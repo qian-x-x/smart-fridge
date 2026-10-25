@@ -1,66 +1,101 @@
-# Smart Fridge 可视化冰箱项目
+# Smart Fridge 可视化冰箱
 
-本仓库用于承接“可视化冰箱 APP”的外包开发、联调、验收和交付。当前首要任务是完成 S0 需求冻结，尚未进入业务功能编码。
+面向家庭用户的食材、菜谱与补货应用。仓库采用单仓库管理 Flutter 用户端、Vue 运营后台、7 个 Spring Boot 服务、基础设施编排和验收文档。
 
-仓库中的开发依据为 V1.2《可视化冰箱APP开发说明》。该文件写明“待双方书面确认”，因此它目前是评审基线，不等同于已经签署的合同或验收结论。
+远程私有仓库：[qian-x-x/smart-fridge](https://github.com/qian-x-x/smart-fridge)
 
-## 项目目标
+## 当前状态
 
-项目需要打通以下业务闭环：
+当前已完成 **S0 工程决策 + S1 第一轮底座**。项目所有者与实施方为同一人，V1.2 开发说明作为当前产品基线推进。
 
-1. 家庭成员把食材和调料以手绘贴纸形式放入 2.5D 冰箱。
-2. 系统计算保质期与临期状态，并基于现有食材推荐菜谱。
-3. 做饭确认后生成烹饪记录，准确扣减库存且不重复扣减。
-4. 缺少的食材进入补货清单，订单、库存和优惠券通过 Seata 保持一致。
-5. 消息中心把临期、家庭变更和订单状态通知给在线成员。
-
-2.5D 视觉、家庭协作、菜谱扣减、补货事务和课程中间件都必须出现在同一条可运行的真实业务流中。
-
-## 交付构成
-
-- Flutter 3.x 用户端，同一代码库交付 Android APK 与 Flutter Web/PWA。
-- Vue 3 + TypeScript + Vite + Element Plus + ECharts 运营后台。
-- Java 17 + Spring Boot 3.2.x + Spring Cloud Alibaba 的 7 个服务。
-- Nacos、Gateway、OpenFeign、Sentinel、Seata、SkyWalking、RocketMQ、MySQL、Redis 和 MinIO 的可运行编排与验收证据。
-- 60 张版权清晰贴纸、80 道预置菜谱、30 个初始化商品。
-- SQL、OpenAPI、部署手册、测试报告、架构文档、素材授权清单和 3 至 8 分钟演示视频。
-
-## 当前基线
-
-| 项目 | 当前值 |
+| 模块 | 当前能力 |
 | --- | --- |
-| 项目代号 | Smart Fridge |
-| 开发说明版本 | V1.2 |
-| 开发说明日期 | 2026-10-24 |
-| 文档状态 | 待双方书面确认 |
-| 当前阶段 | S0 需求冻结 |
-| 代码状态 | 尚未进入实现 |
-| SHA-256 | `954A7902F62C7B84F7AF872D21640F7948761648F4D4B581813D4C188BD7AE` |
+| Flutter | 登录、注册、会话安全存储、演示入口、2.5D 冰箱首页、菜谱页、家庭设置 |
+| Vue 管理端 | 登录、ECharts 看板、菜谱、商品库存、订单页面 |
+| 后端 | Maven BOM、7 个服务模块、统一响应/异常/追踪、Gateway JWT、认证家庭纵切 |
+| 数据 | Flyway、账号/家庭/成员/刷新会话表、H2 集成测试 |
+| 基础设施 | core/full 两套 Compose，MySQL 双实例、Nacos、Redis、MinIO 及课程组件 |
+| 质量 | Maven 测试、Flutter 测试、Flutter Web release、Vue 生产构建 |
 
-开发说明原件位于仓库根目录，文件名保留为 `可视化冰箱APP开发说明.docx`。
+仍未实现的主业务包括：冰箱食材 CRUD、WebSocket 家庭同步、菜谱推荐与做饭扣减、补货事务、Seata/Sentinel/RocketMQ/SkyWalking 的真实业务证据、正式素材和 Android release 签名。
 
-## 仓库文档
+## 快速开始
 
-- [乙方开工评审与交付边界](docs/乙方开工评审.md)
+环境基线：JDK 17、Maven 3.9、Flutter 3.47.8、Node.js 22、Docker Desktop。
+
+```powershell
+# 启动 Nacos、MySQL、Redis、MinIO
+.\scripts\Start-Core.ps1
+
+# 后端全模块测试
+cd backend
+mvn test
+
+# 用户端
+cd apps/fridge-app
+flutter test
+flutter run -d chrome --dart-define=API_BASE_URL=http://localhost:8080
+
+# 运营后台
+cd apps/admin-web
+npm run dev
+```
+
+详细启动顺序、端口和故障处理见 [开发运行手册](docs/开发运行手册.md)。
+
+## 目录
+
+```text
+apps/fridge-app/                  Flutter Android/Web
+apps/admin-web/                   Vue 3 运营后台
+backend/
+  common-core/                    统一 API、异常和追踪
+  gateway-service/                统一入口与 JWT
+  auth-family-service/            账号与家庭纵切
+  fridge-service/                 冰箱领域骨架
+  recipe-service/                 菜谱领域骨架
+  stock-service/                  商品库存骨架
+  order-service/                  订单领域骨架
+  notification-service/           通知领域骨架
+contracts/openapi/                OpenAPI 3 契约
+infra/compose/                    core/full Compose
+infra/mysql/                      双实例初始化 SQL
+docs/                             评审、设计、追踪和运行文档
+```
+
+## 当前 API
+
+所有客户端请求从 Gateway `8080` 进入，统一前缀 `/api/v1`。
+
+- `POST /api/v1/auth/register`
+- `POST /api/v1/auth/login`
+- `POST /api/v1/auth/refresh`
+- `POST /api/v1/auth/logout`
+- `POST /api/v1/auth/introspect`
+- `POST /api/v1/families`
+- `GET /api/v1/families`
+- `GET /api/v1/families/{familyId}`
+
+认证家庭服务可独立运行在 `8081`。其余业务服务当前提供 `/ping` 和 Actuator 健康端点。
+
+## 关键文档
+
+- [工程设计](docs/superpowers/specs/2026-10-26-smart-fridge-design.md)
+- [S0 需求追踪基线](docs/S0-需求追踪基线.md)
+- [乙方开工评审](docs/乙方开工评审.md)
+- [OpenAPI 契约](contracts/openapi/smart-fridge-v1.yaml)
+- [开发运行手册](docs/开发运行手册.md)
+
+V1.2 开发说明原件保持为根目录 `可视化冰箱APP开发说明.docx`，其 SHA-256 为：
+
+```text
+954A7902F62C7B84F7AF872D21640F7948761648F4D4B581813D4C188BD7A826
+```
 
 ## 协作约定
 
-- `main` 保存可运行、可验证的基线版本。
-- 功能开发使用独立分支，提交记录按功能拆分，不使用最终一次性导入的方式。
-- 每周至少提供一次可运行演示，演示内容和验收编号需要留下记录。
-- 密钥、令牌、真实用户照片、本地数据库文件和未授权素材不得提交到 Git。
-- 功能、技术版本、素材授权和验收范围发生变化时，先登记变更，再进入实现。
-- 甲方只读协作权限需要在确认其 GitHub 账号后单独授权；当前尚未邀请外部协作者。
-
-## 开工条件
-
-进入 S1 前至少完成以下确认：
-
-- V1.2 已被双方书面冻结，P0 与 P1 的合同效力明确。
-- 60 张贴纸、80 道菜谱和 30 个商品的来源、审核人和授权责任明确。
-- 验收电脑、网络条件、性能测量方法和 Flutter Android 基准设备明确。
-- 7 个服务的边界、端口和课程证据格式得到甲方确认。
-- 甲方指定 GitHub 账号并获得只读权限。
-- 细化排期、每周演示时间和最终验收人形成书面记录。
-
-本仓库暂不包含业务源码、运行产物或验收证据。相关内容将在 S0 通过后按阶段补充。
+- `main` 保持可编译、可验证。
+- 数据库变更通过 Flyway；不得手工修改已发布迁移。
+- 密钥、真实用户图片和未授权素材不得提交。
+- 中间件必须随真实业务接入，不后补静态声明。
+- 每个阶段以 AC 编号关联自动化测试或可复现演示。
