@@ -1,0 +1,89 @@
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.jks
+application-local.yml
+application-local.yaml
+application-secret.yml
+application-secret.yaml
+
+# Operating systems and editors
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.iml
+*.swp
+*~
+
+# Logs and temporary files
+*.log
+logs/
+tmp/
+temp/
+.cache/
+
+# Flutter and Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+coverage/
+.fvm/flutter_sdk/
+*.apk
+*.aab
+*.ipa
+android/.gradle/
+android/captures/
+android/local.properties
+android/key.properties
+android/app/release/
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+
+# Node and Vue
+node_modules/
+dist/
+.vite/
+.turbo/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Java and Maven
+target/
+.mvn/timing.properties
+*.class
+*.jar.tmp
+hs_err_pid*
+replay_pid*
+
+# Test and report outputs
+test-results/
+playwright-report/
+allure-results/
+surefire-reports/
+failsafe-reports/
+
+# Local database, upload and container data
+*.sqlite
+*.sqlite3
+*.db
+mysql-data/
+redis-data/
+minio-data/
+rocketmq-data/
+seata-data/
+skywalking-data/
