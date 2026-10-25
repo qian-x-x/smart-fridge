@@ -1,0 +1,95 @@
+name: smart-fridge-full
+
+include:
+  - compose.core.yml
+
+services:
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.3.1
+    container_name: smart-fridge-rocketmq-namesrv
+    command: sh mqnamesrv
+    environment:
+      JAVA_OPT_EXT: -Xms256m -Xmx256m
+    ports:
+      - "9876:9876"
+    volumes:
+      - rocketmq-namesrv-logs:/home/rocketmq/logs
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.3.1
+    container_name: smart-fridge-rocketmq-broker
+    command: sh mqbroker -n rocketmq-namesrv:9876 --enable-proxy
+    environment:
+      NAMESRV_ADDR: rocketmq-namesrv:9876
+      JAVA_OPT_EXT: -Xms512m -Xmx512m -Xmn256m
+    ports:
+      - "10909:10909"
+      - "10911:10911"
+      - "8089:8081"
+    volumes:
+      - rocketmq-broker-logs:/home/rocketmq/logs
+      - rocketmq-broker-store:/home/rocketmq/store
+    depends_on:
+      - rocketmq-namesrv
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+  seata:
+    image: apache/seata-server:2.1.0
+    container_name: smart-fridge-seata
+    environment:
+      SEATA_PORT: "8091"
+      STORE_MODE: file
+      SERVER_NODE: "1"
+    ports:
+      - "8091:8091"
+      - "7091:7091"
+    volumes:
+      - seata-data:/root/seata-server
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+  sentinel-dashboard:
+    image: bladex/sentinel-dashboard:1.8.8
+    container_name: smart-fridge-sentinel
+    ports:
+      - "8858:8858"
+    environment:
+      JAVA_OPTS: -Xms128m -Xmx256m
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+  skywalking-oap:
+    image: apache/skywalking-oap-server:10.1.0
+    container_name: smart-fridge-skywalking-oap
+    environment:
+      SW_STORAGE: h2
+      JAVA_OPTS: -Xms256m -Xmx512m
+    ports:
+      - "11800:11800"
+      - "12800:12800"
+    volumes:
+      - skywalking-data:/skywalking/data
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+  skywalking-ui:
+    image: apache/skywalking-ui:10.1.0
+    container_name: smart-fridge-skywalking-ui
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+    ports:
+      - "8088:8080"
+    depends_on:
+      - skywalking-oap
+    restart: unless-stopped
+    networks: [smart-fridge]
+
+volumes:
+  rocketmq-namesrv-logs:
+  rocketmq-broker-logs:
+  rocketmq-broker-store:
+  seata-data:
+  skywalking-data:
