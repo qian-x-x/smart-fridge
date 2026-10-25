@@ -49,7 +49,9 @@ spring:
           '[/**]':
             allowed-origins:
               - ${ADMIN_ORIGIN:http://localhost:5173}
+              - ${ADMIN_LOOPBACK_ORIGIN:http://127.0.0.1:5173}
               - ${FLUTTER_WEB_ORIGIN:http://localhost:3000}
+              - ${FLUTTER_WEB_LOOPBACK_ORIGIN:http://127.0.0.1:3000}
             allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
             allowed-headers: ["*"]
             exposed-headers: [X-Request-Id]
