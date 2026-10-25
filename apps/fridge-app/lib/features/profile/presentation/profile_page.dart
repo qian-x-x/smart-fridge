@@ -111,7 +111,7 @@ class ProfilePage extends ConsumerWidget {
         const _SettingTile(
           icon: Icons.palette_outlined,
           title: '外观与可访问性',
-          subtitle: '米色复古 · 跟随系统字号',
+          subtitle: '香槟米色 · WebGL 3D 视图 · 跟随系统字号',
         ),
         const SizedBox(height: 24),
         OutlinedButton.icon(

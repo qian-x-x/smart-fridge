@@ -291,7 +291,7 @@ class _TablePreviewSheet extends StatelessWidget {
             Text('冰箱清单', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 5),
             Text(
-              '2.5D 素材异常时，也可以在这里查看完整数据。',
+              'WebGL 场景不可用时，也可以在这里查看完整数据。',
               style: TextStyle(color: AppColors.cocoa.withValues(alpha: 0.62)),
             ),
             const SizedBox(height: 16),

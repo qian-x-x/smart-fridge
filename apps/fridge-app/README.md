@@ -34,7 +34,7 @@ Windows 中文路径可能触发 Gradle 或 Dart AOT 的路径限制。仓库根
 
 - `lib/core`：配置、网络、会话、主题和路由。
 - `lib/features/auth`：真实登录、注册与本地会话。
-- `lib/features/fridge`：2.5D 冰箱首页和食材详情。
+- `lib/features/fridge`：Flutter 响应式首页、Three.js WebGL 真 3D 冰箱和食材详情。
 - `lib/features/recipe`：菜谱推荐页面。
 - `lib/features/profile`：家庭、设置和退出。
 - `lib/shared`：主导航布局。

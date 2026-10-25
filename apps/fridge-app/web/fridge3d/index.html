@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, viewport-fit=cover"
+  >
+  <meta name="theme-color" content="#F7F2EA">
+  <title>小满冰箱 WebGL 3D</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --cream: #f7f2ea;
+      --cocoa: #4f382e;
+      --sage: #6f8569;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body,
+    #scene {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    body {
+      font-family:
+        "Noto Sans SC",
+        "Microsoft YaHei UI",
+        "PingFang SC",
+        sans-serif;
+      -webkit-font-smoothing: antialiased;
+      touch-action: none;
+    }
+
+    #fridge-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      cursor: grab;
+      outline: none;
+    }
+
+    #fridge-canvas.is-dragging {
+      cursor: grabbing;
+    }
+
+    .fallback {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 28px;
+      color: var(--cocoa);
+      text-align: center;
+      background:
+        radial-gradient(circle at 50% 36%, #fffaf3 0, #f7f2ea 65%);
+    }
+
+    .fallback.is-visible {
+      display: grid;
+    }
+
+    .fallback strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .fallback span {
+      display: block;
+      max-width: 340px;
+      font-size: 13px;
+      line-height: 1.7;
+      opacity: 0.7;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      color: rgba(79, 56, 46, 0.68);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      transform: translate(-50%, -50%);
+      transition:
+        opacity 220ms ease,
+        visibility 220ms ease;
+    }
+
+    .loading::before {
+      width: 16px;
+      height: 16px;
+      content: "";
+      border: 2px solid rgba(79, 56, 46, 0.18);
+      border-top-color: #6f8569;
+      border-radius: 999px;
+      animation: spin 900ms linear infinite;
+    }
+
+    .loading.is-hidden {
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <main id="scene" aria-label="可旋转和打开抽屉的四门智能冰箱三维模型">
+    <canvas
+      id="fridge-canvas"
+      tabindex="0"
+      aria-label="小满冰箱三维模型。拖动可旋转；点击上部门、变温抽屉或冷冻抽屉查看内部。"
+    ></canvas>
+    <div id="fallback" class="fallback" role="status">
+      <div>
+        <strong>当前浏览器未启用 WebGL</strong>
+        <span>请开启硬件加速或改用最新版 Chrome / Edge。冰箱数据仍可在下方清单中查看。</span>
+      </div>
+    </div>
+    <div id="loading" class="loading">正在装入三维冰箱</div>
+    <p id="live-status" class="sr-only" aria-live="polite"></p>
+  </main>
+
+  <script>
+    (() => {
+      const revealError = (message) => {
+        const fallback = document.querySelector("#fallback");
+        const loading = document.querySelector("#loading");
+        const detail = fallback?.querySelector("span");
+        if (detail && message) {
+          detail.textContent = message;
+        }
+        loading?.classList.add("is-hidden");
+        fallback?.classList.add("is-visible");
+      };
+      window.addEventListener("error", (event) => {
+        revealError(event.message || "WebGL 场景加载失败");
+      });
+      window.addEventListener("unhandledrejection", (event) => {
+        revealError(event.reason?.message || "WebGL 场景加载失败");
+      });
+      window.smartFridgeShowError = revealError;
+    })();
+  </script>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "../vendor/three.module.min.js"
+      }
+    }
+  </script>
+  <script type="module" src="./fridge3d.js"></script>
+</body>
+</html>

@@ -1,371 +1,280 @@
 import 'package:flutter/material.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
-import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_sticker.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/webgl_fridge_view.dart';
 
 class FridgeScene extends StatelessWidget {
   const FridgeScene({
     required this.zones,
-    required this.foods,
     required this.selectedZone,
     required this.onZoneSelected,
-    required this.onFoodTap,
     super.key,
   });
 
   final List<FridgeZone> zones;
-  final List<FridgeFood> foods;
   final FridgeZoneId selectedZone;
   final ValueChanged<FridgeZoneId> onZoneSelected;
-  final ValueChanged<FridgeFood> onFoodTap;
 
   @override
   Widget build(BuildContext context) {
     final zone = zones.firstWhere((item) => item.id == selectedZone);
-    final zoneFoods = foods.where((food) => food.zone == selectedZone).toList();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        SizedBox(
-          height: 82,
-          child: ListView.separated(
-            key: const ValueKey('fridge-zone-selector'),
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 2),
-            itemCount: zones.length,
-            separatorBuilder: (_, _) => const SizedBox(width: 9),
-            itemBuilder: (context, index) {
-              final item = zones[index];
-              final active = item.id == selectedZone;
-              return Semantics(
-                selected: active,
-                button: true,
-                label: '${item.name}区，${item.temperature}',
-                child: GestureDetector(
-                  onTap: () => onZoneSelected(item.id),
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 280),
-                    curve: Curves.easeOutCubic,
-                    width: 112,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 10,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact = constraints.maxWidth < 620;
+        final stageHeight = compact ? 420.0 : 620.0;
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            SizedBox(
+              height: 72,
+              child: ListView.separated(
+                key: const ValueKey('fridge-zone-selector'),
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.zero,
+                itemCount: zones.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 9),
+                itemBuilder: (context, index) {
+                  final item = zones[index];
+                  return _ZoneSelector(
+                    zone: item,
+                    active: item.id == selectedZone,
+                    onTap: () => onZoneSelected(item.id),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              height: stageHeight,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Color(0xFFFBF7F0), Color(0xFFEDE4D8)],
+                  ),
+                  borderRadius: BorderRadius.circular(compact ? 26 : 34),
+                  border: Border.all(color: Colors.white, width: 1.5),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x175B4336),
+                      blurRadius: 34,
+                      offset: Offset(0, 18),
                     ),
-                    decoration: BoxDecoration(
-                      color: active ? AppColors.cocoa : AppColors.paper,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: active ? AppColors.cocoa : AppColors.linen,
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(compact ? 26 : 34),
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      const _StageBackdrop(),
+                      WebGLFridgeView(
+                        zone: selectedZone,
+                        onZoneSelected: onZoneSelected,
                       ),
-                      boxShadow: active
-                          ? const [
-                              BoxShadow(
-                                color: Color(0x265B4336),
-                                blurRadius: 16,
-                                offset: Offset(0, 8),
-                              ),
-                            ]
-                          : null,
-                    ),
-                    child: Row(
-                      children: [
-                        Text(item.emoji, style: const TextStyle(fontSize: 21)),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                item.name,
-                                style: TextStyle(
-                                  color: active
-                                      ? AppColors.cream
-                                      : AppColors.ink,
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                item.temperature,
-                                style: TextStyle(
-                                  color: active
-                                      ? AppColors.cream.withValues(alpha: 0.65)
-                                      : AppColors.cocoa.withValues(alpha: 0.58),
-                                  fontSize: 10,
-                                ),
-                              ),
-                            ],
-                          ),
+                      Positioned(
+                        top: 16,
+                        left: 16,
+                        child: _WebGLBadge(compact: compact),
+                      ),
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: _DragHint(compact: compact),
+                      ),
+                      if (!compact)
+                        Positioned(
+                          left: 20,
+                          right: 20,
+                          bottom: 20,
+                          child: _SceneCaption(zone: zone, compact: false),
                         ),
-                      ],
-                    ),
+                    ],
                   ),
                 ),
-              );
-            },
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ZoneSelector extends StatelessWidget {
+  const _ZoneSelector({
+    required this.zone,
+    required this.active,
+    required this.onTap,
+  });
+
+  final FridgeZone zone;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      selected: active,
+      button: true,
+      label: '${zone.name}区，${zone.temperature}',
+      child: Material(
+        color: active
+            ? AppColors.cocoa
+            : AppColors.paper.withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(18),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 240),
+            width: 116,
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: active ? AppColors.cocoa : AppColors.linen,
+              ),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 31,
+                  height: 31,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: active
+                        ? Colors.white.withValues(alpha: 0.12)
+                        : AppColors.cream,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Text(zone.emoji, style: const TextStyle(fontSize: 17)),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        zone.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: active ? AppColors.cream : AppColors.ink,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      Text(
+                        zone.temperature,
+                        style: TextStyle(
+                          color: active
+                              ? AppColors.cream.withValues(alpha: 0.62)
+                              : AppColors.cocoa.withValues(alpha: 0.56),
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: 16),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            final height = constraints.maxWidth < 420 ? 440.0 : 490.0;
-            return SizedBox(
-              height: height,
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Positioned(
-                    top: 18,
-                    right: 2,
-                    bottom: 18,
-                    width: 24,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFB89E86),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 12,
-                    right: 12,
-                    height: 28,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFEADAC9),
-                        borderRadius: BorderRadius.circular(18),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    right: 18,
-                    bottom: 0,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFFEBD9C7), Color(0xFFD8BEA5)],
-                        ),
-                        borderRadius: BorderRadius.circular(32),
-                        border: Border.all(
-                          color: const Color(0xFFF8EEE2),
-                          width: 4,
-                        ),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Color(0x225B4336),
-                            blurRadius: 34,
-                            offset: Offset(18, 22),
-                          ),
-                        ],
-                      ),
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            right: 19,
-                            top: 62,
-                            child: Container(
-                              width: 7,
-                              height: 103,
-                              decoration: BoxDecoration(
-                                color: AppColors.cocoa,
-                                borderRadius: BorderRadius.circular(10),
-                                boxShadow: const [
-                                  BoxShadow(
-                                    color: Color(0x335B4336),
-                                    blurRadius: 7,
-                                    offset: Offset(3, 4),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 16,
-                            right: 44,
-                            top: 44,
-                            height: 2,
-                            child: ColoredBox(
-                              color: AppColors.cocoa.withValues(alpha: 0.16),
-                            ),
-                          ),
-                          Positioned(
-                            left: 18,
-                            right: 48,
-                            top: 56,
-                            bottom: 18,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(24),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Color(0xFFF9F5EC),
-                                      Color(0xFFE8F0E5),
-                                    ],
-                                  ),
-                                  borderRadius: BorderRadius.circular(24),
-                                  border: Border.all(
-                                    color: const Color(0xFFB99F88),
-                                    width: 2,
-                                  ),
-                                ),
-                                child: Stack(
-                                  children: [
-                                    const Positioned(
-                                      left: 16,
-                                      top: 13,
-                                      child: _CavityLabel(),
-                                    ),
-                                    Positioned(
-                                      left: 16,
-                                      right: 16,
-                                      top: 48,
-                                      child: _ZoneCaption(zone: zone),
-                                    ),
-                                    Positioned(
-                                      left: 18,
-                                      right: 18,
-                                      bottom: 22,
-                                      child: AnimatedSlide(
-                                        offset: const Offset(0, 0),
-                                        duration: const Duration(
-                                          milliseconds: 340,
-                                        ),
-                                        curve: Curves.easeOutBack,
-                                        child: AnimatedContainer(
-                                          duration: const Duration(
-                                            milliseconds: 340,
-                                          ),
-                                          padding: const EdgeInsets.fromLTRB(
-                                            16,
-                                            18,
-                                            16,
-                                            16,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.paper.withValues(
-                                              alpha: 0.92,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              21,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.white,
-                                              width: 2,
-                                            ),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Color(0x24302822),
-                                                blurRadius: 20,
-                                                offset: Offset(0, 10),
-                                              ),
-                                            ],
-                                          ),
-                                          child: zoneFoods.isEmpty
-                                              ? const _EmptyZone()
-                                              : Wrap(
-                                                  alignment:
-                                                      WrapAlignment.center,
-                                                  spacing: 8,
-                                                  runSpacing: 10,
-                                                  children: [
-                                                    for (final food
-                                                        in zoneFoods)
-                                                      FoodSticker(
-                                                        key: ValueKey(food.id),
-                                                        food: food,
-                                                        onTap: () =>
-                                                            onFoodTap(food),
-                                                      ),
-                                                  ],
-                                                ),
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 18,
-                                      right: 18,
-                                      bottom: 10,
-                                      child: Container(
-                                        height: 6,
-                                        decoration: BoxDecoration(
-                                          color: AppColors.cocoa.withValues(
-                                            alpha: 0.2,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const Positioned(
-                            left: 28,
-                            top: 17,
-                            child: _FridgeBrand(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    left: 30,
-                    right: 54,
-                    bottom: -12,
-                    child: Container(
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: AppColors.cocoa.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(99),
-                      ),
-                    ),
-                  ),
+      ),
+    );
+  }
+}
+
+class _StageBackdrop extends StatelessWidget {
+  const _StageBackdrop();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Positioned(
+          left: -40,
+          top: -70,
+          child: Container(
+            width: 260,
+            height: 260,
+            decoration: const BoxDecoration(
+              color: Color(0x42E8D6C4),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Positioned(
+          right: -72,
+          bottom: -70,
+          child: Container(
+            width: 260,
+            height: 260,
+            decoration: const BoxDecoration(
+              color: Color(0x3DDDE8DC),
+              shape: BoxShape.circle,
+            ),
+          ),
+        ),
+        Align(
+          alignment: const Alignment(0, -0.28),
+          child: Container(
+            width: 420,
+            height: 420,
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                colors: [
+                  Colors.white.withValues(alpha: 0.58),
+                  Colors.white.withValues(alpha: 0),
                 ],
               ),
-            );
-          },
+            ),
+          ),
         ),
       ],
     );
   }
 }
 
-class _CavityLabel extends StatelessWidget {
-  const _CavityLabel();
+class _WebGLBadge extends StatelessWidget {
+  const _WebGLBadge({required this.compact});
+
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      padding: EdgeInsets.symmetric(horizontal: compact ? 9 : 11, vertical: 7),
       decoration: BoxDecoration(
-        color: AppColors.cocoa.withValues(alpha: 0.08),
+        color: AppColors.paper.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: Colors.white),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.ac_unit_rounded, size: 13, color: AppColors.sage),
-          SizedBox(width: 4),
-          Text(
-            '今日 4°C',
-            style: TextStyle(
+          Container(
+            width: 7,
+            height: 7,
+            decoration: const BoxDecoration(
               color: AppColors.sage,
-              fontSize: 10,
-              fontWeight: FontWeight.w700,
+              shape: BoxShape.circle,
+            ),
+          ),
+          const SizedBox(width: 6),
+          Text(
+            compact ? 'WEBGL' : 'WEBGL 真 3D',
+            style: const TextStyle(
+              color: AppColors.cocoa,
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
             ),
           ),
         ],
@@ -374,88 +283,102 @@ class _CavityLabel extends StatelessWidget {
   }
 }
 
-class _ZoneCaption extends StatelessWidget {
-  const _ZoneCaption({required this.zone});
+class _DragHint extends StatelessWidget {
+  const _DragHint({required this.compact});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    if (compact) {
+      return const Icon(
+        Icons.threesixty_rounded,
+        color: AppColors.cocoa,
+        size: 22,
+      );
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.threesixty_rounded, color: AppColors.cocoa, size: 18),
+        const SizedBox(width: 6),
+        Text(
+          '拖动旋转 · 点击开门',
+          style: TextStyle(
+            color: AppColors.cocoa.withValues(alpha: 0.62),
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SceneCaption extends StatelessWidget {
+  const _SceneCaption({required this.zone, required this.compact});
 
   final FridgeZone zone;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(zone.emoji, style: const TextStyle(fontSize: 22)),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${zone.name} · ${zone.temperature}',
-                style: const TextStyle(
-                  color: AppColors.ink,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 15,
-                ),
-              ),
-              Text(
-                zone.description,
-                style: TextStyle(
-                  color: AppColors.cocoa.withValues(alpha: 0.58),
-                  fontSize: 10,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _EmptyZone extends StatelessWidget {
-  const _EmptyZone();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(vertical: 24),
-      child: Column(
-        children: [
-          Text('🧺', style: TextStyle(fontSize: 32)),
-          SizedBox(height: 8),
-          Text(
-            '这一层还空着',
-            style: TextStyle(
-              color: AppColors.cocoa,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 13 : 16,
+        vertical: compact ? 10 : 12,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.paper.withValues(alpha: 0.91),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Colors.white),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x155B4336),
+            blurRadius: 18,
+            offset: Offset(0, 8),
           ),
         ],
       ),
-    );
-  }
-}
-
-class _FridgeBrand extends StatelessWidget {
-  const _FridgeBrand();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        Icon(Icons.kitchen_rounded, size: 16, color: AppColors.cocoa),
-        SizedBox(width: 4),
-        Text(
-          'MANMAN',
-          style: TextStyle(
-            color: AppColors.cocoa,
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
-            letterSpacing: 1.2,
+      child: Row(
+        children: [
+          Text(zone.emoji, style: const TextStyle(fontSize: 21)),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${zone.name} · ${zone.temperature}',
+                  style: const TextStyle(
+                    color: AppColors.ink,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                Text(
+                  zone.description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: AppColors.cocoa.withValues(alpha: 0.56),
+                    fontSize: 9,
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          if (!compact)
+            Text(
+              '点击模型切换',
+              style: TextStyle(
+                color: AppColors.sage.withValues(alpha: 0.92),
+                fontSize: 10,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

@@ -6,74 +6,205 @@ class RecipesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScrollView(
-      physics: const BouncingScrollPhysics(),
-      slivers: [
-        SliverPadding(
-          padding: const EdgeInsets.fromLTRB(20, 22, 20, 32),
-          sliver: SliverList.list(
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desktop = constraints.maxWidth >= 1040;
+        final compact = constraints.maxWidth < 620;
+
+        return DecoratedBox(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFFFAF6EF), AppColors.cream],
+            ),
+          ),
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              desktop ? 34 : 20,
+              desktop ? 24 : 22,
+              desktop ? 34 : 20,
+              32,
+            ),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 1240),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _RecipeHeader(desktop: desktop),
+                    const SizedBox(height: 22),
+                    if (desktop)
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(flex: 5, child: _RecommendationHero()),
+                          const SizedBox(width: 24),
+                          Expanded(
+                            flex: 4,
+                            child: _RecipeList(compact: compact),
+                          ),
+                        ],
+                      )
+                    else ...[
+                      const _RecommendationHero(),
+                      const SizedBox(height: 20),
+                      _RecipeList(compact: compact),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _RecipeHeader extends StatelessWidget {
+  const _RecipeHeader({required this.desktop});
+
+  final bool desktop;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
                 '今晚吃什么',
-                style: Theme.of(context).textTheme.headlineMedium
-                    ?.copyWith(fontSize: 30),
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  fontSize: desktop ? 30 : 27,
+                  letterSpacing: -0.9,
+                ),
               ),
               const SizedBox(height: 7),
               Text(
                 '根据冰箱现有食材与临期状态，为你排好了优先级。',
                 style: Theme.of(context).textTheme.bodyMedium
-                    ?.copyWith(color: AppColors.cocoa.withValues(alpha: 0.64)),
-              ),
-              const SizedBox(height: 20),
-              const _RecommendationHero(),
-              const SizedBox(height: 18),
-              const Row(
-                children: [
-                  Expanded(child: _FilterChip(label: '全部食材', selected: true)),
-                  SizedBox(width: 8),
-                  Expanded(child: _FilterChip(label: '临期优先')),
-                  SizedBox(width: 8),
-                  Expanded(child: _FilterChip(label: '20 分钟内')),
-                ],
-              ),
-              const SizedBox(height: 22),
-              Text('其他刚刚好的灵感', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 12),
-              const _RecipeTile(
-                emoji: '🥬',
-                title: '蒜蓉生菜',
-                subtitle: '消耗生菜 · 8 分钟',
-                match: '86%',
-                missing: '食材齐全',
-                color: Color(0xFFE5EEE0),
-              ),
-              const SizedBox(height: 10),
-              const _RecipeTile(
-                emoji: '🥩',
-                title: '黑椒牛肉粒',
-                subtitle: '优先用掉牛里脊 · 22 分钟',
-                match: '79%',
-                missing: '缺少：彩椒',
-                color: Color(0xFFF3E2D7),
-              ),
-              const SizedBox(height: 10),
-              const _RecipeTile(
-                emoji: '🥟',
-                title: '家常煎饺',
-                subtitle: '从冷冻区直接开始 · 15 分钟',
-                match: '74%',
-                missing: '缺少：香醋',
-                color: Color(0xFFF5ECD2),
-              ),
-              const SizedBox(height: 24),
-              OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.tune_rounded),
-                label: const Text('按口味和耗时筛选'),
+                    ?.copyWith(color: AppColors.cocoa.withValues(alpha: 0.62)),
               ),
             ],
           ),
         ),
+        if (desktop)
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
+            decoration: BoxDecoration(
+              color: AppColors.paper.withValues(alpha: 0.78),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.white),
+            ),
+            child: const Row(
+              children: [
+                Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 17,
+                  color: AppColors.sage,
+                ),
+                SizedBox(width: 7),
+                Text(
+                  '按冰箱库存实时推荐',
+                  style: TextStyle(
+                    color: AppColors.cocoa,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+class _RecipeList extends StatelessWidget {
+  const _RecipeList({required this.compact});
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _FilterBar(compact: compact),
+        const SizedBox(height: 22),
+        Text('其他刚刚好的灵感', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        const _RecipeTile(
+          emoji: '🥬',
+          title: '蒜蓉生菜',
+          subtitle: '消耗生菜 · 8 分钟',
+          match: '86%',
+          missing: '食材齐全',
+          color: Color(0xFFE5EEE0),
+        ),
+        const SizedBox(height: 10),
+        const _RecipeTile(
+          emoji: '🥩',
+          title: '黑椒牛肉粒',
+          subtitle: '优先用掉牛里脊 · 22 分钟',
+          match: '79%',
+          missing: '缺少：彩椒',
+          color: Color(0xFFF3E2D7),
+        ),
+        const SizedBox(height: 10),
+        const _RecipeTile(
+          emoji: '🥟',
+          title: '家常煎饺',
+          subtitle: '从冷冻区直接开始 · 15 分钟',
+          match: '74%',
+          missing: '缺少：香醋',
+          color: Color(0xFFF5ECD2),
+        ),
+        const SizedBox(height: 18),
+        OutlinedButton.icon(
+          onPressed: () {},
+          icon: const Icon(Icons.tune_rounded),
+          label: const Text('按口味和耗时筛选'),
+        ),
+      ],
+    );
+  }
+}
+
+class _FilterBar extends StatefulWidget {
+  const _FilterBar({required this.compact});
+
+  final bool compact;
+
+  @override
+  State<_FilterBar> createState() => _FilterBarState();
+}
+
+class _FilterBarState extends State<_FilterBar> {
+  int _selected = 0;
+  static const _labels = ['全部食材', '临期优先', '20 分钟内'];
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        for (var index = 0; index < _labels.length; index++) ...[
+          if (index > 0) const SizedBox(width: 8),
+          Expanded(
+            child: GestureDetector(
+              onTap: () => setState(() => _selected = index),
+              child: _FilterChip(
+                label: _labels[index],
+                selected: _selected == index,
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }
