@@ -1,34 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
+import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
 
-Future<void> showFoodDetails(BuildContext context, FridgeFood food) {
+Future<void> showFoodDetails(
+  BuildContext context,
+  FridgeFood food, {
+  required List<FridgeZone> zones,
+  required bool canEdit,
+  required Future<void> Function(double quantity) onConsume,
+  required Future<void> Function(FridgeZone targetZone) onMove,
+  required Future<void> Function() onDiscard,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: AppColors.cream,
-    builder: (context) => _FoodDetailsSheet(food: food),
+    builder: (context) => _FoodDetailsSheet(
+      food: food,
+      zones: zones,
+      canEdit: canEdit,
+      onConsume: onConsume,
+      onMove: onMove,
+      onDiscard: onDiscard,
+    ),
   );
 }
 
-Future<void> showTablePreview(BuildContext context) {
+Future<void> showTablePreview(
+  BuildContext context,
+  List<FridgeFood> foods, {
+  required ValueChanged<FridgeFood> onFoodTap,
+}
+) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: AppColors.cream,
-    builder: (context) => const _TablePreviewSheet(),
+    builder: (context) => _TablePreviewSheet(
+      foods: foods,
+      onFoodTap: onFoodTap,
+    ),
   );
 }
 
-Future<void> showAddFoodPreview(BuildContext context) {
+Future<void> showAddFoodPreview(
+  BuildContext context, {
+  required List<FridgeZone> zones,
+  required bool canEdit,
+  required Future<void> Function(NewFoodInput input) onSave,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
     backgroundColor: AppColors.cream,
-    builder: (context) => const _AddFoodPreviewSheet(),
+    builder: (context) => _AddFoodPreviewSheet(
+      zones: zones,
+      canEdit: canEdit,
+      onSave: onSave,
+    ),
   );
 }
 
@@ -50,10 +83,41 @@ class _SheetHandle extends StatelessWidget {
   }
 }
 
-class _FoodDetailsSheet extends StatelessWidget {
-  const _FoodDetailsSheet({required this.food});
+class _FoodDetailsSheet extends StatefulWidget {
+  const _FoodDetailsSheet({
+    required this.food,
+    required this.zones,
+    required this.canEdit,
+    required this.onConsume,
+    required this.onMove,
+    required this.onDiscard,
+  });
 
   final FridgeFood food;
+  final List<FridgeZone> zones;
+  final bool canEdit;
+  final Future<void> Function(double quantity) onConsume;
+  final Future<void> Function(FridgeZone targetZone) onMove;
+  final Future<void> Function() onDiscard;
+
+  @override
+  State<_FoodDetailsSheet> createState() => _FoodDetailsSheetState();
+}
+
+class _FoodDetailsSheetState extends State<_FoodDetailsSheet> {
+  late FridgeZone? _targetZone;
+  bool _busy = false;
+  String? _error;
+
+  FridgeFood get food => widget.food;
+
+  @override
+  void initState() {
+    super.initState();
+    _targetZone = widget.zones
+        .where((zone) => zone.id != food.zone)
+        .firstOrNull;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,19 +198,123 @@ class _FoodDetailsSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 22),
-          FilledButton.icon(
-            onPressed: () => Navigator.of(context).pop(),
-            icon: const Icon(Icons.edit_rounded),
-            label: const Text('记录使用或移动'),
-          ),
-          const SizedBox(height: 9),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('把这一份标记为已吃完'),
-          ),
+          if (widget.canEdit) ...[
+            FilledButton.icon(
+              key: const ValueKey('consume-food-button'),
+              onPressed: _busy ? null : _consume,
+              icon: const Icon(Icons.restaurant_rounded),
+              label: Text('使用 ${_consumeQuantityLabel()} ${food.unit}'),
+            ),
+            if (_targetZone != null) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<FridgeZone>(
+                      initialValue: _targetZone,
+                      decoration: const InputDecoration(labelText: '移动到'),
+                      items: [
+                        for (final zone in widget.zones)
+                          if (zone.id != food.zone)
+                            DropdownMenuItem(
+                              value: zone,
+                              child: Text(zone.name),
+                            ),
+                      ],
+                      onChanged: _busy
+                          ? null
+                          : (value) {
+                              if (value != null) {
+                                setState(() => _targetZone = value);
+                              }
+                            },
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  FilledButton.tonal(
+                    key: const ValueKey('move-food-button'),
+                    onPressed: _busy ? null : _move,
+                    child: const Text('移动'),
+                  ),
+                ],
+              ),
+            ],
+            const SizedBox(height: 9),
+            TextButton(
+              key: const ValueKey('discard-food-button'),
+              onPressed: _busy ? null : _discard,
+              child: const Text('丢弃这份食材'),
+            ),
+          ] else
+            Container(
+              padding: const EdgeInsets.all(13),
+              decoration: BoxDecoration(
+                color: AppColors.paper,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: const Text('当前账号只有查看权限'),
+            ),
+          if (_busy) ...[
+            const SizedBox(height: 12),
+            const LinearProgressIndicator(color: AppColors.cocoa),
+          ],
+          if (_error != null) ...[
+            const SizedBox(height: 8),
+            Text(
+              _error!,
+              textAlign: TextAlign.center,
+              style: const TextStyle(color: AppColors.rose, fontSize: 11),
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  double get _consumeQuantity =>
+      food.quantity >= 1 ? 1 : food.quantity;
+
+  String _consumeQuantityLabel() {
+    final value = _consumeQuantity;
+    return value % 1 == 0 ? value.toInt().toString() : value.toStringAsFixed(1);
+  }
+
+  Future<void> _consume() async {
+    await _run(() => widget.onConsume(_consumeQuantity), '已记录使用');
+  }
+
+  Future<void> _move() async {
+    final target = _targetZone;
+    if (target != null) {
+      await _run(() => widget.onMove(target), '已移动到${target.name}');
+    }
+  }
+
+  Future<void> _discard() async {
+    await _run(widget.onDiscard, '已丢弃并保留操作记录');
+  }
+
+  Future<void> _run(Future<void> Function() action, String success) async {
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await action();
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(success)));
+      }
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = error.toString();
+        });
+      }
+    }
   }
 
   String _zoneName(FridgeZoneId zone) {
@@ -208,12 +376,50 @@ class _DetailMetric extends StatelessWidget {
   }
 }
 
-class _AddFoodPreviewSheet extends StatelessWidget {
-  const _AddFoodPreviewSheet();
+class _AddFoodPreviewSheet extends StatefulWidget {
+  const _AddFoodPreviewSheet({
+    required this.zones,
+    required this.canEdit,
+    required this.onSave,
+  });
+
+  final List<FridgeZone> zones;
+  final bool canEdit;
+  final Future<void> Function(NewFoodInput input) onSave;
+
+  @override
+  State<_AddFoodPreviewSheet> createState() => _AddFoodPreviewSheetState();
+}
+
+class _AddFoodPreviewSheetState extends State<_AddFoodPreviewSheet> {
+  final _nameController = TextEditingController();
+  final _quantityController = TextEditingController();
+  final _unitController = TextEditingController(text: '份');
+  final _categoryController = TextEditingController(text: '其他');
+  FridgeZone? _zone;
+  DateTime _productionDate = DateTime.now();
+  DateTime _expiresOn = DateTime.now().add(const Duration(days: 7));
+  bool _saving = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _zone = widget.zones.firstOrNull;
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _quantityController.dispose();
+    _unitController.dispose();
+    _categoryController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
         22,
         16,
@@ -229,50 +435,231 @@ class _AddFoodPreviewSheet extends StatelessWidget {
           Text('放进一份新食材', style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 6),
           Text(
-            '先完成交互与字段布局，S2 接入 fridge-service 后即可真实保存。',
-            style: TextStyle(color: AppColors.cocoa.withValues(alpha: 0.62)),
-          ),
-          const SizedBox(height: 20),
-          const TextField(
-            decoration: InputDecoration(
-              labelText: '食材名称',
-              hintText: '例如：西兰花',
-              prefixIcon: Icon(Icons.eco_outlined),
+            widget.canEdit
+                ? '保存后会同步到家庭冰箱，并记录当前操作人。'
+                : '当前账号为只读成员或演示账号，不能写入真实冰箱。',
+            style: TextStyle(
+              color: widget.canEdit
+                  ? AppColors.cocoa.withValues(alpha: 0.62)
+                  : AppColors.rose,
             ),
           ),
-          const SizedBox(height: 12),
-          const Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(labelText: '数量'),
-                ),
+          if (widget.zones.isNotEmpty) ...[
+            const SizedBox(height: 20),
+            TextField(
+              key: const ValueKey('food-name-input'),
+              controller: _nameController,
+              enabled: widget.canEdit && !_saving,
+              decoration: const InputDecoration(
+                labelText: '食材名称',
+                hintText: '例如：西兰花',
+                prefixIcon: Icon(Icons.eco_outlined),
               ),
-              SizedBox(width: 10),
-              Expanded(
-                child: TextField(decoration: InputDecoration(labelText: '单位')),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('food-quantity-input'),
+                    controller: _quantityController,
+                    enabled: widget.canEdit && !_saving,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(labelText: '数量'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    key: const ValueKey('food-unit-input'),
+                    controller: _unitController,
+                    enabled: widget.canEdit && !_saving,
+                    decoration: const InputDecoration(labelText: '单位'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              key: const ValueKey('food-category-input'),
+              controller: _categoryController,
+              enabled: widget.canEdit && !_saving,
+              decoration: const InputDecoration(labelText: '分类'),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<FridgeZone>(
+              initialValue: _zone,
+              decoration: const InputDecoration(labelText: '存放区域'),
+              items: [
+                for (final zone in widget.zones)
+                  DropdownMenuItem(value: zone, child: Text(zone.name)),
+              ],
+              onChanged: widget.canEdit && !_saving
+                  ? (value) {
+                      if (value != null) {
+                        setState(() => _zone = value);
+                      }
+                    }
+                  : null,
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _DateField(
+                    label: '生产日期',
+                    value: _productionDate,
+                    enabled: widget.canEdit && !_saving,
+                    onTap: () => _pickDate(production: true),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _DateField(
+                    label: '到期日期',
+                    value: _expiresOn,
+                    enabled: widget.canEdit && !_saving,
+                    onTap: () => _pickDate(production: false),
+                  ),
+                ),
+              ],
+            ),
+            if (_error != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                _error!,
+                style: const TextStyle(color: AppColors.rose, fontSize: 11),
               ),
             ],
-          ),
-          const SizedBox(height: 18),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('表单节点已完成，下一阶段接入真实保存')),
-              );
-            },
-            child: const Text('选择贴纸并保存'),
-          ),
+            const SizedBox(height: 18),
+            FilledButton.icon(
+              key: const ValueKey('save-food-button'),
+              onPressed: widget.canEdit && !_saving ? _save : null,
+              icon: _saving
+                  ? const SizedBox(
+                      width: 17,
+                      height: 17,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.add_rounded),
+              label: Text(_saving ? '正在保存' : '保存食材'),
+            ),
+          ] else
+            const Padding(
+              padding: EdgeInsets.only(top: 20),
+              child: Text('当前冰箱没有可写入的分区。'),
+            ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _pickDate({required bool production}) async {
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: production ? _productionDate : _expiresOn,
+      firstDate: DateTime(2020),
+      lastDate: DateTime.now().add(const Duration(days: 3650)),
+    );
+    if (selected == null) {
+      return;
+    }
+    setState(() {
+      if (production) {
+        _productionDate = selected;
+      } else {
+        _expiresOn = selected;
+      }
+    });
+  }
+
+  Future<void> _save() async {
+    final quantity = double.tryParse(_quantityController.text.trim());
+    if (_nameController.text.trim().isEmpty ||
+        _unitController.text.trim().isEmpty ||
+        _categoryController.text.trim().isEmpty ||
+        quantity == null ||
+        quantity <= 0) {
+      setState(() => _error = '请填写名称、正数数量、单位和分类');
+      return;
+    }
+    if (_expiresOn.isBefore(_productionDate)) {
+      setState(() => _error = '到期日期不能早于生产日期');
+      return;
+    }
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+    try {
+      await widget.onSave(
+        NewFoodInput(
+          zone: _zone!,
+          name: _nameController.text.trim(),
+          category: _categoryController.text.trim(),
+          quantity: quantity,
+          unit: _unitController.text.trim(),
+          productionDate: _productionDate,
+          expiresOn: _expiresOn,
+        ),
+      );
+      if (mounted) {
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('食材已保存')),
+        );
+      }
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() {
+          _saving = false;
+          _error = error.toString();
+        });
+      }
+    }
+  }
+}
+
+class _DateField extends StatelessWidget {
+  const _DateField({
+    required this.label,
+    required this.value,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final String label;
+  final DateTime value;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: enabled ? onTap : null,
+      borderRadius: BorderRadius.circular(12),
+      child: InputDecorator(
+        decoration: InputDecoration(labelText: label),
+        child: Text(
+          '${value.year}-${value.month.toString().padLeft(2, '0')}-'
+          '${value.day.toString().padLeft(2, '0')}',
+          style: const TextStyle(fontSize: 12),
+        ),
       ),
     );
   }
 }
 
 class _TablePreviewSheet extends StatelessWidget {
-  const _TablePreviewSheet();
+  const _TablePreviewSheet({required this.foods, required this.onFoodTap});
+
+  final List<FridgeFood> foods;
+  final ValueChanged<FridgeFood> onFoodTap;
 
   @override
   Widget build(BuildContext context) {
@@ -295,50 +682,65 @@ class _TablePreviewSheet extends StatelessWidget {
               style: TextStyle(color: AppColors.cocoa.withValues(alpha: 0.62)),
             ),
             const SizedBox(height: 16),
-            for (final food in demoFoods)
+            if (foods.isEmpty)
+              Container(
+                padding: const EdgeInsets.all(18),
+                decoration: BoxDecoration(
+                  color: AppColors.paper,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                child: const Text('冰箱里还没有食材'),
+              ),
+            for (final food in foods)
               Padding(
                 padding: const EdgeInsets.only(bottom: 9),
-                child: Container(
-                  padding: const EdgeInsets.all(13),
-                  decoration: BoxDecoration(
-                    color: AppColors.paper,
+                child: Material(
+                  color: AppColors.paper,
+                  borderRadius: BorderRadius.circular(18),
+                  child: InkWell(
+                    onTap: () => onFoodTap(food),
                     borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: Row(
-                    children: [
-                      Text(food.emoji, style: const TextStyle(fontSize: 27)),
-                      const SizedBox(width: 11),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              food.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w700,
-                              ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(13),
+                      child: Row(
+                        children: [
+                          Text(food.emoji, style: const TextStyle(fontSize: 27)),
+                          const SizedBox(width: 11),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  food.name,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                Text(
+                                  '${food.category} · ${food.owner}',
+                                  style: TextStyle(
+                                    color: AppColors.cocoa.withValues(
+                                      alpha: 0.55,
+                                    ),
+                                    fontSize: 11,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              '${food.category} · ${food.owner}',
-                              style: TextStyle(
-                                color: AppColors.cocoa.withValues(alpha: 0.55),
-                                fontSize: 11,
-                              ),
+                          ),
+                          Text(
+                            '${food.expiresInDays} 天',
+                            style: TextStyle(
+                              color: food.isExpiring
+                                  ? AppColors.rose
+                                  : AppColors.sage,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Text(
-                        '${food.expiresInDays} 天',
-                        style: TextStyle(
-                          color: food.isExpiring
-                              ? AppColors.rose
-                              : AppColors.sage,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ),

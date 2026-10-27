@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/application/auth_controller.dart';
-import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
+import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
+import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_scene.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_sheets.dart';
 
@@ -19,9 +20,28 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final workspace = ref.watch(fridgeWorkspaceProvider);
     final displayName =
-        ref.watch(authControllerProvider).value?.user.displayName ?? '小满';
-    final expiring = demoFoods.where((food) => food.isExpiring).toList();
+        ref.watch(authControllerProvider).value?.user.displayName ?? '家人';
+
+    return workspace.when(
+      data: (data) => _buildHome(context, data, displayName),
+      loading: () => _FridgeLoading(displayName: displayName),
+      error: (error, stackTrace) => _FridgeLoadError(
+        displayName: displayName,
+        message: error.toString(),
+        onRetry: () => ref.read(fridgeWorkspaceProvider.notifier).refresh(),
+      ),
+    );
+  }
+
+  Widget _buildHome(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+    String displayName,
+  ) {
+    final expiring =
+        workspace.foods.where((food) => food.isExpiring).toList();
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -65,14 +85,18 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                       children: [
                         _HomeHeader(
                           displayName: displayName,
+                          familyName: workspace.familyName,
+                          role: workspace.role,
                           desktop: desktop,
-                          onOpenTable: () => showTablePreview(context),
+                          onOpenTable: () =>
+                              _openTable(context, workspace),
                         ),
                         SizedBox(height: desktop ? 24 : 18),
                         if (!desktop) ...[
                           _SummaryStrip(
-                            foodCount: demoFoods.length,
+                            foodCount: workspace.foods.length,
                             expiringCount: expiring.length,
+                            role: workspace.role,
                             compact: compact,
                           ),
                           const SizedBox(height: 24),
@@ -83,9 +107,12 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                             children: [
                               Expanded(
                                 child: _FridgeWorkspace(
+                                  title: workspace.fridgeName,
+                                  zones: workspace.zones,
                                   selectedZone: _selectedZone,
                                   onZoneSelected: _selectZone,
-                                  onOpenTable: () => showTablePreview(context),
+                                  onOpenTable: () =>
+                                      _openTable(context, workspace),
                                 ),
                               ),
                               const SizedBox(width: 24),
@@ -93,23 +120,32 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                                 width: 324,
                                 child: _FridgeStatusPanel(
                                   selectedZone: _selectedZone,
+                                  zones: workspace.zones,
+                                  foods: workspace.foods,
                                   expiring: expiring,
                                   onZoneSelected: _selectZone,
-                                  onFoodTap: (food) =>
-                                      showFoodDetails(context, food),
+                                  onFoodTap: (food) => _openFoodDetails(
+                                    context,
+                                    workspace,
+                                    food,
+                                  ),
                                 ),
                               ),
                             ],
                           )
                         else ...[
                           _FridgeWorkspace(
+                            title: workspace.fridgeName,
+                            zones: workspace.zones,
                             selectedZone: _selectedZone,
                             onZoneSelected: _selectZone,
-                            onOpenTable: () => showTablePreview(context),
+                            onOpenTable: () =>
+                                _openTable(context, workspace),
                           ),
                           const SizedBox(height: 16),
                           _MobileStatusStrip(
                             selectedZone: _selectedZone,
+                            zones: workspace.zones,
                             expiringCount: expiring.length,
                           ),
                         ],
@@ -117,8 +153,10 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                         _ExpirySection(
                           expiring: expiring,
                           compact: compact,
-                          onViewAll: () => showTablePreview(context),
-                          onFoodTap: (food) => showFoodDetails(context, food),
+                          onViewAll: () =>
+                              _openTable(context, workspace),
+                          onFoodTap: (food) =>
+                              _openFoodDetails(context, workspace, food),
                         ),
                         SizedBox(height: desktop ? 24 : 20),
                         if (desktop)
@@ -134,7 +172,8 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                               SizedBox(
                                 width: 324,
                                 child: _AddFoodAction(
-                                  onTap: () => showAddFoodPreview(context),
+                                  onTap: () =>
+                                      _openAddFood(context, workspace),
                                 ),
                               ),
                             ],
@@ -145,7 +184,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                           ),
                           const SizedBox(height: 14),
                           _AddFoodAction(
-                            onTap: () => showAddFoodPreview(context),
+                            onTap: () => _openAddFood(context, workspace),
                           ),
                         ],
                       ],
@@ -166,16 +205,63 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     }
     setState(() => _selectedZone = zone);
   }
+
+  Future<void> _openAddFood(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+  ) {
+    return showAddFoodPreview(
+      context,
+      zones: workspace.zones,
+      canEdit: workspace.canEdit && !workspace.isDemo,
+      onSave: (input) =>
+          ref.read(fridgeWorkspaceProvider.notifier).addFood(input),
+    );
+  }
+
+  Future<void> _openFoodDetails(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+    FridgeFood food,
+  ) {
+    return showFoodDetails(
+      context,
+      food,
+      zones: workspace.zones,
+      canEdit: workspace.canEdit && !workspace.isDemo,
+      onConsume: (quantity) =>
+          ref.read(fridgeWorkspaceProvider.notifier).consume(food, quantity),
+      onMove: (targetZone) =>
+          ref.read(fridgeWorkspaceProvider.notifier).moveFood(food, targetZone),
+      onDiscard: () =>
+          ref.read(fridgeWorkspaceProvider.notifier).discard(food),
+    );
+  }
+
+  Future<void> _openTable(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+  ) {
+    return showTablePreview(
+      context,
+      workspace.foods,
+      onFoodTap: (food) => _openFoodDetails(context, workspace, food),
+    );
+  }
 }
 
 class _FridgeWorkspace extends StatelessWidget {
   const _FridgeWorkspace({
+    required this.title,
+    required this.zones,
     required this.selectedZone,
     required this.onZoneSelected,
     required this.onOpenTable,
   });
 
   final FridgeZoneId selectedZone;
+  final String title;
+  final List<FridgeZone> zones;
   final ValueChanged<FridgeZoneId> onZoneSelected;
   final VoidCallback onOpenTable;
 
@@ -192,7 +278,7 @@ class _FridgeWorkspace extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '我家的冰箱',
+                    title,
                     style: Theme.of(context).textTheme.headlineMedium
                         ?.copyWith(fontSize: 30, letterSpacing: -1),
                   ),
@@ -224,7 +310,7 @@ class _FridgeWorkspace extends StatelessWidget {
         ),
         const SizedBox(height: 15),
         FridgeScene(
-          zones: demoZones,
+          zones: zones,
           selectedZone: selectedZone,
           onZoneSelected: onZoneSelected,
         ),
@@ -236,11 +322,15 @@ class _FridgeWorkspace extends StatelessWidget {
 class _HomeHeader extends StatelessWidget {
   const _HomeHeader({
     required this.displayName,
+    required this.familyName,
+    required this.role,
     required this.desktop,
     required this.onOpenTable,
   });
 
   final String displayName;
+  final String familyName;
+  final String role;
   final bool desktop;
   final VoidCallback onOpenTable;
 
@@ -274,11 +364,22 @@ class _HomeHeader extends StatelessWidget {
                   letterSpacing: -0.8,
                 ),
               ),
+              if (!desktop) ...[
+                const SizedBox(height: 3),
+                Text(
+                  '$familyName · ${_roleLabel(role)}',
+                  style: TextStyle(
+                    color: AppColors.cocoa.withValues(alpha: 0.55),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ],
           ),
         ),
         if (desktop) ...[
-          _FamilyPresence(),
+          _FamilyPresence(familyName: familyName, role: role),
           const SizedBox(width: 12),
           IconButton(
             tooltip: '冰箱清单',
@@ -318,10 +419,21 @@ class _HomeHeader extends StatelessWidget {
       ],
     );
   }
+
+  String _roleLabel(String value) {
+    return switch (value) {
+      'OWNER' => '拥有者',
+      'EDITOR' => '编辑者',
+      _ => '只读者',
+    };
+  }
 }
 
 class _FamilyPresence extends StatelessWidget {
-  const _FamilyPresence();
+  const _FamilyPresence({required this.familyName, required this.role});
+
+  final String familyName;
+  final String role;
 
   @override
   Widget build(BuildContext context) {
@@ -332,13 +444,17 @@ class _FamilyPresence extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.people_alt_outlined, size: 16, color: AppColors.sage),
-          SizedBox(width: 7),
+          const Icon(
+            Icons.people_alt_outlined,
+            size: 16,
+            color: AppColors.sage,
+          ),
+          const SizedBox(width: 7),
           Text(
-            '3 位家人在线',
-            style: TextStyle(
+            '$familyName · ${_roleLabel(role)}',
+            style: const TextStyle(
               color: AppColors.cocoa,
               fontSize: 11,
               fontWeight: FontWeight.w700,
@@ -348,17 +464,27 @@ class _FamilyPresence extends StatelessWidget {
       ),
     );
   }
+
+  String _roleLabel(String value) {
+    return switch (value) {
+      'OWNER' => '拥有者',
+      'EDITOR' => '编辑者',
+      _ => '只读者',
+    };
+  }
 }
 
 class _SummaryStrip extends StatelessWidget {
   const _SummaryStrip({
     required this.foodCount,
     required this.expiringCount,
+    required this.role,
     required this.compact,
   });
 
   final int foodCount;
   final int expiringCount;
+  final String role;
   final bool compact;
 
   @override
@@ -394,9 +520,13 @@ class _SummaryStrip extends StatelessWidget {
             alert: true,
           ),
           _SummaryDivider(),
-          const _SummaryMetric(
-            value: '3',
-            label: '位家人',
+          _SummaryMetric(
+            value: switch (role) {
+              'OWNER' => '拥有者',
+              'EDITOR' => '编辑者',
+              _ => '只读者',
+            },
+            label: '权限',
             icon: Icons.family_restroom_rounded,
           ),
           if (!compact) ...[
@@ -496,20 +626,24 @@ class _SummaryDivider extends StatelessWidget {
 class _FridgeStatusPanel extends StatelessWidget {
   const _FridgeStatusPanel({
     required this.selectedZone,
+    required this.zones,
+    required this.foods,
     required this.expiring,
     required this.onZoneSelected,
     required this.onFoodTap,
   });
 
   final FridgeZoneId selectedZone;
+  final List<FridgeZone> zones;
+  final List<FridgeFood> foods;
   final List<FridgeFood> expiring;
   final ValueChanged<FridgeZoneId> onZoneSelected;
   final ValueChanged<FridgeFood> onFoodTap;
 
   @override
   Widget build(BuildContext context) {
-    final selected = demoZones.firstWhere((zone) => zone.id == selectedZone);
-    final foods = demoFoods.where((food) => food.zone == selectedZone).toList();
+    final selected = zones.firstWhere((zone) => zone.id == selectedZone);
+    final selectedFoods = foods.where((food) => food.zone == selectedZone).toList();
 
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
@@ -559,7 +693,7 @@ class _FridgeStatusPanel extends StatelessWidget {
           ),
           const SizedBox(height: 5),
           Text(
-            '${demoFoods.length} 份食材 · ${expiring.length} 项临期',
+            '${foods.length} 份食材 · ${expiring.length} 项临期',
             style: TextStyle(
               color: AppColors.cocoa.withValues(alpha: 0.52),
               fontSize: 10,
@@ -593,7 +727,7 @@ class _FridgeStatusPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 16),
-          for (final zone in demoZones)
+          for (final zone in zones)
             _ZoneStatusRow(
               zone: zone,
               active: zone.id == selectedZone,
@@ -659,7 +793,7 @@ class _FridgeStatusPanel extends StatelessWidget {
             ),
           const SizedBox(height: 7),
           Text(
-            '${selected.description}，本层共 ${foods.length} 份。',
+            '${selected.description}，本层共 ${selectedFoods.length} 份。',
             style: TextStyle(
               color: AppColors.cocoa.withValues(alpha: 0.52),
               fontSize: 10,
@@ -731,15 +865,17 @@ class _ZoneStatusRow extends StatelessWidget {
 class _MobileStatusStrip extends StatelessWidget {
   const _MobileStatusStrip({
     required this.selectedZone,
+    required this.zones,
     required this.expiringCount,
   });
 
   final FridgeZoneId selectedZone;
+  final List<FridgeZone> zones;
   final int expiringCount;
 
   @override
   Widget build(BuildContext context) {
-    final zone = demoZones.firstWhere((item) => item.id == selectedZone);
+    final zone = zones.firstWhere((item) => item.id == selectedZone);
     return Row(
       children: [
         Expanded(
@@ -1083,6 +1219,93 @@ class _AmbientOrb extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+      ),
+    );
+  }
+}
+
+class _FridgeLoading extends StatelessWidget {
+  const _FridgeLoading({required this.displayName});
+
+  final String displayName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const CircularProgressIndicator(color: AppColors.cocoa),
+          const SizedBox(height: 18),
+          Text(
+            '正在打开 $displayName 的冰箱…',
+            style: const TextStyle(
+              color: AppColors.cocoa,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FridgeLoadError extends StatelessWidget {
+  const _FridgeLoadError({
+    required this.displayName,
+    required this.message,
+    required this.onRetry,
+  });
+
+  final String displayName;
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Container(
+          margin: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: AppColors.paper,
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(color: Colors.white),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.cloud_off_rounded,
+                color: AppColors.rose,
+                size: 34,
+              ),
+              const SizedBox(height: 14),
+              Text(
+                '$displayName，冰箱数据暂时没有加载成功',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppColors.cocoa.withValues(alpha: 0.62),
+                  fontSize: 12,
+                ),
+              ),
+              const SizedBox(height: 18),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('重新加载'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

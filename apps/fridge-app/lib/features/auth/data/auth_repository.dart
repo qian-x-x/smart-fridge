@@ -36,6 +36,13 @@ class AuthRepository {
     return AuthSession.fromApi(body['data'] as Map<String, dynamic>);
   }
 
+  Future<AuthSession> refresh(AuthSession session) async {
+    final body = await _api.post('/api/v1/auth/refresh', {
+      'refreshToken': session.refreshToken,
+    });
+    return AuthSession.fromApi(body['data'] as Map<String, dynamic>);
+  }
+
   Future<void> logout(AuthSession session) async {
     if (session.isDemo) {
       return;

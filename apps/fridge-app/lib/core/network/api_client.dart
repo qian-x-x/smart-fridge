@@ -22,38 +22,98 @@ class ApiClient {
 
   final Dio _dio;
 
+  Future<Map<String, dynamic>> get(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) {
+    return _request(
+      () => _dio.get<Map<String, dynamic>>(
+        path,
+        queryParameters: queryParameters,
+        options: _options(accessToken),
+      ),
+    );
+  }
+
   Future<Map<String, dynamic>> post(
     String path,
     Map<String, dynamic> body, {
     String? accessToken,
-  }) async {
-    try {
-      final response = await _dio.post<Map<String, dynamic>>(
+  }) {
+    return _request(
+      () => _dio.post<Map<String, dynamic>>(
         path,
         data: body,
-        options: Options(
-          headers: {
-            if (accessToken != null) 'Authorization': 'Bearer $accessToken',
-          },
-        ),
+        options: _options(accessToken),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> put(
+    String path,
+    Map<String, dynamic> body, {
+    String? accessToken,
+  }) {
+    return _request(
+      () => _dio.put<Map<String, dynamic>>(
+        path,
+        data: body,
+        options: _options(accessToken),
+      ),
+    );
+  }
+
+  Future<void> delete(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+    String? accessToken,
+  }) async {
+    try {
+      await _dio.delete<void>(
+        path,
+        queryParameters: queryParameters,
+        options: _options(accessToken),
       );
+    } on DioException catch (error) {
+      throw _failure(error);
+    }
+  }
+
+  Future<Map<String, dynamic>> _request(
+    Future<Response<Map<String, dynamic>>> Function() send,
+  ) async {
+    try {
+      final response = await send();
       return _unwrap(response);
     } on DioException catch (error) {
-      final body = error.response?.data;
-      if (body is Map<String, dynamic>) {
-        throw ApiFailure(
-          body['message'] as String? ?? '请求未完成，请稍后重试',
-          statusCode: error.response?.statusCode,
-          code: body['code'] as String?,
-        );
-      }
-      throw ApiFailure(
-        error.type == DioExceptionType.connectionError
-            ? '无法连接服务，请确认 Gateway 已启动'
-            : '网络请求失败，请稍后重试',
+      throw _failure(error);
+    }
+  }
+
+  Options _options(String? accessToken) {
+    return Options(
+      headers: {
+        if (accessToken != null) 'Authorization': 'Bearer $accessToken',
+      },
+    );
+  }
+
+  ApiFailure _failure(DioException error) {
+    final body = error.response?.data;
+    if (body is Map<String, dynamic>) {
+      return ApiFailure(
+        body['message'] as String? ?? '请求未完成，请稍后重试',
         statusCode: error.response?.statusCode,
+        code: body['code'] as String?,
       );
     }
+    return ApiFailure(
+      error.type == DioExceptionType.connectionError
+          ? '无法连接服务，请确认 Gateway 已启动'
+          : '网络请求失败，请稍后重试',
+      statusCode: error.response?.statusCode,
+    );
   }
 
   Map<String, dynamic> _unwrap(Response<Map<String, dynamic>> response) {

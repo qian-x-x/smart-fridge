@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/core/session/session_store.dart';
 import 'package:smart_fridge_app/features/auth/data/auth_repository.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
@@ -12,7 +13,21 @@ class AuthController extends AsyncNotifier<AuthSession?> {
 
   @override
   Future<AuthSession?> build() async {
-    return _store.read();
+    final stored = await _store.read();
+    if (stored == null || stored.isDemo || !stored.isAccessTokenExpiring) {
+      return stored;
+    }
+    try {
+      final refreshed = await _repository.refresh(stored);
+      await _store.write(refreshed);
+      return refreshed;
+    } on ApiFailure catch (error) {
+      if (error.statusCode == 401 || error.code == 'UNAUTHORIZED') {
+        await _store.clear();
+        return null;
+      }
+      return stored;
+    }
   }
 
   Future<void> login({
@@ -45,6 +60,28 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     final session = AuthSession.demo();
     await _store.write(session);
     state = AsyncData(session);
+  }
+
+  Future<AuthSession> refreshAccessToken() async {
+    final current = state.value ?? await _store.read();
+    if (current == null) {
+      throw const ApiFailure('登录会话已失效，请重新登录', statusCode: 401);
+    }
+    if (current.isDemo) {
+      return current;
+    }
+    try {
+      final refreshed = await _repository.refresh(current);
+      await _store.write(refreshed);
+      state = AsyncData(refreshed);
+      return refreshed;
+    } on ApiFailure catch (error) {
+      if (error.statusCode == 401 || error.code == 'UNAUTHORIZED') {
+        await _store.clear();
+        state = const AsyncData(null);
+      }
+      rethrow;
+    }
   }
 
   Future<void> logout() async {

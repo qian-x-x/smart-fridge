@@ -1,16 +1,19 @@
 openapi: 3.0.3
 info:
   title: Smart Fridge API
-  version: 1.0.0
+  version: 1.2.0
   description: |
     可视化冰箱客户端与运营后台的统一 API 契约。
-    当前版本实现认证、家庭查询和所有服务的健康骨架。
+    当前版本实现认证家庭、冰箱结构、食材 CRUD 和食材操作日志。
 servers:
   - url: http://localhost:8080
     description: Local Gateway
 tags:
   - name: Authentication
   - name: Family
+  - name: Fridge
+  - name: Food
+  - name: Recipe
 paths:
   /api/v1/auth/register:
     post:
@@ -186,7 +189,315 @@ paths:
                     type: string
         '404':
           description: 家庭不存在或当前用户不是成员
+  /api/v1/fridges:
+    get:
+      tags: [Fridge]
+      summary: 按家庭查询冰箱
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: familyId
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 家庭冰箱及分区结构
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FridgeResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [Fridge]
+      summary: 为家庭创建冰箱及默认四区结构
+      description: 仅家庭 OWNER 可调用；每个家庭只能有一个冰箱。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFridgeRequest'
+      responses:
+        '201':
+          description: 冰箱已创建
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FridgeResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/fridges/{fridgeId}:
+    get:
+      tags: [Fridge]
+      summary: 查询冰箱结构
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeId'
+      responses:
+        '200':
+          description: 冰箱及分区、容器结构
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FridgeResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/foods:
+    get:
+      tags: [Food]
+      summary: 查询冰箱中的有效食材
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeIdQuery'
+        - name: query
+          in: query
+          required: false
+          description: 按食材名称进行不区分大小写的包含搜索
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 食材列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Food'
+                  traceId:
+                    type: string
+    post:
+      tags: [Food]
+      summary: 添加食材或调料
+      description: OWNER 和 EDITOR 可调用；操作会原样写入时间线。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFoodRequest'
+      responses:
+        '201':
+          description: 食材已添加
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/foods/{foodId}:
+    get:
+      tags: [Food]
+      summary: 查询食材详情
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+      responses:
+        '200':
+          description: 食材详情与临期状态
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      tags: [Food]
+      summary: 编辑食材详情
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFoodRequest'
+      responses:
+        '200':
+          description: 更新后的食材
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    delete:
+      tags: [Food]
+      summary: 丢弃食材并写入操作日志
+      description: 使用软删除，不物理删除食材或历史记录。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+        - name: version
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        '204':
+          description: 食材已丢弃
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/foods/{foodId}/move:
+    post:
+      tags: [Food]
+      summary: 移动食材到其他分区或容器
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveFoodRequest'
+      responses:
+        '200':
+          description: 移动后的食材
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/foods/{foodId}/consume:
+    post:
+      tags: [Food]
+      summary: 使用食材并扣减数量
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumeFoodRequest'
+      responses:
+        '200':
+          description: 扣减后的食材
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/recipes:
+    get:
+      tags: [Recipe]
+      summary: 查询菜谱目录
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 按精选和菜谱 ID 排序的菜谱列表
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+                  traceId:
+                    type: string
+  /api/v1/recipes/{recipeId}:
+    get:
+      tags: [Recipe]
+      summary: 查询菜谱详情
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: recipeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 菜谱、原料和步骤
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Recipe'
+                  traceId:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
+  parameters:
+    FridgeId:
+      name: fridgeId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    FridgeIdQuery:
+      name: fridgeId
+      in: query
+      required: true
+      schema:
+        type: integer
+        format: int64
+    FoodId:
+      name: foodId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
   securitySchemes:
     bearerAuth:
       type: http
@@ -200,7 +511,19 @@ components:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
     Conflict:
-      description: 用户名或手机号冲突
+      description: 资源冲突、版本过期或业务约束不满足
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: 当前家庭成员无权执行该操作
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: 资源不存在或当前用户无权访问
       content:
         application/json:
           schema:
@@ -299,6 +622,334 @@ components:
         createdAt:
           type: string
           format: date-time
+    CreateFridgeRequest:
+      type: object
+      required: [familyId, name]
+      properties:
+        familyId:
+          type: integer
+          format: int64
+        name:
+          type: string
+          maxLength: 80
+    FridgeContainer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        type:
+          type: string
+          enum: [SHELF, DRAWER, BASKET]
+        sortOrder:
+          type: integer
+    FridgeZone:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        code:
+          type: string
+          enum: [FRESH, VARIABLE, FREEZER, PANTRY]
+        name:
+          type: string
+        temperatureC:
+          type: number
+          format: double
+          nullable: true
+        sortOrder:
+          type: integer
+        containers:
+          type: array
+          items:
+            $ref: '#/components/schemas/FridgeContainer'
+    Fridge:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        familyId:
+          type: integer
+          format: int64
+        name:
+          type: string
+        timezone:
+          type: string
+          example: Asia/Shanghai
+        zones:
+          type: array
+          items:
+            $ref: '#/components/schemas/FridgeZone'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FridgeResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: OK
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Fridge'
+        traceId:
+          type: string
+    Food:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fridgeId:
+          type: integer
+          format: int64
+        zoneId:
+          type: integer
+          format: int64
+        containerId:
+          type: integer
+          format: int64
+          nullable: true
+        name:
+          type: string
+        category:
+          type: string
+        quantity:
+          type: number
+          format: double
+        unit:
+          type: string
+        productionDate:
+          type: string
+          format: date
+        expiresOn:
+          type: string
+          format: date
+        remainingDays:
+          type: integer
+          format: int64
+        expiring:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        modelKey:
+          type: string
+          nullable: true
+        photoUrl:
+          type: string
+          nullable: true
+        createdBy:
+          type: integer
+          format: int64
+        updatedBy:
+          type: integer
+          format: int64
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    FoodResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: OK
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Food'
+        traceId:
+          type: string
+    CreateFoodRequest:
+      type: object
+      required:
+        - fridgeId
+        - zoneId
+        - name
+        - category
+        - quantity
+        - unit
+        - productionDate
+        - expiresOn
+      properties:
+        fridgeId:
+          type: integer
+          format: int64
+        zoneId:
+          type: integer
+          format: int64
+        containerId:
+          type: integer
+          format: int64
+          nullable: true
+        name:
+          type: string
+          maxLength: 80
+        category:
+          type: string
+          maxLength: 40
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: 0
+        unit:
+          type: string
+          maxLength: 20
+        productionDate:
+          type: string
+          format: date
+        expiresOn:
+          type: string
+          format: date
+        tags:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+            maxLength: 30
+        modelKey:
+          type: string
+          maxLength: 80
+        photoUrl:
+          type: string
+          maxLength: 500
+    UpdateFoodRequest:
+      type: object
+      required:
+        - zoneId
+        - name
+        - category
+        - quantity
+        - unit
+        - productionDate
+        - expiresOn
+        - version
+      properties:
+        zoneId:
+          type: integer
+          format: int64
+        containerId:
+          type: integer
+          format: int64
+          nullable: true
+        name:
+          type: string
+          maxLength: 80
+        category:
+          type: string
+          maxLength: 40
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: 0
+        unit:
+          type: string
+          maxLength: 20
+        productionDate:
+          type: string
+          format: date
+        expiresOn:
+          type: string
+          format: date
+        tags:
+          type: array
+          maxItems: 20
+          items:
+            type: string
+            maxLength: 30
+        modelKey:
+          type: string
+          maxLength: 80
+        photoUrl:
+          type: string
+          maxLength: 500
+        version:
+          type: integer
+          minimum: 0
+    MoveFoodRequest:
+      type: object
+      required: [zoneId, version]
+      properties:
+        zoneId:
+          type: integer
+          format: int64
+        containerId:
+          type: integer
+          format: int64
+          nullable: true
+        version:
+          type: integer
+          minimum: 0
+    ConsumeFoodRequest:
+      type: object
+      required: [quantity, version]
+      properties:
+        quantity:
+          type: number
+          format: double
+          exclusiveMinimum: 0
+        version:
+          type: integer
+          minimum: 0
+    RecipeIngredient:
+      type: object
+      properties:
+        name:
+          type: string
+        quantity:
+          type: number
+          nullable: true
+        unit:
+          type: string
+          nullable: true
+        optional:
+          type: boolean
+    Recipe:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        summary:
+          type: string
+        category:
+          type: string
+        durationMinutes:
+          type: integer
+        calories:
+          type: integer
+        difficulty:
+          type: string
+        servings:
+          type: integer
+        coverEmoji:
+          type: string
+        steps:
+          type: array
+          items:
+            type: string
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+        featured:
+          type: boolean
     SimpleResponse:
       type: object
       properties:

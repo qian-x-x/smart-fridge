@@ -1,5 +1,17 @@
 enum FridgeZoneId { fresh, variable, freezer, pantry }
 
+class FridgeContainer {
+  const FridgeContainer({
+    required this.id,
+    required this.name,
+    required this.type,
+  });
+
+  final int id;
+  final String name;
+  final String type;
+}
+
 class FridgeZone {
   const FridgeZone({
     required this.id,
@@ -7,6 +19,8 @@ class FridgeZone {
     required this.description,
     required this.temperature,
     required this.emoji,
+    this.serverId,
+    this.containers = const [],
   });
 
   final FridgeZoneId id;
@@ -14,6 +28,8 @@ class FridgeZone {
   final String description;
   final String temperature;
   final String emoji;
+  final int? serverId;
+  final List<FridgeContainer> containers;
 }
 
 class FridgeFood {
@@ -28,6 +44,13 @@ class FridgeFood {
     required this.category,
     required this.owner,
     required this.tilt,
+    this.serverId,
+    this.containerId,
+    this.version = 0,
+    this.tags = const [],
+    this.productionDate,
+    this.expiresOn,
+    this.modelKey,
   });
 
   final String id;
@@ -40,6 +63,13 @@ class FridgeFood {
   final String category;
   final String owner;
   final double tilt;
+  final int? serverId;
+  final int? containerId;
+  final int version;
+  final List<String> tags;
+  final String? productionDate;
+  final String? expiresOn;
+  final String? modelKey;
 
   bool get isExpiring => expiresInDays <= 3;
 }

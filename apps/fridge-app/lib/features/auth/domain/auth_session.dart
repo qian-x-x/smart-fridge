@@ -39,6 +39,7 @@ class AuthSession {
     required this.expiresIn,
     required this.user,
     this.isDemo = false,
+    this.issuedAt,
   });
 
   final String accessToken;
@@ -46,6 +47,21 @@ class AuthSession {
   final int expiresIn;
   final UserProfile user;
   final bool isDemo;
+  final DateTime? issuedAt;
+
+  bool get isAccessTokenExpiring {
+    if (isDemo) {
+      return false;
+    }
+    final issued = issuedAt;
+    if (issued == null) {
+      return true;
+    }
+    final refreshAt = issued.add(
+      Duration(seconds: expiresIn > 60 ? expiresIn - 60 : expiresIn),
+    );
+    return !DateTime.now().toUtc().isBefore(refreshAt);
+  }
 
   factory AuthSession.fromApi(Map<String, dynamic> json) {
     return AuthSession(
@@ -53,6 +69,7 @@ class AuthSession {
       refreshToken: json['refreshToken'] as String,
       expiresIn: (json['expiresIn'] as num).toInt(),
       user: UserProfile.fromJson(json['user'] as Map<String, dynamic>),
+      issuedAt: DateTime.now().toUtc(),
     );
   }
 
@@ -63,6 +80,9 @@ class AuthSession {
       expiresIn: (json['expiresIn'] as num).toInt(),
       user: UserProfile.fromJson(json['user'] as Map<String, dynamic>),
       isDemo: json['isDemo'] as bool? ?? false,
+      issuedAt: json['issuedAt'] == null
+          ? null
+          : DateTime.parse(json['issuedAt'] as String).toUtc(),
     );
   }
 
@@ -87,5 +107,6 @@ class AuthSession {
     'expiresIn': expiresIn,
     'user': user.toJson(),
     'isDemo': isDemo,
+    'issuedAt': issuedAt?.toIso8601String(),
   };
 }

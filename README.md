@@ -6,20 +6,20 @@
 
 ## 当前状态
 
-当前已完成 **S0 工程决策 + S1 第一轮底座**，并完成用户端 WebGL 真 3D 视觉升级。项目所有者与实施方为同一人，V1.3 开发说明作为当前产品基线推进。
+当前已完成 **S0 工程决策 + S1 第一轮底座**，并完成用户端 WebGL 真 3D 视觉升级。**S2 核心纵切及菜谱/家庭接口已可联调**：冰箱与食材支持真实 CRUD 和操作日志；Flutter 首页已接入真实数据；家庭页读取真实家庭并可创建家庭；菜谱页读取 MySQL 菜谱目录并结合冰箱库存计算推荐匹配。
 
-下一阶段进入 S2：实现 `fridge-service` 的真实冰箱结构、食材 CRUD、历史与撤销，并将 Flutter 首页从演示数据切换到真实 API。详细阶段、验证证据和已知缺口见 [开发状态](docs/开发状态.md)。
+S2 的下一纵切是补齐组合筛选、时间线撤销/恢复、冰箱结构配置、家庭邀请和“尚未创建冰箱”引导。详细阶段、验证证据和已知缺口见 [开发状态](docs/开发状态.md)。
 
 | 模块 | 当前能力 |
 | --- | --- |
-| Flutter | 登录、注册、会话安全存储、演示入口、WebGL 真 3D 冰箱首页、菜谱页、家庭设置 |
+| Flutter | 登录、注册、会话安全存储与自动续期、真实家庭冰箱数据、WebGL 真 3D 冰箱、食材增改移用丢、演示入口 |
 | Vue 管理端 | 登录、ECharts 看板、菜谱、商品库存、订单页面 |
-| 后端 | Maven BOM、7 个服务模块、统一响应/异常/追踪、Gateway JWT、认证家庭纵切 |
-| 数据 | Flyway、账号/家庭/成员/刷新会话表、H2 集成测试 |
+| 后端 | Maven BOM、7 个服务、Gateway JWT、认证家庭、冰箱食材、菜谱目录纵切 |
+| 数据 | Flyway、账号/家庭、冰箱、食材、操作日志、菜谱和原料，H2 集成测试 |
 | 基础设施 | core/full 两套 Compose，MySQL 双实例、Nacos、Redis、MinIO 及课程组件 |
 | 质量 | Maven 测试、Flutter 测试、Flutter Web release、Vue 生产构建 |
 
-仍未实现的主业务包括：冰箱食材 CRUD、WebSocket 家庭同步、菜谱推荐与做饭扣减、补货事务、Seata/Sentinel/RocketMQ/SkyWalking 的真实业务证据、正式素材和 Android release 签名。
+仍未实现的主业务包括：组合筛选、时间线撤销/恢复、家庭邀请、多家庭切换、无冰箱创建引导、WebSocket 家庭同步、做饭扣减、补货事务、Seata/Sentinel/RocketMQ/SkyWalking 的真实业务证据、正式素材和 Android release 签名。
 
 ## 快速开始
 
@@ -54,8 +54,8 @@ backend/
   common-core/                    统一 API、异常和追踪
   gateway-service/                统一入口与 JWT
   auth-family-service/            账号与家庭纵切
-  fridge-service/                 冰箱领域骨架
-  recipe-service/                 菜谱领域骨架
+  fridge-service/                 冰箱、分区、食材与操作日志
+  recipe-service/                 菜谱目录、原料与步骤
   stock-service/                  商品库存骨架
   order-service/                  订单领域骨架
   notification-service/           通知领域骨架
@@ -77,8 +77,20 @@ docs/                             评审、设计、追踪和运行文档
 - `POST /api/v1/families`
 - `GET /api/v1/families`
 - `GET /api/v1/families/{familyId}`
+- `POST /api/v1/fridges`
+- `GET /api/v1/fridges?familyId={familyId}`
+- `GET /api/v1/fridges/{fridgeId}`
+- `GET /api/v1/foods?fridgeId={fridgeId}&query={name}`
+- `POST /api/v1/foods`
+- `GET /api/v1/foods/{foodId}`
+- `PUT /api/v1/foods/{foodId}`
+- `DELETE /api/v1/foods/{foodId}?version={version}`
+- `POST /api/v1/foods/{foodId}/move`
+- `POST /api/v1/foods/{foodId}/consume`
+- `GET /api/v1/recipes`
+- `GET /api/v1/recipes/{recipeId}`
 
-认证家庭服务可独立运行在 `8081`。其余业务服务当前提供 `/ping` 和 Actuator 健康端点。
+认证家庭服务运行在 `8081`，冰箱食材服务运行在 `8082`，菜谱服务运行在 `8083`。OWNER 可配置冰箱结构；OWNER/EDITOR 可修改食材；VIEWER 只读。库存、订单和通知服务当前仍提供 `/ping` 与 Actuator 健康端点。
 
 ## 关键文档
 
