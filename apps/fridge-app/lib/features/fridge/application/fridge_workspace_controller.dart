@@ -1,6 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/features/auth/application/auth_controller.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
+import 'package:smart_fridge_app/features/family/application/family_controller.dart';
+import 'package:smart_fridge_app/features/family/domain/family_workspace_state.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 
@@ -18,42 +20,57 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
     if (session == null) {
       throw StateError('当前没有登录会话');
     }
-    return _source.load(session);
+    final workspace = await ref.watch(familyControllerProvider.future);
+    return _load(session, workspace);
   }
 
   Future<void> refresh() async {
     final session = await _session();
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _source.load(session));
+    state = await AsyncValue.guard(() async {
+      final workspace = await ref.read(familyControllerProvider.future);
+      return _load(session, workspace);
+    });
   }
 
   Future<void> addFood(NewFoodInput input) async {
     final session = await _requireEditableSession();
     final workspace = state.requireValue;
-    await _mutate(() async {
-      await _source.addFood(session, workspace, input);
-    });
+    await _mutate(() => _source.addFood(session, workspace, input));
   }
 
   Future<void> moveFood(FridgeFood food, FridgeZone targetZone) async {
     final session = await _requireEditableSession();
-    await _mutate(() async {
-      await _source.moveFood(session, food, targetZone);
-    });
+    await _mutate(() => _source.moveFood(session, food, targetZone));
   }
 
   Future<void> consume(FridgeFood food, double quantity) async {
     final session = await _requireEditableSession();
-    await _mutate(() async {
-      await _source.consume(session, food, quantity);
-    });
+    await _mutate(() => _source.consume(session, food, quantity));
   }
 
   Future<void> discard(FridgeFood food) async {
     final session = await _requireEditableSession();
-    await _mutate(() async {
-      await _source.discardFood(session, food);
-    });
+    await _mutate(() => _source.discardFood(session, food));
+  }
+
+  Future<FridgeWorkspaceData> _load(
+    AuthSession session,
+    FamilyWorkspaceState families,
+  ) async {
+    if (session.isDemo) {
+      return _source.load(session, 0);
+    }
+    final family = families.selectedFamily;
+    if (family == null) {
+      throw StateError('当前账号尚未加入家庭');
+    }
+    final loaded = await _source.load(session, family.id);
+    return loaded.withFamilyIdentity(
+      familyId: family.id,
+      familyName: family.name,
+      role: family.role,
+    );
   }
 
   Future<void> _mutate(Future<void> Function() action) async {
@@ -61,7 +78,8 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
     final previous = state;
     try {
       await action();
-      state = AsyncData(await _source.load(session));
+      final workspace = await ref.read(familyControllerProvider.future);
+      state = AsyncData(await _load(session, workspace));
     } on Object catch (error, stackTrace) {
       state = previous;
       Error.throwWithStackTrace(error, stackTrace);

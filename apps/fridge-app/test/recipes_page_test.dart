@@ -1,3 +1,7 @@
+import 'package:smart_fridge_app/features/family/data/family_repository.dart';
+import 'package:smart_fridge_app/features/family/data/family_selection_store.dart';
+import 'package:smart_fridge_app/features/family/domain/family_info.dart';
+import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,6 +20,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RecipeSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(_RecipeFridgeSource()),
           recipeDataSourceProvider.overrideWithValue(_RecipeSource()),
         ],
@@ -73,9 +83,7 @@ class _RecipeSource implements RecipeDataSource {
         coverEmoji: '🍳',
         steps: ['切豆腐', '煎熟'],
         featured: true,
-        ingredients: [
-          RecipeIngredient(name: '嫩豆腐', quantity: 1, unit: '盒'),
-        ],
+        ingredients: [RecipeIngredient(name: '嫩豆腐', quantity: 1, unit: '盒')],
       ),
     ];
   }
@@ -83,7 +91,7 @@ class _RecipeSource implements RecipeDataSource {
 
 class _RecipeFridgeSource implements FridgeDataSource {
   @override
-  Future<FridgeWorkspaceData> load(AuthSession session) async {
+  Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
     return const FridgeWorkspaceData(
       familyId: 4,
       familyName: '小满的家',
@@ -141,4 +149,70 @@ class _RecipeFridgeSource implements FridgeDataSource {
     FridgeFood food,
     FridgeZone targetZone,
   ) async {}
+}
+
+class _FridgeFixtureFamilySource implements FamilyDataSource {
+  @override
+  Future<List<FamilyInfo>> list(AuthSession session) async => const [
+    FamilyInfo(
+      id: 4,
+      name: '小满的家',
+      inviteCode: 'TEST2026',
+      ownerUserId: 7,
+      role: 'OWNER',
+    ),
+  ];
+
+  @override
+  Future<FamilyInfo> create(AuthSession session, String name) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<FamilyInfo> join(AuthSession session, String inviteCode) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FamilyMember>> listMembers(
+    AuthSession session,
+    int familyId,
+  ) async => const [];
+
+  @override
+  Future<FamilyMember> updateMemberRole(
+    AuthSession session,
+    int familyId,
+    int userId,
+    String role,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeMember(
+    AuthSession session,
+    int familyId,
+    int userId,
+  ) async {}
+
+  @override
+  Future<FamilyInfo> transferOwner(
+    AuthSession session,
+    int familyId,
+    int targetUserId,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class _FridgeFixtureSelectionStore implements FamilySelectionStore {
+  @override
+  Future<int?> read(int userId) async => 4;
+
+  @override
+  Future<void> write(int userId, int familyId) async {}
+
+  @override
+  Future<void> clear(int userId) async {}
 }

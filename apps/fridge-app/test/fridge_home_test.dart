@@ -1,3 +1,7 @@
+import 'package:smart_fridge_app/features/family/data/family_repository.dart';
+import 'package:smart_fridge_app/features/family/data/family_selection_store.dart';
+import 'package:smart_fridge_app/features/family/domain/family_info.dart';
+import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -88,6 +92,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(_RemoteFridgeSource()),
         ],
         child: MaterialApp(
@@ -112,6 +122,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(source),
         ],
         child: MaterialApp(
@@ -138,10 +154,7 @@ void main() {
       find.byKey(const ValueKey('food-quantity-input')),
       '2',
     );
-    await tester.enterText(
-      find.byKey(const ValueKey('food-unit-input')),
-      '颗',
-    );
+    await tester.enterText(find.byKey(const ValueKey('food-unit-input')), '颗');
     await tester.enterText(
       find.byKey(const ValueKey('food-category-input')),
       '蔬菜',
@@ -162,6 +175,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(source),
         ],
         child: MaterialApp(
@@ -195,6 +214,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(source),
         ],
         child: MaterialApp(
@@ -228,6 +253,12 @@ void main() {
       ProviderScope(
         overrides: [
           sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(
+            _FridgeFixtureFamilySource(),
+          ),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeFixtureSelectionStore(),
+          ),
           fridgeDataSourceProvider.overrideWithValue(source),
         ],
         child: MaterialApp(
@@ -310,9 +341,7 @@ class _RemoteFridgeSource implements FridgeDataSource {
         description: '蔬果 · 饮品 · 熟食',
         temperature: '4°C',
         emoji: '🥬',
-        containers: [
-          FridgeContainer(id: 21, name: '上层隔层', type: 'SHELF'),
-        ],
+        containers: [FridgeContainer(id: 21, name: '上层隔层', type: 'SHELF')],
       ),
       FridgeZone(
         id: FridgeZoneId.variable,
@@ -321,9 +350,7 @@ class _RemoteFridgeSource implements FridgeDataSource {
         description: '鲜肉 · 海鲜',
         temperature: '0°C',
         emoji: '🥩',
-        containers: [
-          FridgeContainer(id: 22, name: '变温抽屉', type: 'DRAWER'),
-        ],
+        containers: [FridgeContainer(id: 22, name: '变温抽屉', type: 'DRAWER')],
       ),
     ],
     foods: [
@@ -345,7 +372,8 @@ class _RemoteFridgeSource implements FridgeDataSource {
   );
 
   @override
-  Future<FridgeWorkspaceData> load(AuthSession session) async => workspace;
+  Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async =>
+      workspace;
 
   @override
   Future<void> addFood(
@@ -380,4 +408,70 @@ class _RemoteFridgeSource implements FridgeDataSource {
     movedFood = food;
     movedZone = targetZone;
   }
+}
+
+class _FridgeFixtureFamilySource implements FamilyDataSource {
+  @override
+  Future<List<FamilyInfo>> list(AuthSession session) async => const [
+    FamilyInfo(
+      id: 4,
+      name: '小满的家',
+      inviteCode: 'TEST2026',
+      ownerUserId: 7,
+      role: 'OWNER',
+    ),
+  ];
+
+  @override
+  Future<FamilyInfo> create(AuthSession session, String name) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<FamilyInfo> join(AuthSession session, String inviteCode) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FamilyMember>> listMembers(
+    AuthSession session,
+    int familyId,
+  ) async => const [];
+
+  @override
+  Future<FamilyMember> updateMemberRole(
+    AuthSession session,
+    int familyId,
+    int userId,
+    String role,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeMember(
+    AuthSession session,
+    int familyId,
+    int userId,
+  ) async {}
+
+  @override
+  Future<FamilyInfo> transferOwner(
+    AuthSession session,
+    int familyId,
+    int targetUserId,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class _FridgeFixtureSelectionStore implements FamilySelectionStore {
+  @override
+  Future<int?> read(int userId) async => 4;
+
+  @override
+  Future<void> write(int userId, int familyId) async {}
+
+  @override
+  Future<void> clear(int userId) async {}
 }

@@ -18,23 +18,25 @@ void main() {
     ),
   );
 
-  test('loads the first family, its fridge and foods through the gateway', () async {
-    final api = _FakeApiClient();
-    final repository = ApiFridgeRepository(api);
+  test(
+    'loads the selected family fridge and foods through the gateway',
+    () async {
+      final api = _FakeApiClient();
+      final repository = ApiFridgeRepository(api);
 
-    final workspace = await repository.load(session);
+      final workspace = await repository.load(session, 4);
 
-    expect(workspace.familyId, 4);
-    expect(workspace.fridgeId, 1);
-    expect(workspace.foods.single.name, '测试牛奶');
-    expect(api.getCalls.map((call) => call.$1), [
-      '/api/v1/families',
-      '/api/v1/fridges',
-      '/api/v1/foods',
-    ]);
-    expect(api.getCalls[1].$2?['familyId'], 4);
-    expect(api.tokens, everyElement('access-token'));
-  });
+      expect(workspace.familyId, 4);
+      expect(workspace.fridgeId, 1);
+      expect(workspace.foods.single.name, '测试牛奶');
+      expect(api.getCalls.map((call) => call.$1), [
+        '/api/v1/fridges',
+        '/api/v1/foods',
+      ]);
+      expect(api.getCalls[0].$2?['familyId'], 4);
+      expect(api.tokens, everyElement('access-token'));
+    },
+  );
 
   test('consume sends the food version and quantity', () async {
     final api = _FakeApiClient();
@@ -78,52 +80,45 @@ class _FakeApiClient extends ApiClient {
     getCalls.add((path, queryParameters, accessToken));
     tokens.add(accessToken);
     return switch (path) {
-      '/api/v1/families' => _envelope([
-          {
-            'id': 4,
-            'name': '小满的家',
-            'currentUserRole': 'OWNER',
-          },
-        ]),
       '/api/v1/fridges' => _envelope({
-          'id': 1,
-          'familyId': 4,
-          'name': '厨房冰箱',
-          'timezone': 'Asia/Shanghai',
-          'zones': [
-            {
-              'id': 11,
-              'code': 'FRESH',
-              'name': '冷藏',
-              'temperatureC': 4,
-              'sortOrder': 10,
-              'containers': [
-                {'id': 21, 'name': '上层隔层', 'type': 'SHELF', 'sortOrder': 10},
-              ],
-            },
-          ],
-        }),
-      '/api/v1/foods' => _envelope([
+        'id': 1,
+        'familyId': 4,
+        'name': '厨房冰箱',
+        'timezone': 'Asia/Shanghai',
+        'zones': [
           {
-            'id': 31,
-            'fridgeId': 1,
-            'zoneId': 11,
-            'containerId': 21,
-            'name': '测试牛奶',
-            'category': '蛋奶',
-            'quantity': 2,
-            'unit': '盒',
-            'productionDate': '2026-10-27',
-            'expiresOn': '2026-11-02',
-            'remainingDays': 5,
-            'expiring': false,
-            'tags': ['早餐'],
-            'modelKey': 'milk',
-            'createdBy': 7,
-            'updatedBy': 7,
-            'version': 0,
+            'id': 11,
+            'code': 'FRESH',
+            'name': '冷藏',
+            'temperatureC': 4,
+            'sortOrder': 10,
+            'containers': [
+              {'id': 21, 'name': '上层隔层', 'type': 'SHELF', 'sortOrder': 10},
+            ],
           },
-        ]),
+        ],
+      }),
+      '/api/v1/foods' => _envelope([
+        {
+          'id': 31,
+          'fridgeId': 1,
+          'zoneId': 11,
+          'containerId': 21,
+          'name': '测试牛奶',
+          'category': '蛋奶',
+          'quantity': 2,
+          'unit': '盒',
+          'productionDate': '2026-10-27',
+          'expiresOn': '2026-11-02',
+          'remainingDays': 5,
+          'expiring': false,
+          'tags': ['早餐'],
+          'modelKey': 'milk',
+          'createdBy': 7,
+          'updatedBy': 7,
+          'version': 0,
+        },
+      ]),
       _ => throw StateError('Unexpected GET $path'),
     };
   }

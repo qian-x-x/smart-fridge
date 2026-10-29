@@ -6,14 +6,26 @@ import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
 import 'package:smart_fridge_app/features/family/data/family_repository.dart';
+import 'package:smart_fridge_app/features/family/data/family_selection_store.dart';
 import 'package:smart_fridge_app/features/family/domain/family_info.dart';
+import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 import 'package:smart_fridge_app/features/profile/presentation/profile_page.dart';
 
 void main() {
-  testWidgets('profile displays data returned by the family API', (tester) async {
+  testWidgets('profile displays data returned by the family API', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          familySelectionStoreProvider.overrideWithValue(
+            _MemoryFamilySelectionStore(),
+          ),
+
           sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
           familyDataSourceProvider.overrideWithValue(_FamilySource()),
         ],
@@ -36,6 +48,10 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          familySelectionStoreProvider.overrideWithValue(
+            _MemoryFamilySelectionStore(),
+          ),
+
           sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
           familyDataSourceProvider.overrideWithValue(source),
         ],
@@ -62,7 +78,7 @@ void main() {
       tester.element(find.byType(ProfilePage)),
     );
     expect(
-      container.read(familyControllerProvider).value?.single.name,
+      container.read(familyControllerProvider).value?.selectedFamily?.name,
       '周末厨房',
     );
     final visibleTexts = tester
@@ -71,6 +87,79 @@ void main() {
         .where((text) => text.isNotEmpty)
         .join(' | ');
     expect(find.text('周末厨房'), findsOneWidget, reason: visibleTexts);
+  });
+  testWidgets('joins a family and makes it the selected workspace', (
+    tester,
+  ) async {
+    final source = _JoinFamilySource();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
+          familyDataSourceProvider.overrideWithValue(source),
+          familySelectionStoreProvider.overrideWithValue(
+            _MemoryFamilySelectionStore(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: const Scaffold(body: ProfilePage()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('join-family-button')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const ValueKey('invite-code-input')),
+      'friend26',
+    );
+    await tester.tap(find.byKey(const ValueKey('join-family-submit')));
+    await tester.pumpAndSettle();
+
+    expect(source.joinedCode, 'FRIEND26');
+    expect(find.text('朋友的家'), findsOneWidget);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(ProfilePage)),
+    );
+    expect(
+      container.read(familyControllerProvider).value?.selectedFamily?.id,
+      6,
+    );
+  });
+  testWidgets('owner opens member management with role actions', (
+    tester,
+  ) async {
+    final source = _MemberManagementFamilySource();
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
+          familyDataSourceProvider.overrideWithValue(source),
+          familySelectionStoreProvider.overrideWithValue(
+            _MemoryFamilySelectionStore(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: const Scaffold(body: ProfilePage()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('manage-members-button')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('member-actions-9')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('成员管理'), findsOneWidget);
+    expect(find.text('家庭成员'), findsOneWidget);
+    expect(find.text('设为编辑者'), findsOneWidget);
+    expect(find.text('设为只读者'), findsOneWidget);
+    expect(find.text('转交所有权'), findsOneWidget);
+    expect(find.text('移除成员'), findsOneWidget);
   });
 }
 
@@ -122,6 +211,45 @@ class _FamilySource implements FamilyDataSource {
       role: 'OWNER',
     );
   }
+
+  @override
+  Future<FamilyInfo> join(AuthSession session, String inviteCode) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FamilyMember>> listMembers(
+    AuthSession session,
+    int familyId,
+  ) async {
+    return const [];
+  }
+
+  @override
+  Future<FamilyMember> updateMemberRole(
+    AuthSession session,
+    int familyId,
+    int userId,
+    String role,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeMember(
+    AuthSession session,
+    int familyId,
+    int userId,
+  ) async {}
+
+  @override
+  Future<FamilyInfo> transferOwner(
+    AuthSession session,
+    int familyId,
+    int targetUserId,
+  ) {
+    throw UnimplementedError();
+  }
 }
 
 class _EmptyFamilySource implements FamilyDataSource {
@@ -143,5 +271,120 @@ class _EmptyFamilySource implements FamilyDataSource {
     );
     families.add(family);
     return family;
+  }
+
+  @override
+  Future<FamilyInfo> join(AuthSession session, String inviteCode) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<List<FamilyMember>> listMembers(
+    AuthSession session,
+    int familyId,
+  ) async {
+    return const [];
+  }
+
+  @override
+  Future<FamilyMember> updateMemberRole(
+    AuthSession session,
+    int familyId,
+    int userId,
+    String role,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> removeMember(
+    AuthSession session,
+    int familyId,
+    int userId,
+  ) async {}
+
+  @override
+  Future<FamilyInfo> transferOwner(
+    AuthSession session,
+    int familyId,
+    int targetUserId,
+  ) {
+    throw UnimplementedError();
+  }
+}
+
+class _MemoryFamilySelectionStore implements FamilySelectionStore {
+  int? selectedFamilyId;
+
+  @override
+  Future<int?> read(int userId) async => selectedFamilyId;
+
+  @override
+  Future<void> write(int userId, int familyId) async {
+    selectedFamilyId = familyId;
+  }
+
+  @override
+  Future<void> clear(int userId) async {
+    selectedFamilyId = null;
+  }
+}
+
+class _JoinFamilySource extends _FamilySource {
+  String? joinedCode;
+
+  @override
+  Future<FamilyInfo> join(AuthSession session, String inviteCode) async {
+    joinedCode = inviteCode;
+    return const FamilyInfo(
+      id: 6,
+      name: '朋友的家',
+      inviteCode: 'FRIEND26',
+      ownerUserId: 11,
+      role: 'VIEWER',
+    );
+  }
+
+  @override
+  Future<List<FamilyInfo>> list(AuthSession session) async {
+    return [
+      ...await super.list(session),
+      const FamilyInfo(
+        id: 6,
+        name: '朋友的家',
+        inviteCode: 'FRIEND26',
+        ownerUserId: 11,
+        role: 'VIEWER',
+      ),
+    ];
+  }
+}
+
+class _MemberManagementFamilySource extends _FamilySource {
+  final List<FamilyMember> members = [
+    FamilyMember(
+      userId: 7,
+      username: 'manman',
+      displayName: '小满',
+      role: 'OWNER',
+      joinedAt: DateTime.utc(2026, 10, 29),
+      currentUser: true,
+    ),
+    FamilyMember(
+      userId: 9,
+      username: 'family_member',
+      displayName: '家庭成员',
+      role: 'EDITOR',
+      joinedAt: DateTime.utc(2026, 10, 29),
+      currentUser: false,
+    ),
+  ];
+
+  @override
+  Future<List<FamilyMember>> listMembers(
+    AuthSession session,
+    int familyId,
+  ) async {
+    return List.unmodifiable(members);
   }
 }

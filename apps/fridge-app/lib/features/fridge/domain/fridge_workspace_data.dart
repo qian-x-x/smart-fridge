@@ -5,6 +5,23 @@ import 'fridge_data.dart';
 export 'fridge_data.dart';
 
 class FridgeWorkspaceData {
+  FridgeWorkspaceData withFamilyIdentity({
+    required int familyId,
+    required String familyName,
+    required String role,
+  }) {
+    return FridgeWorkspaceData(
+      familyId: familyId,
+      familyName: familyName,
+      role: role,
+      fridgeId: fridgeId,
+      fridgeName: fridgeName,
+      timezone: timezone,
+      zones: zones,
+      foods: foods,
+    );
+  }
+
   const FridgeWorkspaceData({
     required this.familyId,
     required this.familyName,
@@ -100,8 +117,8 @@ class FridgeWorkspaceData {
     Map<int, FridgeZoneId> zoneById,
   ) {
     final serverId = (json['id'] as num).toInt();
-    final zoneId = zoneById[(json['zoneId'] as num).toInt()] ??
-        FridgeZoneId.fresh;
+    final zoneId =
+        zoneById[(json['zoneId'] as num).toInt()] ?? FridgeZoneId.fresh;
     final name = json['name'] as String;
     final category = json['category'] as String;
     final modelKey = json['modelKey'] as String?;
@@ -118,7 +135,9 @@ class FridgeWorkspaceData {
       expiresInDays: (json['remainingDays'] as num).toInt(),
       zone: zoneId,
       category: category,
-      owner: createdBy == currentUser.id ? currentUser.displayName : '成员 #$createdBy',
+      owner: createdBy == currentUser.id
+          ? currentUser.displayName
+          : '成员 #$createdBy',
       tilt: ((serverId % 9) - 4) / 100,
       version: (json['version'] as num?)?.toInt() ?? 0,
       tags: _asList(json['tags']).map((value) => value.toString()).toList(),

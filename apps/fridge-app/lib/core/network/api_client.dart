@@ -64,6 +64,20 @@ class ApiClient {
     );
   }
 
+  Future<Map<String, dynamic>> patch(
+    String path,
+    Map<String, dynamic> body, {
+    String? accessToken,
+  }) {
+    return _request(
+      () => _dio.patch<Map<String, dynamic>>(
+        path,
+        data: body,
+        options: _options(accessToken),
+      ),
+    );
+  }
+
   Future<void> delete(
     String path, {
     Map<String, dynamic>? queryParameters,

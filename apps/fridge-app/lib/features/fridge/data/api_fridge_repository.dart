@@ -8,7 +8,7 @@ final fridgeDataSourceProvider = Provider<FridgeDataSource>((ref) {
 });
 
 abstract interface class FridgeDataSource {
-  Future<FridgeWorkspaceData> load(AuthSession session);
+  Future<FridgeWorkspaceData> load(AuthSession session, int familyId);
 
   Future<void> addFood(
     AuthSession session,
@@ -22,11 +22,7 @@ abstract interface class FridgeDataSource {
     FridgeZone targetZone,
   );
 
-  Future<void> consume(
-    AuthSession session,
-    FridgeFood food,
-    double quantity,
-  );
+  Future<void> consume(AuthSession session, FridgeFood food, double quantity);
 
   Future<void> discardFood(AuthSession session, FridgeFood food);
 }
@@ -61,27 +57,24 @@ class ApiFridgeRepository implements FridgeDataSource {
   final ApiClient _api;
 
   @override
-  Future<FridgeWorkspaceData> load(AuthSession session) async {
+  Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
     if (session.isDemo) {
       return FridgeWorkspaceData.demo(session.user);
     }
 
-    final familyBody = await _api.get(
-      '/api/v1/families',
-      accessToken: session.accessToken,
-    );
-    final families = familyBody['data'];
-    if (families is! List || families.isEmpty) {
-      throw const ApiFailure('当前账号尚未加入家庭');
+    late final Map<String, dynamic> fridgeBody;
+    try {
+      fridgeBody = await _api.get(
+        '/api/v1/fridges',
+        queryParameters: {'familyId': familyId},
+        accessToken: session.accessToken,
+      );
+    } on ApiFailure catch (error) {
+      if (error.statusCode == 404) {
+        throw const ApiFailure('当前家庭没有冰箱，请切换其他家庭');
+      }
+      rethrow;
     }
-    final family = _map(families.first);
-    final familyId = (family['id'] as num).toInt();
-
-    final fridgeBody = await _api.get(
-      '/api/v1/fridges',
-      queryParameters: {'familyId': familyId},
-      accessToken: session.accessToken,
-    );
     final fridge = _map(fridgeBody['data']);
     final fridgeId = (fridge['id'] as num).toInt();
 
@@ -91,7 +84,7 @@ class ApiFridgeRepository implements FridgeDataSource {
       accessToken: session.accessToken,
     );
     return FridgeWorkspaceData.fromApi(
-      familyData: family,
+      familyData: {'id': familyId, 'name': '当前家庭', 'currentUserRole': 'VIEWER'},
       fridgeData: fridge,
       foodsData: _list(foodsBody['data']),
       currentUser: session.user,
@@ -105,23 +98,19 @@ class ApiFridgeRepository implements FridgeDataSource {
     NewFoodInput input,
   ) async {
     final container = input.zone.containers.firstOrNull;
-    await _api.post(
-      '/api/v1/foods',
-      {
-        'fridgeId': workspace.fridgeId,
-        'zoneId': input.zone.serverId,
-        'containerId': container?.id,
-        'name': input.name,
-        'category': input.category,
-        'quantity': input.quantity,
-        'unit': input.unit,
-        'productionDate': _date(input.productionDate),
-        'expiresOn': _date(input.expiresOn),
-        'tags': input.tags,
-        'modelKey': input.modelKey,
-      },
-      accessToken: session.accessToken,
-    );
+    await _api.post('/api/v1/foods', {
+      'fridgeId': workspace.fridgeId,
+      'zoneId': input.zone.serverId,
+      'containerId': container?.id,
+      'name': input.name,
+      'category': input.category,
+      'quantity': input.quantity,
+      'unit': input.unit,
+      'productionDate': _date(input.productionDate),
+      'expiresOn': _date(input.expiresOn),
+      'tags': input.tags,
+      'modelKey': input.modelKey,
+    }, accessToken: session.accessToken);
   }
 
   @override
@@ -130,15 +119,11 @@ class ApiFridgeRepository implements FridgeDataSource {
     FridgeFood food,
     FridgeZone targetZone,
   ) async {
-    await _api.post(
-      '/api/v1/foods/${food.serverId}/move',
-      {
-        'zoneId': targetZone.serverId,
-        'containerId': targetZone.containers.firstOrNull?.id,
-        'version': food.version,
-      },
-      accessToken: session.accessToken,
-    );
+    await _api.post('/api/v1/foods/${food.serverId}/move', {
+      'zoneId': targetZone.serverId,
+      'containerId': targetZone.containers.firstOrNull?.id,
+      'version': food.version,
+    }, accessToken: session.accessToken);
   }
 
   @override
@@ -147,11 +132,10 @@ class ApiFridgeRepository implements FridgeDataSource {
     FridgeFood food,
     double quantity,
   ) async {
-    await _api.post(
-      '/api/v1/foods/${food.serverId}/consume',
-      {'quantity': quantity, 'version': food.version},
-      accessToken: session.accessToken,
-    );
+    await _api.post('/api/v1/foods/${food.serverId}/consume', {
+      'quantity': quantity,
+      'version': food.version,
+    }, accessToken: session.accessToken);
   }
 
   @override
