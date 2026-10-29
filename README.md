@@ -8,7 +8,7 @@
 
 当前已完成 **S0 工程决策 + S1 第一轮底座**，并完成用户端 WebGL 真 3D 视觉升级。**S2 核心纵切及菜谱/家庭接口已可联调**：冰箱与食材支持真实 CRUD 和操作日志；Flutter 首页已接入真实数据；家庭页读取真实家庭并可创建家庭；菜谱页读取 MySQL 菜谱目录并结合冰箱库存计算推荐匹配。
 
-S2 的下一纵切是补齐组合筛选、时间线撤销/恢复、冰箱结构配置、家庭邀请和“尚未创建冰箱”引导。详细阶段、验证证据和已知缺口见 [开发状态](docs/开发状态.md)。
+家庭协作已补齐邀请码加入、成员角色管理、所有权转交及按账号持久化的多家庭选择；切换家庭后冰箱与菜谱匹配同步更新。下一纵切补齐无冰箱创建引导、组合筛选、时间线撤销/恢复和冰箱结构配置。
 
 | 模块 | 当前能力 |
 | --- | --- |
@@ -19,7 +19,7 @@ S2 的下一纵切是补齐组合筛选、时间线撤销/恢复、冰箱结构�
 | 基础设施 | core/full 两套 Compose，MySQL 双实例、Nacos、Redis、MinIO 及课程组件 |
 | 质量 | Maven 测试、Flutter 测试、Flutter Web release、Vue 生产构建 |
 
-仍未实现的主业务包括：组合筛选、时间线撤销/恢复、家庭邀请、多家庭切换、无冰箱创建引导、WebSocket 家庭同步、做饭扣减、补货事务、Seata/Sentinel/RocketMQ/SkyWalking 的真实业务证据、正式素材和 Android release 签名。
+仍未实现的主业务包括：组合筛选、时间线撤销/恢复、无冰箱创建引导、WebSocket 家庭同步、做饭扣减、补货事务、Seata/Sentinel/RocketMQ/SkyWalking 的真实业务证据、正式素材和 Android release 签名。
 
 ## 快速开始
 
@@ -77,6 +77,11 @@ docs/                             评审、设计、追踪和运行文档
 - `POST /api/v1/families`
 - `GET /api/v1/families`
 - `GET /api/v1/families/{familyId}`
+- `POST /api/v1/families/join`
+- `GET /api/v1/families/{familyId}/members`
+- `PATCH /api/v1/families/{familyId}/members/{userId}`
+- `DELETE /api/v1/families/{familyId}/members/{userId}`
+- `POST /api/v1/families/{familyId}/transfer-owner`
 - `POST /api/v1/fridges`
 - `GET /api/v1/fridges?familyId={familyId}`
 - `GET /api/v1/fridges/{fridgeId}`

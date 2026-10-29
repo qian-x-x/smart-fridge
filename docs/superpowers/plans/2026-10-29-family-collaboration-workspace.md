@@ -10,6 +10,10 @@
 
 ---
 
+## Execution record — 2026-10-30
+
+Tasks 1–12 are implemented. Backend integration tests cover invite joining, member governance and concurrent owner transfer. Flutter tests cover repositories, persisted account-specific selection, member actions, and fridge/recipe changes on family selection. Full backend and Flutter suites and static analysis pass. Task 13 automated verification passed: Maven package (29 tests), Flutter tests (37), dart analysis, Flutter Web release, OpenAPI reference checks and 390px family-page widget tests. Real Gateway browser smoke remains pending. Historical per-step checkboxes below describe the original plan rather than individual execution evidence.
+
 ## Execution Rules
 
 - Run commands from `C:\Users\Lenovo\Desktop\软件开发实践` with PowerShell.

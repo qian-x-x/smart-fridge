@@ -1,10 +1,10 @@
 openapi: 3.0.3
 info:
   title: Smart Fridge API
-  version: 1.2.0
+  version: 1.3.0
   description: |
     可视化冰箱客户端与运营后台的统一 API 契约。
-    当前版本实现认证家庭、冰箱结构、食材 CRUD 和食材操作日志。
+    当前版本实现认证家庭、邀请码加入、成员治理、冰箱结构、食材 CRUD 和食材操作日志。
 servers:
   - url: http://localhost:8080
     description: Local Gateway
@@ -189,6 +189,162 @@ paths:
                     type: string
         '404':
           description: 家庭不存在或当前用户不是成员
+  /api/v1/families/join:
+    post:
+      tags: [Family]
+      summary: 通过邀请码加入家庭
+      description: 已加入同一家庭时幂等返回当前成员角色。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinFamilyRequest'
+      responses:
+        '200':
+          description: 已加入家庭
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/families/{familyId}/members:
+    get:
+      tags: [Family]
+      summary: 查询家庭成员
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: familyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: 家庭成员列表
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyMemberListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/families/{familyId}/members/{userId}:
+    patch:
+      tags: [Family]
+      summary: 调整普通成员角色
+      description: 仅家庭 OWNER 可调用；只接受 EDITOR 和 VIEWER。
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: familyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateFamilyRoleRequest'
+      responses:
+        '200':
+          description: 更新后的成员
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyMemberResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    delete:
+      tags: [Family]
+      summary: 移除普通成员
+      description: 仅家庭 OWNER 可调用，不能移除拥有者。
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: familyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: 成员已移除
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/families/{familyId}/transfer-owner:
+    post:
+      tags: [Family]
+      summary: 转交家庭所有权
+      description: 目标必须是 EDITOR；成功后原拥有者变为 EDITOR。
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: familyId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransferFamilyOwnerRequest'
+      responses:
+        '200':
+          description: 更新后的家庭和当前用户角色
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
   /api/v1/fridges:
     get:
       tags: [Fridge]
@@ -522,6 +678,12 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: 请求字段校验失败
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     NotFound:
       description: 资源不存在或当前用户无权访问
       content:
@@ -622,6 +784,87 @@ components:
         createdAt:
           type: string
           format: date-time
+    JoinFamilyRequest:
+      type: object
+      required: [inviteCode]
+      properties:
+        inviteCode:
+          type: string
+          minLength: 8
+          maxLength: 8
+          pattern: '^[A-Za-z0-9]{8}$'
+          example: ABCD2345
+    UpdateFamilyRoleRequest:
+      type: object
+      required: [role]
+      properties:
+        role:
+          type: string
+          example: EDITOR
+    TransferFamilyOwnerRequest:
+      type: object
+      required: [targetUserId]
+      properties:
+        targetUserId:
+          type: integer
+          format: int64
+    FamilyMember:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        username:
+          type: string
+          nullable: true
+        displayName:
+          type: string
+        role:
+          type: string
+          enum: [OWNER, EDITOR, VIEWER]
+        joinedAt:
+          type: string
+          format: date-time
+        currentUser:
+          type: boolean
+    FamilyResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: OK
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/Family'
+        traceId:
+          type: string
+    FamilyMemberResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: OK
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/FamilyMember'
+        traceId:
+          type: string
+    FamilyMemberListResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          example: OK
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/FamilyMember'
+        traceId:
+          type: string
     CreateFridgeRequest:
       type: object
       required: [familyId, name]
