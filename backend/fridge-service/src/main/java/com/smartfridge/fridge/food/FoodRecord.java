@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 
-record FoodRecord(
+public record FoodRecord(
     long id,
     long fridgeId,
     long zoneId,

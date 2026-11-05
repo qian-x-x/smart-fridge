@@ -90,7 +90,8 @@ public class FoodRepository {
             null,
             request.zoneId(),
             request.containerId(),
-            request.quantity()
+            request.quantity(),
+            null
         );
         return requireById(foodId);
     }
@@ -154,6 +155,62 @@ public class FoodRepository {
         ).stream().findFirst();
     }
 
+    /**
+     * Locks the food row regardless of status so undo and restore can also act on
+     * items that were discarded. Callers must run inside a transaction.
+     */
+    public Optional<FoodRecord> lockRecordById(long foodId) {
+        return jdbcTemplate.query(
+            """
+                SELECT id, fridge_id, zone_id, container_id, name, category,
+                       quantity, unit, production_date, expires_on, tags,
+                       model_key, photo_url, status, version, created_by,
+                       updated_by, created_at, updated_at
+                FROM food_item
+                WHERE id = ?
+                FOR UPDATE
+                """,
+            ROW_MAPPER,
+            foodId
+        ).stream().findFirst();
+    }
+
+    /**
+     * Applies a full state snapshot with the version read while holding the row
+     * lock. Used by operation undo and restore; returns false when the version
+     * moved on and the caller must ask the client to refresh.
+     */
+    public boolean applyState(
+        FoodRecord food,
+        String status,
+        java.math.BigDecimal quantity,
+        long zoneId,
+        Long containerId,
+        long userId
+    ) {
+        return jdbcTemplate.update(
+            """
+                UPDATE food_item
+                SET status = ?,
+                    quantity = ?,
+                    zone_id = ?,
+                    container_id = ?,
+                    version = version + 1,
+                    updated_by = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                  AND version = ?
+                """,
+            status,
+            quantity,
+            zoneId,
+            containerId,
+            userId,
+            food.id(),
+            food.version()
+        ) == 1;
+    }
+
     public boolean move(
         FoodRecord food,
         long zoneId,
@@ -192,7 +249,8 @@ public class FoodRepository {
             food.quantity(),
             zoneId,
             containerId,
-            food.quantity()
+            food.quantity(),
+            null
         );
         return true;
     }
@@ -233,7 +291,58 @@ public class FoodRepository {
             food.quantity(),
             food.zoneId(),
             food.containerId(),
-            newQuantity
+            newQuantity,
+            null
+        );
+        return true;
+    }
+
+    /**
+     * Deducts the amount used by a cooking confirmation. The update and the
+     * COOK operation row stay in one statement pair inside the caller's
+     * transaction, and the quantity guard also protects against stale versions.
+     */
+    public boolean consumeForCook(
+        FoodRecord food,
+        java.math.BigDecimal quantity,
+        int expectedVersion,
+        long userId,
+        String note
+    ) {
+        java.math.BigDecimal newQuantity = food.quantity().subtract(quantity);
+        int updated = jdbcTemplate.update(
+            """
+                UPDATE food_item
+                SET quantity = ?,
+                    version = version + 1,
+                    updated_by = ?,
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+                  AND version = ?
+                  AND status = 'ACTIVE'
+                  AND quantity >= ?
+                """,
+            newQuantity,
+            userId,
+            food.id(),
+            expectedVersion,
+            quantity
+        );
+        if (updated == 0) {
+            return false;
+        }
+        recordOperation(
+            food.fridgeId(),
+            food.id(),
+            userId,
+            "COOK",
+            food.zoneId(),
+            food.containerId(),
+            food.quantity(),
+            food.zoneId(),
+            food.containerId(),
+            newQuantity,
+            note
         );
         return true;
     }
@@ -242,8 +351,7 @@ public class FoodRepository {
         FoodRecord food,
         UpdateFoodRequest request,
         long userId
-    ) {
-        int updated = jdbcTemplate.update(
+    ) {        int updated = jdbcTemplate.update(
             """
                 UPDATE food_item
                 SET zone_id = ?,
@@ -292,7 +400,8 @@ public class FoodRepository {
             food.quantity(),
             request.zoneId(),
             request.containerId(),
-            request.quantity()
+            request.quantity(),
+            null
         );
         return true;
     }
@@ -327,7 +436,8 @@ public class FoodRepository {
             food.quantity(),
             food.zoneId(),
             food.containerId(),
-            java.math.BigDecimal.ZERO
+            java.math.BigDecimal.ZERO,
+            null
         );
         return true;
     }
@@ -406,16 +516,17 @@ public class FoodRepository {
         java.math.BigDecimal oldQuantity,
         long newZoneId,
         Long newContainerId,
-        java.math.BigDecimal newQuantity
+        java.math.BigDecimal newQuantity,
+        String note
     ) {
         jdbcTemplate.update(
             """
                 INSERT INTO food_operation (
                     fridge_id, food_item_id, actor_user_id, action,
                     old_zone_id, old_container_id, old_quantity,
-                    new_zone_id, new_container_id, new_quantity
+                    new_zone_id, new_container_id, new_quantity, note
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
             fridgeId,
             foodId,
@@ -426,8 +537,14 @@ public class FoodRepository {
             oldQuantity,
             newZoneId,
             newContainerId,
-            newQuantity
+            newQuantity,
+            note
         );
+    }
+
+    /** Maps a stored row without filtering on status, so discarded rows stay readable. */
+    public FoodView viewOf(FoodRecord record) {
+        return view(record);
     }
 
     private FoodView view(FoodRecord record) {

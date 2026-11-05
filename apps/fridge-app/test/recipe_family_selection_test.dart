@@ -8,6 +8,7 @@ import 'package:smart_fridge_app/features/family/data/family_selection_store.dar
 import 'package:smart_fridge_app/features/family/domain/family_info.dart';
 import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
+import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 import 'package:smart_fridge_app/features/recipe/data/recipe_repository.dart';
@@ -106,6 +107,32 @@ class _RecipeFamilyFridgeSource implements FridgeDataSource {
     FridgeFood food,
     FridgeZone targetZone,
   ) async {}
+  @override
+  Future<List<FoodOperation>> loadOperations(
+    AuthSession session,
+    int fridgeId, {
+    int limit = 30,
+  }) async => const <FoodOperation>[];
+
+  @override
+  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {}
+
+  @override
+  Future<void> restoreOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {}
+
+  @override
+  Future<void> cook(
+    AuthSession session, {
+    required int fridgeId,
+    required int recipeId,
+    required String recipeName,
+    required int servings,
+    required List<CookItemInput> items,
+    required String requestId,
+  }) async {}
 }
 
 class _ToFuRecipeSource implements RecipeDataSource {

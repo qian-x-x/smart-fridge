@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
+import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
+import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/cook_confirm_sheet.dart';
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 import 'package:smart_fridge_app/features/recipe/domain/recipe.dart';
 import 'package:smart_fridge_app/shared/widgets/action_button.dart';
@@ -225,14 +228,77 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
     );
   }
 
-  Future<void> _showDetails(RecipeMatch match) => showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: AppColors.paper,
-    builder: (context) => _RecipeDetailsSheet(match: match),
-  );
+  Future<void> _showDetails(RecipeMatch match) {
+    final workspace = _workspaceOrNull();
+    return showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: AppColors.paper,
+      builder: (context) => _RecipeDetailsSheet(
+        match: match,
+        canCook:
+            workspace != null &&
+            workspace.hasFridge &&
+            workspace.canEdit &&
+            !workspace.isDemo &&
+            match.matchedFoods.isNotEmpty,
+        onCook: () => _openCook(match),
+      ),
+    );
+  }
+
+  Future<void> _openCook(RecipeMatch match) async {
+    final workspace = _workspaceOrNull();
+    if (workspace == null || !workspace.hasFridge) {
+      _notify('还没有可用的冰箱');
+      return;
+    }
+    final cooked = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: AppColors.paper,
+      builder: (context) => CookConfirmSheet(
+        fridgeId: workspace.fridgeId,
+        canEdit: workspace.canEdit && !workspace.isDemo,
+        recipeId: match.recipe.id,
+        recipeName: match.recipe.name,
+        servings: match.recipe.servings,
+        candidates: [
+          for (final food in match.matchedFoods)
+            if (food.serverId != null) food,
+        ],
+      ),
+    );
+    if (cooked != true || !mounted) {
+      return;
+    }
+    // The sheets are pushed on the root navigator, while this page lives in a
+    // go_router branch navigator, so the follow-up pop must target the root one.
+    // Waiting one frame budget keeps the pop from hitting the closing cook sheet.
+    final navigator = Navigator.of(context, rootNavigator: true);
+    final message = '已记录「${match.recipe.name}」并扣减食材';
+    await Future<void>.delayed(const Duration(milliseconds: 320));
+    if (!mounted) {
+      return;
+    }
+    navigator.maybePop();
+    _notify(message);
+  }
+
+  FridgeWorkspaceData? _workspaceOrNull() {
+    final state = ref.read(fridgeWorkspaceProvider);
+    return state is AsyncData<FridgeWorkspaceData> ? state.value : null;
+  }
+
+  void _notify(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
+    );
+  }
 }
 
 String? _recipeImage(Recipe recipe) {
@@ -415,9 +481,15 @@ class _RecipeCard extends StatelessWidget {
 }
 
 class _RecipeDetailsSheet extends StatelessWidget {
-  const _RecipeDetailsSheet({required this.match});
+  const _RecipeDetailsSheet({
+    required this.match,
+    required this.canCook,
+    required this.onCook,
+  });
 
   final RecipeMatch match;
+  final bool canCook;
+  final VoidCallback onCook;
 
   @override
   Widget build(BuildContext context) {
@@ -509,6 +581,21 @@ class _RecipeDetailsSheet extends StatelessWidget {
                 ingredient: ingredient,
                 available: !match.missingIngredients.contains(ingredient),
               ),
+            const SizedBox(height: 18),
+            AppFilledButton.icon(
+              onPressed: canCook ? onCook : null,
+              icon: const Icon(Icons.soup_kitchen_outlined, size: 18),
+              label: Text(canCook ? '用现有食材做这道菜' : '暂无可扣减的食材'),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '确认后会按清单扣减冰箱库存，并写入做饭记录。',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.muted.withValues(alpha: 0.85),
+              ),
+            ),
             const SizedBox(height: 20),
             Text('做法', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 10),

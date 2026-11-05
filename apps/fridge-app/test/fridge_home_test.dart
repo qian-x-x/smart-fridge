@@ -12,6 +12,7 @@ import 'package:smart_fridge_app/core/session/session_store.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
+import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/fridge_home_page.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/webgl_fridge_view.dart';
@@ -713,6 +714,32 @@ class _RemoteFridgeSource implements FridgeDataSource {
     movedFood = food;
     movedZone = targetZone;
   }
+  @override
+  Future<List<FoodOperation>> loadOperations(
+    AuthSession session,
+    int fridgeId, {
+    int limit = 30,
+  }) async => const <FoodOperation>[];
+
+  @override
+  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {}
+
+  @override
+  Future<void> restoreOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {}
+
+  @override
+  Future<void> cook(
+    AuthSession session, {
+    required int fridgeId,
+    required int recipeId,
+    required String recipeName,
+    required int servings,
+    required List<CookItemInput> items,
+    required String requestId,
+  }) async {}
 }
 
 class _FridgeFixtureFamilySource implements FamilyDataSource {

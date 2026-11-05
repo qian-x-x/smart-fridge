@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/features/auth/application/auth_controller.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
 import 'package:smart_fridge_app/features/family/domain/family_workspace_state.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
+import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 
 final fridgeWorkspaceProvider =
@@ -69,6 +72,55 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
   Future<void> discard(FridgeFood food) async {
     final session = await _requireEditableSession();
     await _mutate(() => _source.discardFood(session, food));
+  }
+
+  Future<List<FoodOperation>> loadOperations(int fridgeId) async {
+    final session = await _session();
+    if (session.isDemo) {
+      throw StateError('演示模式不能查看真实操作记录');
+    }
+    return _source.loadOperations(session, fridgeId);
+  }
+
+  Future<void> undoOperation(FoodOperation operation) async {
+    final session = await _requireEditableSession();
+    await _source.undoOperation(session, operation);
+    ref.invalidateSelf();
+  }
+
+  Future<void> restoreOperation(FoodOperation operation) async {
+    final session = await _requireEditableSession();
+    await _source.restoreOperation(session, operation);
+    ref.invalidateSelf();
+  }
+
+  Future<void> cook({
+    required int fridgeId,
+    required int recipeId,
+    required String recipeName,
+    required int servings,
+    required List<CookItemInput> items,
+  }) async {
+    final session = await _requireEditableSession();
+    if (items.isEmpty) {
+      throw StateError('请至少选择一种要扣减的食材');
+    }
+    await _source.cook(
+      session,
+      fridgeId: fridgeId,
+      recipeId: recipeId,
+      recipeName: recipeName,
+      servings: servings,
+      items: items,
+      requestId: _cookRequestId(),
+    );
+    ref.invalidateSelf();
+  }
+
+  String _cookRequestId() {
+    final stamp = DateTime.now().microsecondsSinceEpoch;
+    final salt = Random().nextInt(0xFFFFFF).toRadixString(16).padLeft(6, '0');
+    return 'cook-$stamp-$salt';
   }
 
   Future<FridgeWorkspaceData> _load(

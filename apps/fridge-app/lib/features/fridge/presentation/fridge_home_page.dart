@@ -10,6 +10,7 @@ import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_sce
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_sheets.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_setup_panel.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_search_sheet.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_timeline_sheet.dart';
 
 class FridgeHomePage extends ConsumerStatefulWidget {
   const FridgeHomePage({super.key});
@@ -94,6 +95,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           selected: selected,
           onFoodTap: (food) => _openFoodDetails(context, workspace, food),
           onOpenTable: () => _openTable(context, workspace),
+          onOpenTimeline: () => _openTimeline(context, workspace),
         );
         final scene = FridgeScene(
           key: const ValueKey('family-fridge-scene'),
@@ -370,6 +372,30 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     onDiscard: () => ref.read(fridgeWorkspaceProvider.notifier).discard(food),
   );
 
+  Future<void> _openTimeline(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+  ) {
+    if (workspace.isDemo) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('演示模式没有真实的操作记录'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return Future.value();
+    }
+    return showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      constraints: const BoxConstraints(maxWidth: 720),
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: AppColors.paper,
+      builder: (context) => FoodTimelineSheet(workspace: workspace),
+    );
+  }
+
   Future<void> _openTable(BuildContext context, FridgeWorkspaceData workspace) {
     if (!workspace.isDemo) {
       return showModalBottomSheet<void>(
@@ -450,11 +476,13 @@ class _StockPanel extends StatelessWidget {
     required this.selected,
     required this.onFoodTap,
     required this.onOpenTable,
+    required this.onOpenTimeline,
   });
   final FridgeWorkspaceData workspace;
   final FridgeZoneId selected;
   final ValueChanged<FridgeFood> onFoodTap;
   final VoidCallback onOpenTable;
+  final VoidCallback onOpenTimeline;
   @override
   Widget build(BuildContext context) {
     final foods =
@@ -484,6 +512,35 @@ class _StockPanel extends StatelessWidget {
               Text(
                 '${foods.length} 项',
                 style: const TextStyle(fontSize: 11, color: AppColors.muted),
+              ),
+              const SizedBox(width: 10),
+              InkWell(
+                onTap: onOpenTimeline,
+                borderRadius: BorderRadius.circular(8),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 3,
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.history,
+                        size: 14,
+                        color: AppColors.terracotta,
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        '记录',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.terracotta,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),

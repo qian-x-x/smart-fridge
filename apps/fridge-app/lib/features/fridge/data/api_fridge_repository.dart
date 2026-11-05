@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
+import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 
 final fridgeDataSourceProvider = Provider<FridgeDataSource>((ref) {
@@ -27,6 +28,26 @@ abstract interface class FridgeDataSource {
   Future<void> consume(AuthSession session, FridgeFood food, double quantity);
 
   Future<void> discardFood(AuthSession session, FridgeFood food);
+
+  Future<List<FoodOperation>> loadOperations(
+    AuthSession session,
+    int fridgeId, {
+    int limit = 30,
+  });
+
+  Future<void> undoOperation(AuthSession session, FoodOperation operation);
+
+  Future<void> restoreOperation(AuthSession session, FoodOperation operation);
+
+  Future<void> cook(
+    AuthSession session, {
+    required int fridgeId,
+    required int recipeId,
+    required String recipeName,
+    required int servings,
+    required List<CookItemInput> items,
+    required String requestId,
+  });
 }
 
 class NewFoodInput {
@@ -159,6 +180,79 @@ class ApiFridgeRepository implements FridgeDataSource {
       queryParameters: {'version': food.version},
       accessToken: session.accessToken,
     );
+  }
+
+  @override
+  Future<List<FoodOperation>> loadOperations(
+    AuthSession session,
+    int fridgeId, {
+    int limit = 30,
+  }) async {
+    _requireRealSession(session);
+    final body = await _api.get(
+      '/api/v1/fridges/$fridgeId/operations',
+      queryParameters: {'limit': limit},
+      accessToken: session.accessToken,
+    );
+    return _list(body['data'])
+        .map((item) => FoodOperation.fromApi(_map(item)))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {
+    _requireRealSession(session);
+    await _api.post(
+      '/api/v1/foods/${operation.foodItemId}/operations/${operation.id}/undo',
+      const <String, dynamic>{},
+      accessToken: session.accessToken,
+    );
+  }
+
+  @override
+  Future<void> restoreOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {
+    _requireRealSession(session);
+    await _api.post(
+      '/api/v1/foods/${operation.foodItemId}/operations/${operation.id}/restore',
+      const <String, dynamic>{},
+      accessToken: session.accessToken,
+    );
+  }
+
+  @override
+  Future<void> cook(
+    AuthSession session, {
+    required int fridgeId,
+    required int recipeId,
+    required String recipeName,
+    required int servings,
+    required List<CookItemInput> items,
+    required String requestId,
+  }) async {
+    _requireRealSession(session);
+    await _api.post('/api/v1/fridges/$fridgeId/cook-records', {
+      'recipeId': recipeId,
+      'recipeName': recipeName,
+      'servings': servings,
+      'requestId': requestId,
+      'items': [
+        for (final item in items)
+          {
+            'foodItemId': item.foodItemId,
+            'quantity': item.quantity,
+            'version': item.version,
+          },
+      ],
+    }, accessToken: session.accessToken);
+  }
+
+  void _requireRealSession(AuthSession session) {
+    if (session.isDemo) {
+      throw StateError('演示模式不能读写真实冰箱记录');
+    }
   }
 
   Map<String, dynamic> _map(Object? value) {

@@ -634,6 +634,193 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '409':
           $ref: '#/components/responses/Conflict'
+  /api/v1/fridges/{fridgeId}/operations:
+    get:
+      tags: [Operation]
+      summary: 查询冰箱操作时间线
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeId'
+        - name: foodId
+          in: query
+          description: 只返回指定食材的操作记录
+          schema: {type: integer, format: int64, minimum: 1}
+        - name: limit
+          in: query
+          description: 返回条数，默认 30，最大 100
+          schema: {type: integer, minimum: 1, maximum: 100, default: 30}
+      responses:
+        '200':
+          description: 按创建时间倒序的操作记录，标记是否可撤销
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FoodOperation'
+                  traceId:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/foods/{foodId}/operations/{operationId}/undo:
+    post:
+      tags: [Operation]
+      summary: 撤销一条食材操作
+      description: 只有移动、使用、做饭扣减和丢弃可撤销；同一操作重复撤销或恢复未撤销的操作返回 409。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+        - $ref: '#/components/parameters/OperationId'
+        - name: version
+          in: query
+          required: false
+          description: 客户端持有的食材版本；传入且不一致时返回 409
+          schema: {type: integer, minimum: 0}
+      responses:
+        '200':
+          description: 撤销后的食材
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/foods/{foodId}/operations/{operationId}/restore:
+    post:
+      tags: [Operation]
+      summary: 恢复一条已撤销的食材操作
+      description: 重新应用该操作的新值；数量不足或食材已不在启用状态时返回 409。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FoodId'
+        - $ref: '#/components/parameters/OperationId'
+        - name: version
+          in: query
+          required: false
+          description: 客户端持有的食材版本；传入且不一致时返回 409
+          schema: {type: integer, minimum: 0}
+      responses:
+        '200':
+          description: 恢复后的食材
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FoodResponse'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/fridges/{fridgeId}/cook-records:
+    get:
+      tags: [Cooking]
+      summary: 查询做饭记录
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeId'
+        - name: limit
+          in: query
+          description: 返回条数，默认 20，最大 50
+          schema: {type: integer, minimum: 1, maximum: 50, default: 20}
+      responses:
+        '200':
+          description: 按创建时间倒序的做饭记录
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CookRecord'
+                  traceId:
+                    type: string
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [Cooking]
+      summary: 确认做饭并按清单扣减食材
+      description: requestId 在同一次做饭重试时保证幂等：重复请求返回 200 与既有记录，不再扣减。任一食材库存不足时整批回滚。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CookRequest'
+      responses:
+        '201':
+          description: 新建的做饭记录
+          headers:
+            Location:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/CookRecord'
+                  traceId:
+                    type: string
+        '200':
+          description: 幂等重放命中既有记录，未重复扣减
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/CookRecord'
+                  traceId:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
   /api/v1/recipes:
     get:
       tags: [Recipe]
@@ -708,6 +895,13 @@ components:
         format: int64
     FoodId:
       name: foodId
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+    OperationId:
+      name: operationId
       in: path
       required: true
       schema:
@@ -1271,6 +1465,151 @@ components:
             $ref: '#/components/schemas/RecipeIngredient'
         featured:
           type: boolean
+    FoodOperation:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fridgeId:
+          type: integer
+          format: int64
+        foodItemId:
+          type: integer
+          format: int64
+        foodName:
+          type: string
+        actorUserId:
+          type: integer
+          format: int64
+        action:
+          type: string
+          enum: [ADD, UPDATE, MOVE, CONSUME, COOK, DISCARD, UNDO, RESTORE]
+        oldZoneId:
+          type: integer
+          format: int64
+          nullable: true
+        oldContainerId:
+          type: integer
+          format: int64
+          nullable: true
+        oldQuantity:
+          type: number
+          nullable: true
+        newZoneId:
+          type: integer
+          format: int64
+          nullable: true
+        newContainerId:
+          type: integer
+          format: int64
+          nullable: true
+        newQuantity:
+          type: number
+          nullable: true
+        note:
+          type: string
+          nullable: true
+        originalOperationId:
+          type: integer
+          format: int64
+          nullable: true
+        revertedByOperationId:
+          type: integer
+          format: int64
+          nullable: true
+        undone:
+          type: boolean
+        undoable:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+    CookItemRequest:
+      type: object
+      required: [foodItemId, quantity]
+      properties:
+        foodItemId:
+          type: integer
+          format: int64
+          minimum: 1
+        quantity:
+          type: number
+          minimum: 0.001
+        version:
+          type: integer
+          minimum: 0
+          nullable: true
+    CookRequest:
+      type: object
+      required: [recipeId, recipeName, servings, requestId, items]
+      properties:
+        recipeId:
+          type: integer
+          format: int64
+          minimum: 1
+        recipeName:
+          type: string
+          maxLength: 80
+        servings:
+          type: integer
+          minimum: 1
+          maximum: 20
+        requestId:
+          type: string
+          minLength: 8
+          maxLength: 64
+          pattern: '^[A-Za-z0-9_-]+$'
+        note:
+          type: string
+          maxLength: 200
+          nullable: true
+        items:
+          type: array
+          maxItems: 20
+          items:
+            $ref: '#/components/schemas/CookItemRequest'
+    CookItem:
+      type: object
+      properties:
+        foodItemId:
+          type: integer
+          format: int64
+        foodName:
+          type: string
+        quantity:
+          type: number
+        unit:
+          type: string
+    CookRecord:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        fridgeId:
+          type: integer
+          format: int64
+        recipeId:
+          type: integer
+          format: int64
+        recipeName:
+          type: string
+        actorUserId:
+          type: integer
+          format: int64
+        servings:
+          type: integer
+        note:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CookItem'
     SimpleResponse:
       type: object
       properties:
