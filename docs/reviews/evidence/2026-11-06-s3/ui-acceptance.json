@@ -1,0 +1,67 @@
+{
+  "runAt": "2026-11-05T19:08:28.634Z",
+  "app": "http://127.0.0.1:3000",
+  "plan": {
+    "login": {
+      "user": [
+        338,
+        401
+      ],
+      "pass": [
+        338,
+        461
+      ],
+      "submit": [
+        338,
+        528
+      ]
+    },
+    "record": [
+      1338,
+      343
+    ],
+    "undo": [
+      1020,
+      307
+    ],
+    "restore": [
+      1020,
+      385
+    ]
+  },
+  "total": 6,
+  "passed": 6,
+  "steps": [
+    {
+      "name": "viewport",
+      "pass": true,
+      "detail": "{\"w\":1414,\"h\":807}"
+    },
+    {
+      "name": "login-request-sent",
+      "pass": true,
+      "detail": "count=2"
+    },
+    {
+      "name": "no-network-failures",
+      "pass": true,
+      "detail": "failures=0"
+    },
+    {
+      "name": "timeline-loaded-from-api",
+      "pass": true,
+      "detail": "[{\"url\":\"http://127.0.0.1:8080/api/v1/fridges/26/operations?limit=30\",\"status\":200},{\"url\":\"http://127.0.0.1:8080/api/v1/fridges/26/operations?limit=30\",\"status\":200}]"
+    },
+    {
+      "name": "undo-succeeded-in-ui",
+      "pass": true,
+      "detail": "[{\"url\":\"http://127.0.0.1:8080/api/v1/foods/78/operations/114/undo\",\"status\":200},{\"url\":\"http://127.0.0.1:8080/api/v1/foods/78/operations/114/undo\",\"status\":200}]"
+    },
+    {
+      "name": "restore-succeeded-in-ui",
+      "pass": true,
+      "detail": "[{\"url\":\"http://127.0.0.1:8080/api/v1/foods/78/operations/114/restore\",\"status\":200},{\"url\":\"http://127.0.0.1:8080/api/v1/foods/78/operations/114/restore\",\"status\":200}]"
+    }
+  ],
+  "labels": []
+}

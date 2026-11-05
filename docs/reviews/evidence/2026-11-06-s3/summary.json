@@ -1,0 +1,53 @@
+{
+  "runAt": "2026-11-06T02:00:17.4278196+08:00",
+  "environment": {
+    "infra": "docker compose core: mysql 8.0.39, redis 7.2.5, nacos 2.4.3, minio",
+    "services": [
+      "gateway 8080",
+      "auth-family 8081",
+      "fridge 8082",
+      "recipe 8083",
+      "stock 8084",
+      "order 8085",
+      "notification 8086"
+    ],
+    "web": "flutter release build served by nginx on :3000"
+  },
+  "totals": {
+    "assertions": 225,
+    "passed": 225,
+    "failed": 0
+  },
+  "suites": {
+    "api-matrix": {
+      "total": 135,
+      "passed": 135,
+      "failed": 0,
+      "file": "api-matrix-135.json"
+    },
+    "family-workspace": {
+      "total": 30,
+      "passed": 30,
+      "failed": 0,
+      "file": "family-workspace-30.json"
+    },
+    "food-filters": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0,
+      "file": "food-filters-25.json"
+    },
+    "s3-timeline-cooking": {
+      "total": 29,
+      "passed": 29,
+      "failed": 0,
+      "file": "api-acceptance.json"
+    },
+    "ui-desktop": {
+      "total": 6,
+      "passed": 6,
+      "failed": 0,
+      "file": "ui-acceptance.json"
+    }
+  }
+}

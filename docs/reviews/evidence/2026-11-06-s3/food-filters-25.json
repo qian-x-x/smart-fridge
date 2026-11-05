@@ -1,0 +1,128 @@
+{
+  "checkedAt": "2026-11-06T02:02:24.1316963+08:00",
+  "baseUrl": "http://127.0.0.1:8080",
+  "username": "filter_20261106020223337",
+  "familyId": 35,
+  "fridgeId": 25,
+  "passed": 25,
+  "checks": [
+    {
+      "passed": true,
+      "status": 201,
+      "check": "register fixture"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "create fixture family"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "create fixture fridge"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "seed 筛选牛奶"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "seed 筛选酸奶"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "seed 筛选过期奶"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "seed 筛选蔬菜"
+    },
+    {
+      "passed": true,
+      "status": 201,
+      "check": "seed 100%_!牛奶"
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "combined MySQL filters"
+    },
+    {
+      "check": "all conditions and all tags matched",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "expired filter"
+    },
+    {
+      "check": "expired boundary",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "expiring filter"
+    },
+    {
+      "check": "today and day three included",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "fresh filter"
+    },
+    {
+      "check": "fresh excludes day three",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "literal wildcard query"
+    },
+    {
+      "check": "MySQL LIKE escapes special characters",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "descending expiration"
+    },
+    {
+      "check": "descending sort applied",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 200,
+      "check": "inclusive dates"
+    },
+    {
+      "check": "same day date range inclusive",
+      "passed": true
+    },
+    {
+      "passed": true,
+      "status": 400,
+      "check": "invalid sort rejected"
+    },
+    {
+      "passed": true,
+      "status": 400,
+      "check": "reversed dates rejected"
+    },
+    {
+      "passed": true,
+      "status": 400,
+      "check": "invalid date rejected"
+    }
+  ]
+}
