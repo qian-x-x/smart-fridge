@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_fridge_app/features/family/application/family_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/core/session/session_store.dart';
@@ -10,6 +13,36 @@ import 'package:smart_fridge_app/features/family/domain/family_info.dart';
 import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 
 void main() {
+  for (final fails in [false, true]) {
+    test(
+      'late governance response preserves selected family (fails: $fails)',
+      () async {
+        final source = _MemberFamilySource()..mutationGate = Completer<void>();
+        final container = _memberContainer(source);
+        addTearDown(container.dispose);
+        await container.read(familyMembersProvider.future);
+        final mutation = container
+            .read(familyMembersProvider.notifier)
+            .updateRole(9, 'EDITOR');
+        await source.mutationStarted.future;
+        await container.read(familyControllerProvider.notifier).selectFamily(5);
+        final selectedMembers = await container.read(
+          familyMembersProvider.future,
+        );
+        expect(selectedMembers.single.userId, 15);
+        source.rejectMutation = fails;
+        final checked = fails
+            ? expectLater(mutation, throwsA(isA<ApiFailure>()))
+            : mutation;
+        source.mutationGate!.complete();
+        await checked;
+        expect(
+          container.read(familyMembersProvider).requireValue.single.userId,
+          15,
+        );
+      },
+    );
+  }
   test('loads members for the selected family', () async {
     final source = _MemberFamilySource();
     final container = _memberContainer(source);
@@ -54,7 +87,11 @@ void main() {
     expect(source.ownerUserId, 9);
     expect(source.currentRole, 'EDITOR');
     expect(
-      container.read(familyMembersProvider).requireValue.singleWhere((member) => member.userId == 9).role,
+      container
+          .read(familyMembersProvider)
+          .requireValue
+          .singleWhere((member) => member.userId == 9)
+          .role,
       'OWNER',
     );
   });
@@ -104,6 +141,8 @@ class _MemberFamilySource implements FamilyDataSource {
   int? removedUserId;
   int? transferredUserId;
   bool rejectMutation = false;
+  Completer<void>? mutationGate;
+  final mutationStarted = Completer<void>();
   final List<FamilyMember> members = [
     FamilyMember(
       userId: 7,
@@ -126,6 +165,13 @@ class _MemberFamilySource implements FamilyDataSource {
   @override
   Future<List<FamilyInfo>> list(AuthSession session) async {
     return [
+      const FamilyInfo(
+        id: 5,
+        name: '另一个家庭',
+        inviteCode: 'OTHER234',
+        ownerUserId: 15,
+        role: 'VIEWER',
+      ),
       FamilyInfo(
         id: 4,
         name: '小满的家',
@@ -152,6 +198,18 @@ class _MemberFamilySource implements FamilyDataSource {
     int familyId,
   ) async {
     memberFamilyId = familyId;
+    if (familyId == 5) {
+      return [
+        FamilyMember(
+          userId: 15,
+          username: 'other',
+          displayName: '其他成员',
+          role: 'OWNER',
+          joinedAt: DateTime.utc(2026),
+          currentUser: false,
+        ),
+      ];
+    }
     return List.unmodifiable(members);
   }
 
@@ -162,6 +220,8 @@ class _MemberFamilySource implements FamilyDataSource {
     int userId,
     String role,
   ) async {
+    mutationStarted.complete();
+    await mutationGate?.future;
     if (rejectMutation) {
       throw const ApiFailure(
         '只有家庭拥有者可以管理成员',

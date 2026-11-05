@@ -1,10 +1,13 @@
+import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
 import 'package:smart_fridge_app/features/family/domain/family_info.dart';
 import 'package:smart_fridge_app/features/family/domain/family_workspace_state.dart';
 import 'package:smart_fridge_app/features/family/presentation/family_member_management_sheet.dart';
+import 'package:smart_fridge_app/features/family/presentation/family_action_dialog.dart';
 
 class FamilyWorkspaceSection extends ConsumerWidget {
   const FamilyWorkspaceSection({super.key});
@@ -49,93 +52,27 @@ class FamilyWorkspaceSection extends ConsumerWidget {
     }
   }
 
-  Future<void> _joinFamily(BuildContext context, WidgetRef ref) async {
-    var inviteCode = '';
-    final value = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.paper,
-        title: const Text('加入家庭'),
-        content: TextField(
-          key: const ValueKey('invite-code-input'),
-          autofocus: true,
-          maxLength: 8,
-          textCapitalization: TextCapitalization.characters,
-          onChanged: (text) => inviteCode = text,
-          decoration: const InputDecoration(labelText: '8 位邀请码'),
+  Future<void> _joinFamily(BuildContext context, WidgetRef ref) =>
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => FamilyActionDialog(
+          join: true,
+          onSubmit: (value) =>
+              ref.read(familyControllerProvider.notifier).join(value),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            key: const ValueKey('join-family-submit'),
-            onPressed: () {
-              final code = inviteCode.trim();
-              if (code.length == 8) {
-                Navigator.of(dialogContext).pop(code);
-              }
-            },
-            child: const Text('加入'),
-          ),
-        ],
-      ),
-    );
-    if (value == null || !context.mounted) {
-      return;
-    }
-    try {
-      await ref.read(familyControllerProvider.notifier).join(value);
-    } on Object catch (error) {
-      if (context.mounted) {
-        _showError(context, error);
-      }
-    }
-  }
+      );
 
-  Future<void> _createFamily(BuildContext context, WidgetRef ref) async {
-    var familyName = '';
-    final value = await showDialog<String>(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.paper,
-        title: const Text('创建新家庭'),
-        content: TextField(
-          key: const ValueKey('family-name-input'),
-          autofocus: true,
-          onChanged: (text) => familyName = text,
-          decoration: const InputDecoration(labelText: '家庭名称'),
+  Future<void> _createFamily(BuildContext context, WidgetRef ref) =>
+      showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => FamilyActionDialog(
+          join: false,
+          onSubmit: (value) =>
+              ref.read(familyControllerProvider.notifier).create(value),
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            key: const ValueKey('create-family-submit'),
-            onPressed: () {
-              final name = familyName.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(dialogContext).pop(name);
-              }
-            },
-            child: const Text('创建'),
-          ),
-        ],
-      ),
-    );
-    if (value == null || !context.mounted) {
-      return;
-    }
-    try {
-      await ref.read(familyControllerProvider.notifier).create(value);
-    } on Object catch (error) {
-      if (context.mounted) {
-        _showError(context, error);
-      }
-    }
-  }
+      );
 
   void _showError(BuildContext context, Object error) {
     ScaffoldMessenger.of(context)
@@ -161,14 +98,12 @@ class _FamilyList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
+        Text('我的家庭', style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
           children: [
-            Expanded(
-              child: Text(
-                '我的家庭',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
             TextButton.icon(
               key: const ValueKey('join-family-button'),
               onPressed: onJoin,
@@ -182,12 +117,13 @@ class _FamilyList extends StatelessWidget {
             ),
           ],
         ),
+        const SizedBox(height: 12),
         if (workspace.families.isEmpty)
           _StateCard(
             icon: Icons.family_restroom_rounded,
             title: '还没有家庭',
             subtitle: '创建家庭或使用邀请码加入一个家庭',
-            action: FilledButton(
+            action: AppFilledButton(
               onPressed: onCreate,
               child: const Text('创建第一个家庭'),
             ),
@@ -202,7 +138,8 @@ class _FamilyList extends StatelessWidget {
                 onTap: () => onSelect(family.id),
               ),
             ),
-        if (workspace.selectedFamily != null && !workspace.selectedFamily!.isDemo)
+        if (workspace.selectedFamily != null &&
+            !workspace.selectedFamily!.isDemo)
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
@@ -231,12 +168,12 @@ class _FamilyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: selected ? const Color(0xFFE1EBDD) : AppColors.paper,
-      borderRadius: BorderRadius.circular(22),
+      color: selected ? AppColors.mint : AppColors.paper,
+      borderRadius: BorderRadius.circular(20),
       child: InkWell(
         key: ValueKey('family-card-${family.id}'),
         onTap: onTap,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(17),
           child: Row(
@@ -266,11 +203,33 @@ class _FamilyCard extends StatelessWidget {
                       '${_roleLabel(family.role)}',
                       style: TextStyle(
                         color: AppColors.cocoa.withValues(alpha: 0.58),
-                        fontSize: 10,
+                        fontSize: 11,
                       ),
                     ),
                   ],
                 ),
+              ),
+              IconButton(
+                tooltip: '复制邀请码',
+                onPressed: () async {
+                  try {
+                    await Clipboard.setData(
+                      ClipboardData(text: family.inviteCode),
+                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(const SnackBar(content: Text('邀请码已复制')));
+                    }
+                  } on Object {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('复制未成功，可手动复制上方邀请码')),
+                      );
+                    }
+                  }
+                },
+                icon: const Icon(Icons.copy_outlined, size: 18),
               ),
               Icon(
                 selected
@@ -313,7 +272,7 @@ class _StateCard extends StatelessWidget {
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: AppColors.paper,
-        borderRadius: BorderRadius.circular(22),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         children: [

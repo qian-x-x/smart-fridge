@@ -10,6 +10,8 @@ final fridgeDataSourceProvider = Provider<FridgeDataSource>((ref) {
 abstract interface class FridgeDataSource {
   Future<FridgeWorkspaceData> load(AuthSession session, int familyId);
 
+  Future<void> createFridge(AuthSession session, int familyId, String name);
+
   Future<void> addFood(
     AuthSession session,
     FridgeWorkspaceData workspace,
@@ -71,7 +73,7 @@ class ApiFridgeRepository implements FridgeDataSource {
       );
     } on ApiFailure catch (error) {
       if (error.statusCode == 404) {
-        throw const ApiFailure('当前家庭没有冰箱，请切换其他家庭');
+        return FridgeWorkspaceData.empty(familyId);
       }
       rethrow;
     }
@@ -89,6 +91,18 @@ class ApiFridgeRepository implements FridgeDataSource {
       foodsData: _list(foodsBody['data']),
       currentUser: session.user,
     );
+  }
+
+  @override
+  Future<void> createFridge(
+    AuthSession session,
+    int familyId,
+    String name,
+  ) async {
+    await _api.post('/api/v1/fridges', {
+      'familyId': familyId,
+      'name': name.trim(),
+    }, accessToken: session.accessToken);
   }
 
   @override

@@ -158,6 +158,38 @@ class AuthFlowIntegrationTest {
             .andExpect(jsonPath("$.data").doesNotExist());
     }
 
+    @Test
+    void refreshTokenHasExactlyOneWinnerUnderConcurrency() throws Exception {
+        String registered = mockMvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"refresh_race\",\"displayName\":\"刷新验收\",\"password\":\"Password2026\"}"))
+            .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        String refresh = objectMapper.readTree(registered).at("/data/refreshToken").asText();
+        var start = new java.util.concurrent.CountDownLatch(1);
+        var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+        java.util.concurrent.Callable<Integer> request = () -> {
+            start.await();
+            return mockMvc.perform(post("/api/v1/auth/refresh").contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(new RefreshBody(refresh))))
+                .andReturn().getResponse().getStatus();
+        };
+        try {
+            var first = pool.submit(request);
+            var second = pool.submit(request);
+            start.countDown();
+            assertThat(java.util.List.of(first.get(10, java.util.concurrent.TimeUnit.SECONDS),
+                second.get(10, java.util.concurrent.TimeUnit.SECONDS))).containsExactlyInAnyOrder(200, 401);
+        } finally {
+            pool.shutdownNow();
+        }
+    }
+
+    @Test
+    void rejectsOversizedUtf8PasswordBeforeHashing() throws Exception {
+        mockMvc.perform(post("/api/v1/auth/register").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"username\":\"utf8_password\",\"displayName\":\"密码验收\",\"password\":\"" + "密".repeat(25) + "\"}"))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("VALIDATION_ERROR"));
+    }
+
     private record RefreshBody(String refreshToken) {
     }
 

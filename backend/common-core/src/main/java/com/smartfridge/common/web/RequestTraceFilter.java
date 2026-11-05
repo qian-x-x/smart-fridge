@@ -21,7 +21,7 @@ public class RequestTraceFilter extends OncePerRequestFilter {
         FilterChain filterChain
     ) throws ServletException, IOException {
         String traceId = request.getHeader(TRACE_HEADER);
-        if (traceId == null || traceId.isBlank()) {
+        if (traceId == null || !traceId.matches("[A-Za-z0-9._-]{1,128}")) {
             traceId = UUID.randomUUID().toString();
         }
         MDC.put("traceId", traceId);

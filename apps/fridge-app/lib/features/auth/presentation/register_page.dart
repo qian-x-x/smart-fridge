@@ -1,3 +1,7 @@
+import 'package:smart_fridge_app/shared/widgets/action_button.dart';
+
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -47,8 +51,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                 labelText: '怎么称呼你',
                 prefixIcon: Icon(Icons.face_rounded),
               ),
-              validator: (value) =>
-                  value == null || value.trim().isEmpty ? '请输入显示名称' : null,
+              validator: (value) => value == null || value.trim().isEmpty
+                  ? '请输入显示名称'
+                  : value.trim().length > 40
+                  ? '显示名称最多 40 位'
+                  : null,
             ),
             const SizedBox(height: 14),
             TextFormField(
@@ -62,8 +69,8 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ),
               validator: (value) {
                 final username = value?.trim() ?? '';
-                if (username.length < 3) {
-                  return '用户名至少 3 位';
+                if (username.length < 3 || username.length > 40) {
+                  return '用户名应为 3 至 40 位';
                 }
                 if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username)) {
                   return '用户名只能包含字母、数字和下划线';
@@ -94,8 +101,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   ),
                 ),
               ),
-              validator: (value) =>
-                  (value?.length ?? 0) < 8 ? '密码至少 8 位' : null,
+              validator: (value) => (value?.length ?? 0) < 8
+                  ? '密码至少 8 位'
+                  : utf8.encode(value!).length > 72
+                  ? '密码编码后最多 72 字节'
+                  : null,
             ),
             if (_error != null) ...[
               const SizedBox(height: 14),
@@ -116,7 +126,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               ),
             ],
             const SizedBox(height: 20),
-            FilledButton(
+            AppFilledButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
                   ? const SizedBox(

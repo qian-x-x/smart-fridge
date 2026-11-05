@@ -7,3 +7,6 @@ spring:
         enabled: true
       config:
         enabled: true
+
+smart-fridge:
+  auth-service-url: ${AUTH_SERVICE_URL:}

@@ -4,6 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
@@ -17,6 +19,19 @@ class GatewayCorsTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private GatewayProperties routes;
+
+    @Test
+    void localProfileRoutesAllServicesWithoutNacos() {
+        org.assertj.core.api.Assertions.assertThat(routes.getRoutes()).hasSize(6)
+            .allSatisfy(route -> {
+                org.assertj.core.api.Assertions.assertThat(route.getUri().getScheme()).isEqualTo("http");
+                org.assertj.core.api.Assertions.assertThat(route.getUri().getHost()).isEqualTo("127.0.0.1");
+                org.assertj.core.api.Assertions.assertThat(route.getPredicates()).isNotEmpty();
+            });
+    }
 
     @Test
     void permitsFlutterWebWhenServedFromLoopbackIp() {

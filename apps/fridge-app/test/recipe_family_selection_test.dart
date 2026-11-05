@@ -39,6 +39,13 @@ void main() {
 
 class _RecipeFamilyFridgeSource implements FridgeDataSource {
   @override
+  Future<void> createFridge(
+    AuthSession session,
+    int familyId,
+    String name,
+  ) async {}
+
+  @override
   Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
     return FridgeWorkspaceData(
       familyId: familyId,

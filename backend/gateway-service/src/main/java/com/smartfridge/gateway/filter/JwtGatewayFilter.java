@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import com.smartfridge.gateway.security.TokenIntrospectionClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -24,9 +25,12 @@ import java.time.Instant;
 public class JwtGatewayFilter implements GlobalFilter, Ordered {
 
     private final byte[] jwtSecret;
+    private final TokenIntrospectionClient introspection;
 
-    public JwtGatewayFilter(@Value("${smart-fridge.jwt.secret}") String jwtSecret) {
+    public JwtGatewayFilter(@Value("${smart-fridge.jwt.secret}") String jwtSecret,
+                            TokenIntrospectionClient introspection) {
         this.jwtSecret = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        this.introspection = introspection;
     }
 
     @Override
@@ -68,18 +72,27 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
                     headers.set("X-User-Role", claims.get("role", String.class));
                 })
                 .build();
-            return chain.filter(exchange.mutate().request(request).build());
+            return introspection.isActive(authorization)
+                .onErrorResume(error -> reject(exchange, HttpStatus.SERVICE_UNAVAILABLE,
+                    "INTERNAL_ERROR", "认证服务暂时不可用").then(Mono.empty()))
+                .flatMap(active -> active
+                    ? chain.filter(exchange.mutate().request(request).build())
+                    : reject(exchange, "访问令牌已撤销或失效"));
         } catch (JwtException | IllegalArgumentException exception) {
             return reject(exchange, "访问令牌无效或已过期");
         }
     }
 
     private Mono<Void> reject(ServerWebExchange exchange, String message) {
+        return reject(exchange, HttpStatus.UNAUTHORIZED, "UNAUTHORIZED", message);
+    }
+
+    private Mono<Void> reject(ServerWebExchange exchange, HttpStatus status, String code, String message) {
         String traceId = exchange.getResponse().getHeaders().getFirst(GatewayTraceFilter.TRACE_HEADER);
         String body = """
-            {"code":"UNAUTHORIZED","message":"%s","data":null,"traceId":"%s"}
-            """.formatted(message, traceId == null ? "" : traceId).trim();
-        exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
+            {"code":"%s","message":"%s","data":null,"traceId":"%s"}
+            """.formatted(code, message, traceId == null ? "" : traceId).trim();
+        exchange.getResponse().setStatusCode(status);
         exchange.getResponse().getHeaders().setContentType(MediaType.APPLICATION_JSON);
         DataBuffer buffer = exchange.getResponse().bufferFactory()
             .wrap(body.getBytes(StandardCharsets.UTF_8));

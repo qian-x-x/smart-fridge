@@ -44,6 +44,7 @@ public class FoodService {
         }
         validateLocation(request);
         validateDates(request);
+        validateTags(request.tags());
         return expiryAware(foodRepository.create(request, user.id()), fridge);
     }
 
@@ -56,11 +57,12 @@ public class FoodService {
         return expiryAware(food, fridge);
     }
 
-    public List<FoodView> search(long fridgeId, String query, String authorization) {
+    public List<FoodView> search(long fridgeId, FoodSearchFilter filter, String authorization) {
         FridgeView fridge = fridgeRepository.findById(fridgeId)
             .orElseThrow(() -> BusinessException.notFound("冰箱不存在"));
         familyAccessService.requireMember(fridge.familyId(), authorization);
-        return foodRepository.searchByName(fridgeId, query == null ? "" : query).stream()
+        LocalDate today = LocalDate.now(clock.withZone(ZoneId.of(fridge.timezone())));
+        return foodRepository.search(fridgeId, filter, today).stream()
             .map(food -> expiryAware(food, fridge))
             .toList();
     }
@@ -125,6 +127,7 @@ public class FoodService {
         if (request.expiresOn().isBefore(request.productionDate())) {
             throw BusinessException.conflict("到期日期不能早于生产日期");
         }
+        validateTags(request.tags());
         if (!foodRepository.update(food, request, user.id())) {
             throw BusinessException.conflict("食材已被其他成员更新，请刷新后重试");
         }
@@ -168,6 +171,17 @@ public class FoodService {
     private void validateDates(CreateFoodRequest request) {
         if (request.expiresOn().isBefore(request.productionDate())) {
             throw BusinessException.conflict("到期日期不能早于生产日期");
+        }
+    }
+
+    private void validateTags(List<String> tags) {
+        if (tags != null && tags.stream().map(String::trim).distinct()
+            .collect(java.util.stream.Collectors.joining(",")).length() > 500) {
+            throw new com.smartfridge.common.error.BusinessException(
+                com.smartfridge.common.api.ErrorCode.VALIDATION_ERROR,
+                org.springframework.http.HttpStatus.BAD_REQUEST,
+                "标签总长度不能超过 500 个字符"
+            );
         }
     }
 

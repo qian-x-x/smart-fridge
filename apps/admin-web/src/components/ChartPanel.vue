@@ -12,7 +12,7 @@ import {
   type EChartsCoreOption,
 } from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { onActivated, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 use([
   LineChart,
@@ -30,25 +30,31 @@ const props = defineProps<{
 const chartElement = ref<HTMLDivElement>()
 let chart: ECharts | undefined
 let observer: ResizeObserver | undefined
+const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+const applyOption = () => chart?.setOption({ ...props.option, animation: !motion.matches }, true)
 
 onMounted(() => {
   if (!chartElement.value) return
   chart = init(chartElement.value, undefined, { renderer: 'canvas' })
-  chart.setOption(props.option)
-  observer = new ResizeObserver(() => chart?.resize())
+  applyOption()
+  motion.addEventListener('change', applyOption)
+  observer = new ResizeObserver(() => { if (chartElement.value?.clientWidth) chart?.resize() })
   observer.observe(chartElement.value)
 })
 
 watch(
   () => props.option,
-  (option) => chart?.setOption(option, true),
+  applyOption,
   { deep: true },
 )
 
 onBeforeUnmount(() => {
+  motion.removeEventListener('change', applyOption)
   observer?.disconnect()
   chart?.dispose()
 })
+
+onActivated(() => { if (chartElement.value?.clientWidth) chart?.resize() })
 </script>
 
 <template>

@@ -99,6 +99,27 @@ paths:
                 $ref: '#/components/schemas/SimpleResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /api/v1/auth/introspect:
+    post:
+      tags: [Authentication]
+      summary: 校验访问令牌及撤销状态
+      description: Gateway 也使用此接口检查撤销状态；认证服务不可用时受保护接口返回 503，不将服务故障当作登录失效。
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: 当前有效的访问令牌声明
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code: {type: string, example: OK}
+                  message: {type: string}
+                  data: {type: object}
+                  traceId: {type: string}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/v1/families:
     get:
       tags: [Family]
@@ -418,9 +439,43 @@ paths:
         - name: query
           in: query
           required: false
-          description: 按食材名称进行不区分大小写的包含搜索
+          description: 名称不区分大小写的字面包含搜索，百分号和下划线不作为通配符。所有筛选条件同时满足。
           schema:
             type: string
+            maxLength: 80
+        - name: category
+          in: query
+          description: 完整分类名称
+          schema: {type: string, maxLength: 40}
+        - name: tags
+          in: query
+          style: form
+          explode: true
+          description: 重复传递 tags 参数，需同时包含所有完整标签；标签不能含逗号。
+          schema:
+            type: array
+            maxItems: 20
+            items: {type: string, minLength: 1, maxLength: 40, pattern: '^[^,]*$'}
+        - name: zoneId
+          in: query
+          description: 当前冰箱中的分区 ID，其他冰箱分区不会返回结果
+          schema: {type: integer, format: int64, minimum: 1}
+        - name: expiryState
+          in: query
+          description: 依据冰箱时区，EXPIRED 为今天之前，EXPIRING 为今天到三天后（含边界），FRESH 为三天后以外。
+          schema: {type: string, enum: [ALL, EXPIRED, EXPIRING, FRESH], default: ALL}
+        - name: expiresFrom
+          in: query
+          description: 到期起日，含当天，不能晚于 expiresTo
+          schema: {type: string, format: date}
+        - name: expiresTo
+          in: query
+          description: 到期止日，含当天
+          schema: {type: string, format: date}
+        - name: sort
+          in: query
+          description: 排序字段白名单；主字段相同时按 ID 升序，保证结果稳定
+          schema: {type: string, enum: [EXPIRES_ASC, EXPIRES_DESC, NAME_ASC, CREATED_DESC], default: EXPIRES_ASC}
       responses:
         '200':
           description: 食材列表
@@ -440,6 +495,10 @@ paths:
                       $ref: '#/components/schemas/Food'
                   traceId:
                     type: string
+        '400':
+          description: 筛选参数无效、日期范围颠倒或排序不在白名单内
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       tags: [Food]
       summary: 添加食材或调料
@@ -660,6 +719,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   responses:
+    ServiceUnavailable:
+      description: 认证或依赖服务暂时不可用，客户端可重试且不应清除登录会话
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     Unauthorized:
       description: 未登录、令牌无效或已撤销
       content:
@@ -711,6 +776,7 @@ components:
           type: string
           minLength: 8
           maxLength: 72
+          description: UTF-8 编码后最多 72 字节
     LoginRequest:
       type: object
       required: [identifier, password]
@@ -1048,7 +1114,9 @@ components:
         quantity:
           type: number
           format: double
-          exclusiveMinimum: 0
+          minimum: 0.001
+          maximum: 999999999.999
+          multipleOf: 0.001
         unit:
           type: string
           maxLength: 20
@@ -1061,9 +1129,12 @@ components:
         tags:
           type: array
           maxItems: 20
+          description: 去空格及去重后以逗号连接的总长度不能超过 500 字符
           items:
             type: string
+            minLength: 1
             maxLength: 30
+            pattern: '^[^,]+$'
         modelKey:
           type: string
           maxLength: 80
@@ -1098,7 +1169,9 @@ components:
         quantity:
           type: number
           format: double
-          exclusiveMinimum: 0
+          minimum: 0.001
+          maximum: 999999999.999
+          multipleOf: 0.001
         unit:
           type: string
           maxLength: 20
@@ -1111,9 +1184,12 @@ components:
         tags:
           type: array
           maxItems: 20
+          description: 去空格及去重后以逗号连接的总长度不能超过 500 字符
           items:
             type: string
+            minLength: 1
             maxLength: 30
+            pattern: '^[^,]+$'
         modelKey:
           type: string
           maxLength: 80
@@ -1144,7 +1220,9 @@ components:
         quantity:
           type: number
           format: double
-          exclusiveMinimum: 0
+          minimum: 0.001
+          maximum: 999999999.999
+          multipleOf: 0.001
         version:
           type: integer
           minimum: 0

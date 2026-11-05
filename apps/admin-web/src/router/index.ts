@@ -1,3 +1,4 @@
+import { brand } from '../brand'
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 
@@ -50,7 +51,7 @@ const router = createRouter({
 
 router.beforeEach((to) => {
   const auth = useAuthStore()
-  document.title = `${String(to.meta.title ?? '运营工作台')} · 小满冰箱`
+  document.title = `${String(to.meta.title ?? '运营工作台')} · ${brand.name}`
   if (!to.meta.public && !auth.isAuthenticated) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }

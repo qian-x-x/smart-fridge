@@ -1,4 +1,4 @@
-# 小满冰箱 Flutter 用户端
+# 小易冰箱 Flutter 用户端
 
 Android 与 Flutter Web/PWA 共用同一代码库。
 

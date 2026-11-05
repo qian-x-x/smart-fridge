@@ -90,10 +90,9 @@ public class AuthService {
     @Transactional
     public AuthTokenResponse refresh(String refreshToken) {
         TokenClaims claims = tokenService.parseRefreshToken(refreshToken);
-        if (!refreshSessionRepository.existsActive(claims.tokenId())) {
+        if (!refreshSessionRepository.consumeActive(claims.tokenId())) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED, HttpStatus.UNAUTHORIZED, "刷新令牌已失效");
         }
-        refreshSessionRepository.revoke(claims.tokenId());
         UserAccount user = userRepository.findById(claims.userId())
             .filter(candidate -> "ACTIVE".equals(candidate.status()))
             .orElseThrow(this::invalidCredentials);
@@ -103,11 +102,16 @@ public class AuthService {
     @Transactional
     public void logout(String accessToken, String refreshToken) {
         TokenClaims accessClaims = tokenService.parseAccessToken(accessToken);
+        TokenClaims refreshClaims = StringUtils.hasText(refreshToken)
+            ? tokenService.parseRefreshToken(refreshToken) : null;
+        if (refreshClaims != null && refreshClaims.userId() != accessClaims.userId()) {
+            throw new BusinessException(ErrorCode.VALIDATION_ERROR, HttpStatus.BAD_REQUEST,
+                "刷新令牌不属于当前用户");
+        }
         Duration accessRemaining = Duration.between(Instant.now(), accessClaims.expiresAt());
         tokenRevocationService.revoke(accessClaims.tokenId(), accessRemaining);
 
-        if (StringUtils.hasText(refreshToken)) {
-            TokenClaims refreshClaims = tokenService.parseRefreshToken(refreshToken);
+        if (refreshClaims != null) {
             refreshSessionRepository.revoke(refreshClaims.tokenId());
         }
     }

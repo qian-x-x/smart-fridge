@@ -117,14 +117,16 @@ class ApiClient {
     final body = error.response?.data;
     if (body is Map<String, dynamic>) {
       return ApiFailure(
-        body['message'] as String? ?? '请求未完成，请稍后重试',
+        _message(body, '请求未完成，请稍后重试'),
         statusCode: error.response?.statusCode,
-        code: body['code'] as String?,
+        code: body['code'] is String ? body['code'] as String : null,
       );
     }
     return ApiFailure(
       error.type == DioExceptionType.connectionError
           ? '无法连接服务，请确认 Gateway 已启动'
+          : (error.response?.statusCode ?? 0) >= 500
+          ? '服务暂时不可用，请稍后重试'
           : '网络请求失败，请稍后重试',
       statusCode: error.response?.statusCode,
     );
@@ -137,12 +139,30 @@ class ApiClient {
     }
     if (body['code'] != 'OK') {
       throw ApiFailure(
-        body['message'] as String? ?? '请求失败',
+        _message(body, '请求失败'),
         statusCode: response.statusCode,
-        code: body['code'] as String?,
+        code: body['code'] is String ? body['code'] as String : null,
       );
     }
     return body;
+  }
+
+  String _message(Map<String, dynamic> body, String fallback) {
+    final message = body['message'] is String
+        ? body['message'] as String
+        : fallback;
+    final data = body['data'];
+    if (body['code'] == 'VALIDATION_ERROR' && data is List) {
+      final details = data
+          .whereType<Map>()
+          .map((item) => item['message'])
+          .whereType<String>()
+          .where((item) => item.isNotEmpty)
+          .take(5)
+          .join('；');
+      if (details.isNotEmpty) return '$message：$details';
+    }
+    return message;
   }
 }
 

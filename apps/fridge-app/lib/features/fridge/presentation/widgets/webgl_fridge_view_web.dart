@@ -11,11 +11,15 @@ class WebGLFridgeView extends StatefulWidget {
   const WebGLFridgeView({
     required this.zone,
     required this.onZoneSelected,
+    this.foods = const [],
+    this.interactive = true,
     super.key,
   });
 
   final FridgeZoneId zone;
   final ValueChanged<FridgeZoneId> onZoneSelected;
+  final List<FridgeFood> foods;
+  final bool interactive;
 
   @override
   State<WebGLFridgeView> createState() => _WebGLFridgeViewState();
@@ -34,16 +38,22 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     _viewType = 'smart-fridge-webgl-${DateTime.now().microsecondsSinceEpoch}';
     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
       final iframe = web.HTMLIFrameElement()
-        ..src = 'fridge3d/index.html'
-        ..title = '小满冰箱 WebGL 三维模型'
+        ..src = 'fridge3d/index.html?rev=warm-harvest-v1.5.1'
+        ..title = '小易冰箱 WebGL 三维模型'
         ..setAttribute('allowtransparency', 'true')
         ..style.border = '0'
         ..style.width = '100%'
         ..style.height = '100%'
         ..style.background = 'transparent'
         ..style.overflow = 'hidden';
+      iframe.style.pointerEvents = widget.interactive ? 'auto' : 'none';
+      iframe.setAttribute('data-input-enabled', widget.interactive.toString());
       iframe.onLoad.listen((_) {
+        if (!mounted) return;
         _ready = true;
+        _sendInputState();
+        _sendInventory();
+        if (widget.zone != FridgeZoneId.fresh) _sendFocus(widget.zone);
       });
       _iframe = iframe;
       return iframe;
@@ -55,11 +65,16 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
   @override
   void didUpdateWidget(covariant WebGLFridgeView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _iframe?.style.pointerEvents = widget.interactive ? 'auto' : 'none';
+    _iframe?.setAttribute('data-input-enabled', widget.interactive.toString());
+    if (oldWidget.interactive != widget.interactive) _sendInputState();
+    if (oldWidget.foods != widget.foods) _sendInventory();
     if (oldWidget.zone != widget.zone) {
       if (_sceneDrivenZone == widget.zone) {
         _sceneDrivenZone = null;
         return;
       }
+      _sceneDrivenZone = null;
       _sendFocus(widget.zone);
     }
   }
@@ -67,6 +82,8 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
   @override
   void dispose() {
     _messageSubscription.cancel();
+    _iframe?.style.pointerEvents = 'none';
+    _iframe?.src = 'about:blank';
     super.dispose();
   }
 
@@ -79,7 +96,9 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
   }
 
   void _handleMessage(web.MessageEvent event) {
-    if (event.origin != web.window.location.origin) {
+    if (event.origin != web.window.location.origin ||
+        event.source != _iframe?.contentWindow ||
+        !mounted) {
       return;
     }
     final raw = event.data;
@@ -90,19 +109,65 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     if (data is! String) {
       return;
     }
-    final payload = jsonDecode(data);
+    Object? payload;
+    try {
+      payload = jsonDecode(data);
+    } on FormatException {
+      return;
+    }
     if (payload is! Map<String, dynamic> ||
         payload['source'] != 'smart-fridge-3d') {
+      return;
+    }
+    if (payload['type'] == 'ready') {
+      _ready = true;
+      _sendInputState();
+      _sendInventory();
+      if (widget.zone != FridgeZoneId.fresh) _sendFocus(widget.zone);
       return;
     }
     if (payload['type'] != 'zone-selected') {
       return;
     }
+    if (!widget.interactive) return;
     final zone = _zoneFromWire(payload['zone']);
     if (zone != null) {
-      _sceneDrivenZone = zone;
+      _sceneDrivenZone = zone != widget.zone ? zone : null;
       widget.onZoneSelected(zone);
     }
+  }
+
+  void _sendInputState() {
+    if (!_ready) return;
+    _iframe?.contentWindow?.postMessage(
+      jsonEncode({
+        'type': 'smart-fridge-command',
+        'action': 'setInteractive',
+        'enabled': widget.interactive,
+      }).toJS,
+      web.window.location.origin.toJS,
+    );
+  }
+
+  void _sendInventory() {
+    if (!_ready) return;
+    _iframe?.contentWindow?.postMessage(
+      jsonEncode({
+        'type': 'smart-fridge-command',
+        'action': 'inventory',
+        'foods': [
+          for (final food in widget.foods)
+            {
+              'id': food.id,
+              'name': food.name,
+              'category': food.category,
+              'quantity': food.quantity,
+              'zone': food.zone.name,
+            },
+        ],
+      }).toJS,
+      web.window.location.origin.toJS,
+    );
   }
 
   void _sendFocus(FridgeZoneId zone) {

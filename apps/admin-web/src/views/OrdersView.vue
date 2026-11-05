@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ElMessage } from 'element-plus'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 interface OrderRow {
   orderNo: string
@@ -61,6 +61,17 @@ const orders: OrderRow[] = [
 ]
 
 const status = ref('全部状态')
+const keyword = ref('')
+const dateRange = ref<[string, string] | null>(null)
+const visibleOrders = computed(() => orders.filter((order) => {
+  const query = keyword.value.trim().toLowerCase()
+  const matchesQuery = !query || `${order.orderNo} ${order.user}`.toLowerCase().includes(query)
+  const matchesStatus = status.value === '全部状态' || order.status === status.value
+  const day = order.createdAt.slice(0, 10)
+  const matchesDate = !dateRange.value || (day >= dateRange.value[0] && day <= dateRange.value[1])
+  return matchesQuery && matchesStatus && matchesDate
+}))
+function resetFilters() { keyword.value = ''; status.value = '全部状态'; dateRange.value = null }
 
 function tone(value: string) {
   if (value === '已支付' || value === '已完成') return 'success'
@@ -83,7 +94,7 @@ function openDetail(orderNo: string) {
           查询订单、优惠券和模拟支付状态。取消只允许发生在未支付或可取消状态。
         </p>
       </div>
-      <el-button>导出订单</el-button>
+      <el-button @click="ElMessage.info('订单导出将在订单服务接入后启用')">导出订单</el-button>
     </div>
 
     <section class="order-metrics">
@@ -124,6 +135,7 @@ function openDetail(orderNo: string) {
     <section class="panel">
       <div class="filter-bar">
         <el-input
+          v-model="keyword"
           clearable
           placeholder="搜索订单号或用户"
           class="search-input"
@@ -146,15 +158,18 @@ function openDetail(orderNo: string) {
           />
         </el-select>
         <el-date-picker
+          v-model="dateRange"
+          value-format="YYYY-MM-DD"
           type="daterange"
           range-separator="至"
           start-placeholder="开始日期"
           end-placeholder="结束日期"
         />
-        <span class="result-count">最近更新于 09:48</span>
+        <el-button @click="resetFilters">重置</el-button>
+        <span class="result-count">找到 {{ visibleOrders.length }} 条示例订单</span>
       </div>
 
-      <el-table :data="orders" style="width: 100%">
+      <el-table :data="visibleOrders" style="width: 100%">
         <el-table-column label="订单号" min-width="155">
           <template #default="{ row }">
             <button class="order-link" @click="openDetail(row.orderNo)">
@@ -210,7 +225,7 @@ function openDetail(orderNo: string) {
   gap: 12px;
   border: 1px solid rgba(91, 67, 54, 0.07);
   border-radius: 18px;
-  background: #fffdf9;
+  background: #ffffff;
   box-shadow: 0 12px 32px rgba(70, 52, 40, 0.045);
 }
 
@@ -240,7 +255,7 @@ function openDetail(orderNo: string) {
 }
 
 .metric-icon.cocoa {
-  color: #5b4336;
+  color: #442b22;
   background: #eee5da;
 }
 
@@ -252,7 +267,7 @@ function openDetail(orderNo: string) {
 
 .order-metrics small {
   color: #97887c;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .order-metrics strong {
@@ -265,7 +280,7 @@ function openDetail(orderNo: string) {
 .order-metrics em {
   margin-top: 3px;
   color: #71836b;
-  font-size: 8px;
+  font-size: 12px;
   font-style: normal;
   font-weight: 700;
 }
@@ -293,28 +308,28 @@ function openDetail(orderNo: string) {
 .result-count {
   margin-left: auto;
   color: #a09489;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .order-link {
   padding: 0;
   border: 0;
-  color: #5b4336;
+  color: #442b22;
   background: transparent;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
 .coupon {
   color: #a55340;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .no-coupon {
   color: #ada198;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .amount {
@@ -325,9 +340,9 @@ function openDetail(orderNo: string) {
 .table-link {
   padding: 0;
   border: 0;
-  color: #b85c45;
+  color: #bc4d30;
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   cursor: pointer;
 }
 

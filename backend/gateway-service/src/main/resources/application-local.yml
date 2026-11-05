@@ -1,0 +1,28 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth-family
+          uri: ${AUTH_FAMILY_ROUTE_URI:http://127.0.0.1:8081}
+          predicates:
+            - Path=/api/v1/auth/**,/api/v1/families/**
+        - id: fridge
+          uri: ${FRIDGE_ROUTE_URI:http://127.0.0.1:8082}
+          predicates:
+            - Path=/api/v1/fridges/**,/api/v1/foods/**,/api/v1/operations/**
+        - id: recipe
+          uri: ${RECIPE_ROUTE_URI:http://127.0.0.1:8083}
+          predicates:
+            - Path=/api/v1/recipes/**
+        - id: stock
+          uri: ${STOCK_ROUTE_URI:http://127.0.0.1:8084}
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/replenishment/**
+        - id: order
+          uri: ${ORDER_ROUTE_URI:http://127.0.0.1:8085}
+          predicates:
+            - Path=/api/v1/orders/**
+        - id: notification
+          uri: ${NOTIFICATION_ROUTE_URI:http://127.0.0.1:8086}
+          predicates:
+            - Path=/api/v1/notifications/**,/api/v1/ws/**

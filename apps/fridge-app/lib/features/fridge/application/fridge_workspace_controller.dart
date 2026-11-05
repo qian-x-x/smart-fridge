@@ -16,27 +16,44 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
 
   @override
   Future<FridgeWorkspaceData> build() async {
-    final session = await ref.watch(authControllerProvider.future);
+    var session = await ref.watch(authControllerProvider.future);
     if (session == null) {
       throw StateError('当前没有登录会话');
+    }
+    if (session.isAccessTokenExpiring) {
+      session = await _session();
     }
     final workspace = await ref.watch(familyControllerProvider.future);
     return _load(session, workspace);
   }
 
   Future<void> refresh() async {
-    final session = await _session();
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final workspace = await ref.read(familyControllerProvider.future);
-      return _load(session, workspace);
-    });
+    ref.invalidateSelf();
+    try {
+      await future;
+    } on Object {
+      // The provider exposes the error with a retry action on the page.
+    }
   }
 
   Future<void> addFood(NewFoodInput input) async {
     final session = await _requireEditableSession();
     final workspace = state.requireValue;
     await _mutate(() => _source.addFood(session, workspace, input));
+  }
+
+  Future<void> createFridge(String name) async {
+    final session = await _session();
+    final family = (await ref.read(familyControllerProvider.future))
+        .selectedFamily;
+    if (session.isDemo || family?.role != 'OWNER') {
+      throw StateError('仅家庭拥有者可以创建冰箱');
+    }
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed.length > 80) {
+      throw StateError('请输入 1 至 80 个字符的冰箱名称');
+    }
+    await _mutate(() => _source.createFridge(session, family!.id, trimmed));
   }
 
   Future<void> moveFood(FridgeFood food, FridgeZone targetZone) async {
@@ -74,16 +91,10 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
   }
 
   Future<void> _mutate(Future<void> Function() action) async {
-    final session = await _session();
-    final previous = state;
-    try {
-      await action();
-      final workspace = await ref.read(familyControllerProvider.future);
-      state = AsyncData(await _load(session, workspace));
-    } on Object catch (error, stackTrace) {
-      state = previous;
-      Error.throwWithStackTrace(error, stackTrace);
-    }
+    await action();
+    // A committed write succeeds independently of the following read. Let the
+    // workspace show loading/error and retry reads without resubmitting writes.
+    ref.invalidateSelf();
   }
 
   Future<AuthSession> _session() async {

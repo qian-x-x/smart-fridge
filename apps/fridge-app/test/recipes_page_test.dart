@@ -13,8 +13,43 @@ import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.da
 import 'package:smart_fridge_app/features/recipe/data/recipe_repository.dart';
 import 'package:smart_fridge_app/features/recipe/domain/recipe.dart';
 import 'package:smart_fridge_app/features/recipe/presentation/recipes_page.dart';
+import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 
 void main() {
+  for (final width in [390.0, 1366.0]) {
+    testWidgets(
+      'empty expiry filter can return to all recipes at width $width',
+      (tester) async {
+        await tester.binding.setSurfaceSize(Size(width, 900));
+        addTearDown(() => tester.binding.setSurfaceSize(null));
+        await tester.pumpWidget(
+          ProviderScope(
+            overrides: [
+              recipeBrowserProvider.overrideWith(_NoExpiringRecipes.new),
+            ],
+            child: MaterialApp(
+              theme: AppTheme.light,
+              home: const Scaffold(body: RecipesPage()),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('临期优先'));
+        await tester.pumpAndSettle();
+        expect(find.text('当前筛选下没有菜谱'), findsOneWidget);
+        expect(find.text('全部菜谱'), findsOneWidget);
+        await tester.tap(find.text('查看全部菜谱'));
+        await tester.pumpAndSettle();
+        expect(find.text('香煎测试豆腐'), findsAtLeastNWidgets(1));
+        await tester.tap(find.text('临期优先'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('全部菜谱'));
+        await tester.pumpAndSettle();
+        expect(find.text('当前筛选下没有菜谱'), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
   testWidgets('renders recipes returned by the recipe API', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
@@ -41,6 +76,12 @@ void main() {
     expect(find.textContaining('100% 匹配'), findsAtLeastNWidgets(1));
     expect(find.text('番茄滑蛋'), findsNothing);
   });
+}
+
+class _NoExpiringRecipes extends RecipeBrowserController {
+  @override
+  Future<List<RecipeMatch>> build() async =>
+      RecipeMatcher.rank(await _RecipeSource().load(AuthSession.demo()), []);
 }
 
 class _RecipeSessionStore implements SessionStore {
@@ -90,6 +131,13 @@ class _RecipeSource implements RecipeDataSource {
 }
 
 class _RecipeFridgeSource implements FridgeDataSource {
+  @override
+  Future<void> createFridge(
+    AuthSession session,
+    int familyId,
+    String name,
+  ) async {}
+
   @override
   Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
     return const FridgeWorkspaceData(

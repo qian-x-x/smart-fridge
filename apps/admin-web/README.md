@@ -1,4 +1,4 @@
-# 小满冰箱运营后台
+# 小易冰箱运营后台
 
 Vue 3 + TypeScript + Vite + Element Plus + ECharts 管理端。
 

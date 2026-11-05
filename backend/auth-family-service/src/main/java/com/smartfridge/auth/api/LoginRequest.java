@@ -9,4 +9,8 @@ public record LoginRequest(
     @NotBlank(message = "密码不能为空")
     String password
 ) {
+    @jakarta.validation.constraints.AssertTrue(message = "密码编码后不能超过 72 字节")
+    public boolean isPasswordWithinStorageLimit() {
+        return password == null || password.getBytes(java.nio.charset.StandardCharsets.UTF_8).length <= 72;
+    }
 }

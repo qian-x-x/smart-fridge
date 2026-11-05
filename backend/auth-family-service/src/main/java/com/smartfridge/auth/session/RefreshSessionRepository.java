@@ -46,4 +46,12 @@ public class RefreshSessionRepository {
             tokenId
         );
     }
+
+    public boolean consumeActive(String tokenId) {
+        return jdbcTemplate.update(
+            "UPDATE refresh_session SET revoked = TRUE " +
+                "WHERE token_jti = ? AND revoked = FALSE AND expires_at > CURRENT_TIMESTAMP",
+            tokenId
+        ) == 1;
+    }
 }

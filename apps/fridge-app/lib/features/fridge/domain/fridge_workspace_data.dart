@@ -5,6 +5,16 @@ import 'fridge_data.dart';
 export 'fridge_data.dart';
 
 class FridgeWorkspaceData {
+  List<FridgeFood> foodsFromApi(List<dynamic> data, UserProfile user) {
+    final zoneById = {
+      for (final zone in zones)
+        if (zone.serverId != null) zone.serverId!: zone.id,
+    };
+    return data
+        .map((item) => _foodFromApi(_asMap(item), user, zoneById))
+        .toList(growable: false);
+  }
+
   FridgeWorkspaceData withFamilyIdentity({
     required int familyId,
     required String familyName,
@@ -19,6 +29,8 @@ class FridgeWorkspaceData {
       timezone: timezone,
       zones: zones,
       foods: foods,
+      hasFridge: hasFridge,
+      isDemo: isDemo,
     );
   }
 
@@ -32,6 +44,7 @@ class FridgeWorkspaceData {
     required this.zones,
     required this.foods,
     this.isDemo = false,
+    this.hasFridge = true,
   });
 
   final int familyId;
@@ -43,8 +56,21 @@ class FridgeWorkspaceData {
   final List<FridgeZone> zones;
   final List<FridgeFood> foods;
   final bool isDemo;
+  final bool hasFridge;
 
-  bool get canEdit => role == 'OWNER' || role == 'EDITOR';
+  bool get canEdit => hasFridge && (role == 'OWNER' || role == 'EDITOR');
+
+  factory FridgeWorkspaceData.empty(int familyId) => FridgeWorkspaceData(
+    familyId: familyId,
+    familyName: '当前家庭',
+    role: 'VIEWER',
+    fridgeId: 0,
+    fridgeName: '',
+    timezone: 'Asia/Shanghai',
+    zones: const [],
+    foods: const [],
+    hasFridge: false,
+  );
 
   factory FridgeWorkspaceData.demo(UserProfile user) {
     return FridgeWorkspaceData(

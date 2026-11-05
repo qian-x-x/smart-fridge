@@ -62,6 +62,32 @@ void main() {
     expect(api.postCalls.single.$2, {'quantity': 0.5, 'version': 3});
     expect(api.postCalls.single.$3, 'access-token');
   });
+
+  test(
+    'missing fridge is an empty workspace; other errors remain errors',
+    () async {
+      final api = _FakeApiClient()
+        ..fridgeFailure = const ApiFailure('尚未创建', statusCode: 404);
+      final repository = ApiFridgeRepository(api);
+      final workspace = await repository.load(session, 4);
+      expect(workspace.hasFridge, isFalse);
+      expect(workspace.canEdit, isFalse);
+      expect(api.getCalls.length, 1);
+      api.fridgeFailure = const ApiFailure('无权访问', statusCode: 403);
+      await expectLater(
+        repository.load(session, 4),
+        throwsA(isA<ApiFailure>()),
+      );
+    },
+  );
+
+  test('create fridge sends selected family, trimmed name and token', () async {
+    final api = _FakeApiClient();
+    await ApiFridgeRepository(api).createFridge(session, 4, ' 厨房冰箱 ');
+    expect(api.postCalls.single.$1, '/api/v1/fridges');
+    expect(api.postCalls.single.$2, {'familyId': 4, 'name': '厨房冰箱'});
+    expect(api.postCalls.single.$3, 'access-token');
+  });
 }
 
 class _FakeApiClient extends ApiClient {
@@ -70,6 +96,7 @@ class _FakeApiClient extends ApiClient {
   final List<(String, Map<String, dynamic>?, String?)> getCalls = [];
   final List<(String, Map<String, dynamic>, String?)> postCalls = [];
   final List<String?> tokens = [];
+  ApiFailure? fridgeFailure;
 
   @override
   Future<Map<String, dynamic>> get(
@@ -79,6 +106,9 @@ class _FakeApiClient extends ApiClient {
   }) async {
     getCalls.add((path, queryParameters, accessToken));
     tokens.add(accessToken);
+    if (path == '/api/v1/fridges' && fridgeFailure != null) {
+      throw fridgeFailure!;
+    }
     return switch (path) {
       '/api/v1/fridges' => _envelope({
         'id': 1,

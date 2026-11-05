@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -7,6 +9,68 @@ import 'package:smart_fridge_app/features/auth/application/auth_controller.dart'
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 
 void main() {
+  test('parallel refresh callers share one rotating-token request', () async {
+    final expired = _expiredSession();
+    final store = _MemorySessionStore(
+      AuthSession(
+        accessToken: expired.accessToken,
+        refreshToken: expired.refreshToken,
+        expiresIn: 1800,
+        issuedAt: DateTime.now().toUtc(),
+        user: expired.user,
+      ),
+    );
+    final api = _AuthRefreshApiClient()..gate = Completer<void>();
+    final container = ProviderContainer(
+      overrides: [
+        sessionStoreProvider.overrideWithValue(store),
+        apiClientProvider.overrideWithValue(api),
+      ],
+    );
+    addTearDown(container.dispose);
+    await container.read(authControllerProvider.future);
+    final controller = container.read(authControllerProvider.notifier);
+    final pending = List.generate(3, (_) => controller.refreshAccessToken());
+    expect(api.refreshCalls, 1);
+    api.gate!.complete();
+    final sessions = await Future.wait(pending);
+    expect(sessions.every((item) => item.accessToken == 'new-access'), isTrue);
+    expect(api.refreshCalls, 1);
+    expect(container.read(authControllerProvider).value, isNotNull);
+  });
+
+  test(
+    'a late refresh cannot overwrite a newly selected demo session',
+    () async {
+      final expired = _expiredSession();
+      final store = _MemorySessionStore(
+        AuthSession(
+          accessToken: expired.accessToken,
+          refreshToken: expired.refreshToken,
+          expiresIn: 1800,
+          issuedAt: DateTime.now().toUtc(),
+          user: expired.user,
+        ),
+      );
+      final api = _AuthRefreshApiClient()..gate = Completer<void>();
+      final container = ProviderContainer(
+        overrides: [
+          sessionStoreProvider.overrideWithValue(store),
+          apiClientProvider.overrideWithValue(api),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(authControllerProvider.future);
+      final controller = container.read(authControllerProvider.notifier);
+      final pending = controller.refreshAccessToken();
+      final rejected = expectLater(pending, throwsA(isA<ApiFailure>()));
+      await controller.continueWithDemo();
+      api.gate!.complete();
+      await rejected;
+      expect(container.read(authControllerProvider).value?.isDemo, isTrue);
+      expect(store.session?.isDemo, isTrue);
+    },
+  );
   test('restores an expired session by refreshing it', () async {
     final store = _MemorySessionStore(_expiredSession());
     final api = _AuthRefreshApiClient();
@@ -85,6 +149,7 @@ class _AuthRefreshApiClient extends ApiClient {
 
   final bool failRefresh;
   int refreshCalls = 0;
+  Completer<void>? gate;
 
   @override
   Future<Map<String, dynamic>> post(
@@ -96,12 +161,9 @@ class _AuthRefreshApiClient extends ApiClient {
       throw StateError('Unexpected POST $path');
     }
     refreshCalls++;
+    await gate?.future;
     if (failRefresh) {
-      throw const ApiFailure(
-        '刷新令牌已失效',
-        statusCode: 401,
-        code: 'UNAUTHORIZED',
-      );
+      throw const ApiFailure('刷新令牌已失效', statusCode: 401, code: 'UNAUTHORIZED');
     }
     return {
       'code': 'OK',

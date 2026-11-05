@@ -41,36 +41,33 @@ class FamilyMembersController extends AsyncNotifier<List<FamilyMember>> {
   Future<void> transfer(int targetUserId) async {
     final session = await _session();
     final family = await _selectedFamily();
-    final previous = state;
+    await _source.transferOwner(session, family.id, targetUserId);
+    await ref.read(familyControllerProvider.notifier).refresh();
+    ref.invalidateSelf();
     try {
-      await _source.transferOwner(session, family.id, targetUserId);
-      await ref.read(familyControllerProvider.notifier).refresh();
-      state = AsyncData(await _source.listMembers(session, family.id));
-    } on Object catch (error, stackTrace) {
-      state = previous;
-      Error.throwWithStackTrace(error, stackTrace);
+      await future;
+    } on Object {
+      // Governance succeeded; member-list errors have their own retry action.
     }
   }
 
   Future<void> refresh() async {
-    final session = await _session();
-    final family = await _selectedFamily();
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _source.listMembers(session, family.id),
-    );
+    ref.invalidateSelf();
+    try {
+      await future;
+    } on Object {
+      // Keep refresh failures in the provider's error state.
+    }
   }
 
   Future<void> _mutate(Future<void> Function() action) async {
-    final session = await _session();
-    final family = await _selectedFamily();
-    final previous = state;
+    await action();
+    // Rebuild against the current family; the user may have switched while waiting.
+    ref.invalidateSelf();
     try {
-      await action();
-      state = AsyncData(await _source.listMembers(session, family.id));
-    } on Object catch (error, stackTrace) {
-      state = previous;
-      Error.throwWithStackTrace(error, stackTrace);
+      await future;
+    } on Object {
+      // Do not present an applied member change as a failed write.
     }
   }
 

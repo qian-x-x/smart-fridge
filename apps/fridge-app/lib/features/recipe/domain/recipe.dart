@@ -95,8 +95,10 @@ abstract final class RecipeMatcher {
       final food = foods
           .where(
             (candidate) =>
-                _matches(ingredient.name, candidate.name) ||
-                _matches(ingredient.name, candidate.category),
+                candidate.quantity > 0 &&
+                candidate.expiresInDays >= 0 &&
+                (_matches(ingredient.name, candidate.name) ||
+                    _matches(ingredient.name, candidate.category)),
           )
           .firstOrNull;
       if (food == null) {
@@ -131,7 +133,8 @@ abstract final class RecipeMatcher {
       {'玉米', '速冻玉米粒'},
     ];
     return aliases.any(
-      (group) => group.any((value) => left.contains(value)) &&
+      (group) =>
+          group.any((value) => left.contains(value)) &&
           group.any((value) => right.contains(value)),
     );
   }

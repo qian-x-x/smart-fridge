@@ -65,6 +65,21 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - assets/images/fridge-kitchen-v1.png
+    - assets/images/kitchen-harvest.jpg
+    - assets/images/recipe-tomato-eggs.jpg
+    - assets/images/recipe-broccoli.jpg
+    - assets/images/recipe-pumpkin.jpg
+    - assets/images/recipe-steamed-eggs.jpg
+    - assets/fonts/OFL.txt
+  fonts:
+    - family: XiaoyiUI
+      fonts:
+        - asset: assets/fonts/XiaoyiUI-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/XiaoyiUI-Semibold.ttf
+          weight: 600
 
   # To add assets to your application, add an assets section, like this:
   # assets:

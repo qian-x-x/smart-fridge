@@ -18,7 +18,7 @@ public class GatewayTraceFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String requestedTraceId = exchange.getRequest().getHeaders().getFirst(TRACE_HEADER);
-        final String traceId = requestedTraceId == null || requestedTraceId.isBlank()
+        final String traceId = requestedTraceId == null || !requestedTraceId.matches("[A-Za-z0-9._-]{1,128}")
             ? UUID.randomUUID().toString()
             : requestedTraceId;
 

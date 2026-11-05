@@ -8,6 +8,8 @@ final authControllerProvider =
     AsyncNotifierProvider<AuthController, AuthSession?>(AuthController.new);
 
 class AuthController extends AsyncNotifier<AuthSession?> {
+  Future<AuthSession>? _refreshing;
+  int _revision = 0;
   SessionStore get _store => ref.read(sessionStoreProvider);
   AuthRepository get _repository => ref.read(authRepositoryProvider);
 
@@ -34,6 +36,7 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     required String identifier,
     required String password,
   }) async {
+    _revision++;
     final session = await _repository.login(
       identifier: identifier,
       password: password,
@@ -47,6 +50,7 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     required String displayName,
     required String password,
   }) async {
+    _revision++;
     final session = await _repository.register(
       username: username,
       displayName: displayName,
@@ -57,12 +61,24 @@ class AuthController extends AsyncNotifier<AuthSession?> {
   }
 
   Future<void> continueWithDemo() async {
+    _revision++;
     final session = AuthSession.demo();
     await _store.write(session);
     state = AsyncData(session);
   }
 
-  Future<AuthSession> refreshAccessToken() async {
+  Future<AuthSession> refreshAccessToken() {
+    final pending = _refreshing;
+    if (pending != null) return pending;
+    late final Future<AuthSession> request;
+    request = _refreshSession(_revision).whenComplete(() {
+      if (identical(_refreshing, request)) _refreshing = null;
+    });
+    _refreshing = request;
+    return request;
+  }
+
+  Future<AuthSession> _refreshSession(int revision) async {
     final current = state.value ?? await _store.read();
     if (current == null) {
       throw const ApiFailure('登录会话已失效，请重新登录', statusCode: 401);
@@ -72,11 +88,15 @@ class AuthController extends AsyncNotifier<AuthSession?> {
     }
     try {
       final refreshed = await _repository.refresh(current);
+      if (revision != _revision) {
+        throw const ApiFailure('会话已变更，请重试当前操作');
+      }
       await _store.write(refreshed);
       state = AsyncData(refreshed);
       return refreshed;
     } on ApiFailure catch (error) {
-      if (error.statusCode == 401 || error.code == 'UNAUTHORIZED') {
+      if (revision == _revision &&
+          (error.statusCode == 401 || error.code == 'UNAUTHORIZED')) {
         await _store.clear();
         state = const AsyncData(null);
       }
@@ -85,6 +105,8 @@ class AuthController extends AsyncNotifier<AuthSession?> {
   }
 
   Future<void> logout() async {
+    _revision++;
+    _refreshing = null;
     final current = state.value;
     if (current != null) {
       try {

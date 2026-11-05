@@ -3,115 +3,220 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 import 'package:smart_fridge_app/features/recipe/domain/recipe.dart';
+import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 
 class RecipesPage extends ConsumerStatefulWidget {
   const RecipesPage({super.key});
-
   @override
   ConsumerState<RecipesPage> createState() => _RecipesPageState();
 }
 
 class _RecipesPageState extends ConsumerState<RecipesPage> {
   int _filter = 0;
+  final _search = TextEditingController();
 
   @override
-  Widget build(BuildContext context) {
-    final recipes = ref.watch(recipeBrowserProvider);
-    return recipes.when(
-      data: _buildRecipes,
-      loading: () => const _RecipeLoading(),
-      error: (error, stackTrace) => _RecipeLoadError(
-        message: error.toString(),
-        onRetry: () => ref.read(recipeBrowserProvider.notifier).refresh(),
-      ),
-    );
+  void dispose() {
+    _search.dispose();
+    super.dispose();
   }
 
-  Widget _buildRecipes(List<RecipeMatch> matches) {
-    final filtered = switch (_filter) {
-      1 => matches.where((match) => match.expiringMatches > 0).toList(),
-      2 => matches
-          .where((match) => match.recipe.durationMinutes <= 20)
-          .toList(),
-      _ => matches,
-    };
-    final primary = filtered.firstOrNull;
+  @override
+  Widget build(BuildContext context) => ref
+      .watch(recipeBrowserProvider)
+      .when(
+        data: _buildRecipes,
+        loading: () => const _RecipeLoading(),
+        error: (error, stack) => _RecipeLoadError(
+          message: error.toString(),
+          onRetry: () => ref.read(recipeBrowserProvider.notifier).refresh(),
+        ),
+      );
 
+  Widget _buildRecipes(List<RecipeMatch> matches) {
+    final query = _search.text.trim().toLowerCase();
+    final filtered = matches.where((match) {
+      final matchesFilter = switch (_filter) {
+        1 => match.expiringMatches > 0,
+        2 => match.recipe.durationMinutes <= 20,
+        _ => true,
+      };
+      return matchesFilter && match.recipe.name.toLowerCase().contains(query);
+    }).toList();
     return LayoutBuilder(
       builder: (context, constraints) {
-        final desktop = constraints.maxWidth >= 1040;
-        final compact = constraints.maxWidth < 620;
-
-        return DecoratedBox(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xFFFAF6EF), AppColors.cream],
-            ),
+        final desktop = constraints.maxWidth >= 950;
+        return SingleChildScrollView(
+          key: const PageStorageKey('recipe-page-scroll'),
+          padding: EdgeInsets.fromLTRB(
+            desktop ? 32 : 20,
+            26,
+            desktop ? 32 : 20,
+            32,
           ),
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            padding: EdgeInsets.fromLTRB(
-              desktop ? 34 : 20,
-              desktop ? 24 : 22,
-              desktop ? 34 : 20,
-              32,
-            ),
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1240),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _RecipeHeader(desktop: desktop, recipeCount: matches.length),
-                    const SizedBox(height: 22),
-                    if (primary == null)
-                      const _RecipeEmptyState()
-                    else if (desktop)
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1440),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    'COOK WITH WHAT YOU HAVE',
+                    style: TextStyle(
+                      color: AppColors.muted,
+                      letterSpacing: 2,
+                      fontSize: 10,
+                    ),
+                  ),
+                  const SizedBox(height: 9),
+                  Text(
+                    desktop ? '好食材，值得好好做。' : '今天，吃点什么？',
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                  const SizedBox(height: 9),
+                  Text(
+                    '查查冰箱里的食材，让 ${matches.length} 道菜谱给下一餐一点灵感。',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.muted,
+                      height: 1.6,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 14,
+                      horizontal: 18,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.butter,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.eco_outlined,
+                          size: 20,
+                          color: AppColors.warning,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            matches.any((m) => m.expiringMatches > 0)
+                                ? '有菜谱能用上临期食材，切换“临期优先”看看。'
+                                : '优先选择食材齐全的菜谱，少补一点，也能好好吃饭。',
+                            style: const TextStyle(
+                              color: AppColors.warning,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 20,
+                    runSpacing: 14,
+                    children: [
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
-                          Expanded(
-                            flex: 5,
-                            child: _RecommendationHero(
-                              match: primary,
-                              onTap: () => _showDetails(primary),
+                          for (final label in [
+                            '全部菜谱',
+                            '临期优先',
+                            '20 分钟内',
+                          ].indexed)
+                            ChoiceChip(
+                              label: Text(label.$2),
+                              selected: _filter == label.$1,
+                              showCheckmark: false,
+                              labelStyle: TextStyle(
+                                fontFamily: 'XiaoyiUI',
+                                color: _filter == label.$1
+                                    ? Colors.white
+                                    : AppColors.muted,
+                                fontSize: 12,
+                              ),
+                              onSelected: (_) =>
+                                  setState(() => _filter = label.$1),
                             ),
-                          ),
-                          const SizedBox(width: 24),
-                          Expanded(
-                            flex: 4,
-                            child: _RecipeList(
-                              matches: filtered.skip(1).toList(),
-                              compact: compact,
-                              selectedFilter: _filter,
-                              onFilterSelected: (value) {
-                                setState(() => _filter = value);
-                              },
-                              onRecipeTap: _showDetails,
-                            ),
-                          ),
                         ],
-                      )
-                    else ...[
-                      _RecommendationHero(
-                        match: primary,
-                        onTap: () => _showDetails(primary),
                       ),
-                      const SizedBox(height: 20),
-                      _RecipeList(
-                        matches: filtered.skip(1).toList(),
-                        compact: compact,
-                        selectedFilter: _filter,
-                        onFilterSelected: (value) {
-                          setState(() => _filter = value);
-                        },
-                        onRecipeTap: _showDetails,
+                      SizedBox(
+                        width: desktop ? 280 : constraints.maxWidth - 40,
+                        child: TextField(
+                          key: const ValueKey('recipe-search-input'),
+                          controller: _search,
+                          onChanged: (_) => setState(() {}),
+                          decoration: InputDecoration(
+                            hintText: '搜索菜谱名称',
+                            prefixIcon: const Icon(Icons.search, size: 20),
+                            suffixIcon: _search.text.isNotEmpty
+                                ? IconButton(
+                                    tooltip: '清除搜索',
+                                    onPressed: () => setState(_search.clear),
+                                    icon: const Icon(Icons.close, size: 18),
+                                  )
+                                : null,
+                          ),
+                        ),
                       ),
                     ],
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 24),
+                  if (filtered.isEmpty)
+                    _RecipeEmptyState(
+                      onClear: _filter != 0 || query.isNotEmpty
+                          ? () => setState(() {
+                              _filter = 0;
+                              _search.clear();
+                            })
+                          : null,
+                    )
+                  else if (desktop)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: _RecipeCard(
+                            match: filtered.first,
+                            hero: true,
+                            onTap: () => _showDetails(filtered.first),
+                          ),
+                        ),
+                        const SizedBox(width: 22),
+                        Expanded(
+                          flex: 5,
+                          child: Column(
+                            children: [
+                              for (final match in filtered.skip(1))
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
+                                  child: _RecipeCard(
+                                    match: match,
+                                    onTap: () => _showDetails(match),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  else
+                    for (final match in filtered)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        child: _RecipeCard(
+                          match: match,
+                          onTap: () => _showDetails(match),
+                        ),
+                      ),
+                ],
               ),
             ),
           ),
@@ -120,446 +225,189 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
     );
   }
 
-  Future<void> _showDetails(RecipeMatch match) {
-    return showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      backgroundColor: AppColors.cream,
-      builder: (context) => _RecipeDetailsSheet(match: match),
-    );
-  }
+  Future<void> _showDetails(RecipeMatch match) => showModalBottomSheet<void>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: AppColors.paper,
+    builder: (context) => _RecipeDetailsSheet(match: match),
+  );
 }
 
-class _RecipeHeader extends StatelessWidget {
-  const _RecipeHeader({required this.desktop, required this.recipeCount});
+String? _recipeImage(Recipe recipe) {
+  final name = recipe.name;
+  if ((name.contains('番茄') || name.contains('西红柿')) && name.contains('蛋')) {
+    return 'assets/images/recipe-tomato-eggs.jpg';
+  }
+  if (name.contains('西兰花')) return 'assets/images/recipe-broccoli.jpg';
+  if (name.contains('南瓜') && name.contains('粥')) {
+    return 'assets/images/recipe-pumpkin.jpg';
+  }
+  if (name.contains('蒸蛋') || name.contains('鸡蛋羹')) {
+    return 'assets/images/recipe-steamed-eggs.jpg';
+  }
+  return null;
+}
 
-  final bool desktop;
-  final int recipeCount;
-
+class _RecipeArtwork extends StatelessWidget {
+  const _RecipeArtwork({required this.recipe, required this.height});
+  final Recipe recipe;
+  final double height;
   @override
   Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '今晚吃什么',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontSize: desktop ? 30 : 27,
-                  letterSpacing: -0.9,
+    final image = _recipeImage(recipe);
+    return SizedBox(
+      height: height,
+      child: image != null
+          ? Image.asset(
+              image,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              semanticLabel: '${recipe.name}示意图',
+            )
+          : ColoredBox(
+              color: AppColors.linen,
+              child: Center(
+                child: Text(
+                  recipe.coverEmoji,
+                  style: TextStyle(fontSize: height > 160 ? 94 : 46),
                 ),
               ),
-              const SizedBox(height: 7),
-              Text(
-                '已从菜谱服务加载 $recipeCount 道菜，并按冰箱现有食材与临期状态排序。',
-                style: Theme.of(context).textTheme.bodyMedium
-                    ?.copyWith(color: AppColors.cocoa.withValues(alpha: 0.62)),
-              ),
-            ],
-          ),
-        ),
-        if (desktop)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
-            decoration: BoxDecoration(
-              color: AppColors.paper.withValues(alpha: 0.78),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.white),
             ),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 17,
-                  color: AppColors.sage,
-                ),
-                SizedBox(width: 7),
-                Text(
-                  '按冰箱库存实时推荐',
-                  style: TextStyle(
-                    color: AppColors.cocoa,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-          ),
-      ],
     );
   }
 }
 
-class _RecipeList extends StatelessWidget {
-  const _RecipeList({
-    required this.matches,
-    required this.compact,
-    required this.selectedFilter,
-    required this.onFilterSelected,
-    required this.onRecipeTap,
+class _RecipeCard extends StatelessWidget {
+  const _RecipeCard({
+    required this.match,
+    required this.onTap,
+    this.hero = false,
   });
-
-  final List<RecipeMatch> matches;
-  final bool compact;
-  final int selectedFilter;
-  final ValueChanged<int> onFilterSelected;
-  final ValueChanged<RecipeMatch> onRecipeTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _FilterBar(
-          selected: selectedFilter,
-          onSelected: onFilterSelected,
-        ),
-        const SizedBox(height: 22),
-        Text('其他刚刚好的灵感', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 12),
-        if (matches.isEmpty)
-          Container(
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: AppColors.paper,
-              borderRadius: BorderRadius.circular(22),
-            ),
-            child: const Text('当前筛选下没有更多菜谱'),
-          ),
-        for (var index = 0; index < matches.length; index++) ...[
-          if (index > 0) const SizedBox(height: 10),
-          _RecipeTile(
-            match: matches[index],
-            color: _tileColors[index % _tileColors.length],
-            onTap: () => onRecipeTap(matches[index]),
-          ),
-        ],
-        const SizedBox(height: 18),
-        OutlinedButton.icon(
-          onPressed: () {},
-          icon: const Icon(Icons.tune_rounded),
-          label: const Text('按口味和耗时筛选'),
-        ),
-      ],
-    );
-  }
-
-  static const _tileColors = [
-    Color(0xFFE5EEE0),
-    Color(0xFFF3E2D7),
-    Color(0xFFF5ECD2),
-  ];
-}
-
-class _FilterBar extends StatelessWidget {
-  const _FilterBar({required this.selected, required this.onSelected});
-
-  final int selected;
-  final ValueChanged<int> onSelected;
-  static const _labels = ['全部食材', '临期优先', '20 分钟内'];
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        for (var index = 0; index < _labels.length; index++) ...[
-          if (index > 0) const SizedBox(width: 8),
-          Expanded(
-            child: GestureDetector(
-              onTap: () => onSelected(index),
-              child: _FilterChip(
-                label: _labels[index],
-                selected: selected == index,
-              ),
-            ),
-          ),
-        ],
-      ],
-    );
-  }
-}
-
-class _RecommendationHero extends StatelessWidget {
-  const _RecommendationHero({required this.match, required this.onTap});
-
   final RecipeMatch match;
   final VoidCallback onTap;
-
+  final bool hero;
   @override
   Widget build(BuildContext context) {
     final recipe = match.recipe;
-    final coverage = '${match.matchedCount} / ${match.requiredCount}';
-    return Container(
-      padding: const EdgeInsets.all(22),
-      decoration: BoxDecoration(
-        color: AppColors.cocoa,
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x245B4336),
-            blurRadius: 28,
-            offset: Offset(0, 14),
-          ),
-        ],
-      ),
+    final content = Padding(
+      padding: EdgeInsets.all(hero ? 24 : 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.butter,
-                  borderRadius: BorderRadius.circular(99),
-                ),
+              Expanded(
                 child: Text(
-                  '今日首选 · ${match.score}% 匹配',
-                  style: const TextStyle(
-                    color: AppColors.cocoa,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w800,
+                  recipe.name,
+                  style: TextStyle(
+                    fontSize: hero ? 23 : 16,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
               ),
-              const Spacer(),
-              const Icon(Icons.bookmark_border_rounded, color: AppColors.linen),
+              const SizedBox(width: 5),
+              const Icon(Icons.north_east, size: 18, color: AppColors.muted),
             ],
           ),
-          const SizedBox(height: 24),
-          Row(
+          const SizedBox(height: 6),
+          Text(
+            '${recipe.durationMinutes} 分钟 · ${recipe.category}',
+            style: const TextStyle(fontSize: 12, color: AppColors.muted),
+          ),
+          if (hero) ...[
+            const SizedBox(height: 12),
+            Text(
+              recipe.summary,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.muted,
+                height: 1.7,
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 5,
             children: [
-              Text(recipe.coverEmoji, style: const TextStyle(fontSize: 66)),
-              const SizedBox(width: 15),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      recipe.name,
-                      style: Theme.of(context).textTheme.headlineMedium
-                          ?.copyWith(color: AppColors.cream),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      '${recipe.summary} · ${recipe.durationMinutes} 分钟 · '
-                      '${recipe.category}',
-                      style: TextStyle(
-                        color: AppColors.cream.withValues(alpha: 0.62),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
+              Text(
+                '${match.score}% 匹配',
+                style: const TextStyle(
+                  color: AppColors.terracotta,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
                 ),
+              ),
+              Text(
+                '${match.matchedCount} / ${match.requiredCount} 食材已有',
+                style: const TextStyle(color: AppColors.muted, fontSize: 12),
               ),
             ],
           ),
-          const SizedBox(height: 22),
-          Row(
-            children: [
-              Expanded(
-                child: _HeroMetric(label: '已有', value: coverage),
-              ),
-              Expanded(
-                child: _HeroMetric(
-                  label: '热量',
-                  value: '约 ${recipe.calories} kcal',
-                ),
-              ),
-              Expanded(
-                child: FilledButton(
-                  onPressed: onTap,
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.terracotta,
-                    minimumSize: const Size(0, 44),
-                  ),
-                  child: const Text('查看菜谱'),
-                ),
-              ),
-            ],
+          const SizedBox(height: 7),
+          Text(
+            match.complete
+                ? '食材齐全'
+                : '缺少：${match.missingIngredients.map((i) => i.name).join('、')}',
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: match.complete ? AppColors.sage : AppColors.terracotta,
+              fontSize: 11,
+            ),
           ),
+          const SizedBox(height: 12),
+          LinearProgressIndicator(
+            value: match.score / 100,
+            minHeight: 4,
+            borderRadius: BorderRadius.circular(4),
+            backgroundColor: AppColors.linen,
+            color: AppColors.terracotta,
+            semanticsLabel: '食材匹配',
+            semanticsValue: '${match.score}%',
+          ),
+          if (match.expiringMatches > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Text(
+                '优先消耗 ${match.expiringMatches} 项临期食材',
+                style: const TextStyle(color: AppColors.warning, fontSize: 11),
+              ),
+            ),
         ],
       ),
     );
-  }
-}
-
-class _HeroMetric extends StatelessWidget {
-  const _HeroMetric({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: AppColors.cream.withValues(alpha: 0.5),
-            fontSize: 10,
-          ),
+    return PressFeedback(
+      child: Material(
+        color: AppColors.paper,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: const BorderSide(color: AppColors.border),
         ),
-        const SizedBox(height: 3),
-        Text(
-          value,
-          style: const TextStyle(
-            color: AppColors.cream,
-            fontWeight: FontWeight.w700,
-            fontSize: 12,
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _FilterChip extends StatelessWidget {
-  const _FilterChip({required this.label, this.selected = false});
-
-  final String label;
-  final bool selected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 10),
-      decoration: BoxDecoration(
-        color: selected ? AppColors.cocoa : AppColors.paper,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: selected ? AppColors.cocoa : AppColors.linen),
-      ),
-      child: Text(
-        label,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          color: selected ? AppColors.cream : AppColors.cocoa,
-          fontSize: 10,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    );
-  }
-}
-
-class _RecipeTile extends StatelessWidget {
-  const _RecipeTile({
-    required this.match,
-    required this.color,
-    required this.onTap,
-  });
-
-  final RecipeMatch match;
-  final Color color;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final recipe = match.recipe;
-    final missingLabel = match.complete
-        ? '食材齐全'
-        : '缺少：${match.missingIngredients.map((item) => item.name).join('、')}';
-    return Material(
-      color: AppColors.paper,
-      borderRadius: BorderRadius.circular(23),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(23),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(23),
-            border: Border.all(color: const Color(0x185B4336)),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 70,
-                height: 78,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: Text(
-                  recipe.coverEmoji,
-                  style: const TextStyle(fontSize: 38),
-                ),
-              ),
-              const SizedBox(width: 13),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: hero
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Row(
-                      children: [
-                        Flexible(
-                          child: Text(
-                            recipe.name,
-                            style: const TextStyle(
-                              color: AppColors.ink,
-                              fontWeight: FontWeight.w800,
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 7),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 7,
-                            vertical: 3,
-                          ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFEAF0E7),
-                            borderRadius: BorderRadius.circular(99),
-                          ),
-                          child: Text(
-                            '${match.score}%',
-                            style: const TextStyle(
-                              color: AppColors.sage,
-                              fontSize: 9,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                        ),
-                      ],
+                    _RecipeArtwork(recipe: recipe, height: 320),
+                    content,
+                  ],
+                )
+              : Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(
+                      width: 104,
+                      child: _RecipeArtwork(recipe: recipe, height: 186),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      '${recipe.durationMinutes} 分钟 · ${recipe.category}',
-                      style: TextStyle(
-                        color: AppColors.cocoa.withValues(alpha: 0.6),
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 7),
-                    Text(
-                      missingLabel,
-                      style: TextStyle(
-                        color: match.complete
-                            ? AppColors.sage
-                            : AppColors.terracotta,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
+                    Expanded(child: content),
                   ],
                 ),
-              ),
-              const Icon(Icons.chevron_right_rounded, color: AppColors.sand),
-            ],
-          ),
         ),
       ),
     );
@@ -594,13 +442,17 @@ class _RecipeDetailsSheet extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 22),
+            const SizedBox(height: 18),
+            if (_recipeImage(recipe) != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: _RecipeArtwork(recipe: recipe, height: 210),
+              ),
+              const SizedBox(height: 20),
+            ],
             Row(
               children: [
-                Text(
-                  recipe.coverEmoji,
-                  style: const TextStyle(fontSize: 54),
-                ),
+                Text(recipe.coverEmoji, style: const TextStyle(fontSize: 54)),
                 const SizedBox(width: 14),
                 Expanded(
                   child: Column(
@@ -627,7 +479,7 @@ class _RecipeDetailsSheet extends StatelessWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.cocoa,
+                    color: AppColors.terracotta,
                     borderRadius: BorderRadius.circular(99),
                   ),
                   child: Text(
@@ -793,7 +645,11 @@ class _RecipeLoadError extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.menu_book_rounded, color: AppColors.rose, size: 32),
+            const Icon(
+              Icons.menu_book_rounded,
+              color: AppColors.rose,
+              size: 32,
+            ),
             const SizedBox(height: 12),
             Text(
               message,
@@ -801,7 +657,7 @@ class _RecipeLoadError extends StatelessWidget {
               style: const TextStyle(color: AppColors.cocoa),
             ),
             const SizedBox(height: 14),
-            FilledButton.icon(
+            AppFilledButton.icon(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh_rounded),
               label: const Text('重新加载'),
@@ -814,7 +670,8 @@ class _RecipeLoadError extends StatelessWidget {
 }
 
 class _RecipeEmptyState extends StatelessWidget {
-  const _RecipeEmptyState();
+  const _RecipeEmptyState({this.onClear});
+  final VoidCallback? onClear;
 
   @override
   Widget build(BuildContext context) {
@@ -822,13 +679,21 @@ class _RecipeEmptyState extends StatelessWidget {
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.paper,
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(14),
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Icon(Icons.restaurant_menu_rounded, color: AppColors.sage, size: 34),
-          SizedBox(height: 12),
-          Text('当前筛选下没有菜谱'),
+          const Icon(
+            Icons.restaurant_menu_rounded,
+            color: AppColors.sage,
+            size: 34,
+          ),
+          const SizedBox(height: 12),
+          const Text('当前筛选下没有菜谱'),
+          if (onClear != null) ...[
+            const SizedBox(height: 12),
+            AppOutlinedButton(onPressed: onClear, child: const Text('查看全部菜谱')),
+          ],
         ],
       ),
     );

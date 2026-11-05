@@ -332,9 +332,8 @@ public class FoodRepository {
         return true;
     }
 
-    public List<FoodView> searchByName(long fridgeId, String query) {
-        return jdbcTemplate.query(
-            """
+    public List<FoodView> search(long fridgeId, FoodSearchFilter filter, LocalDate today) {
+        StringBuilder sql = new StringBuilder("""
                 SELECT id, fridge_id, zone_id, container_id, name, category,
                        quantity, unit, production_date, expires_on, tags,
                        model_key, photo_url, status, version, created_by,
@@ -342,13 +341,59 @@ public class FoodRepository {
                 FROM food_item
                 WHERE fridge_id = ?
                   AND status = 'ACTIVE'
-                  AND LOWER(name) LIKE LOWER(?)
-                ORDER BY expires_on, id
-                """,
-            ROW_MAPPER,
-            fridgeId,
-            "%" + query.trim() + "%"
-        ).stream().map(this::view).toList();
+                """);
+        java.util.ArrayList<Object> args = new java.util.ArrayList<>();
+        args.add(fridgeId);
+        if (filter.query() != null && !filter.query().isBlank()) {
+            sql.append(" AND LOWER(name) LIKE LOWER(?) ESCAPE '!'");
+            args.add("%" + escapeLike(filter.query().trim()) + "%");
+        }
+        if (filter.category() != null && !filter.category().isBlank()) {
+            sql.append(" AND category = ?");
+            args.add(filter.category().trim());
+        }
+        if (filter.zoneId() != null) {
+            sql.append(" AND zone_id = ?");
+            args.add(filter.zoneId());
+        }
+        if (filter.tags() != null) {
+            for (String tag : filter.tags().stream().map(String::trim).distinct().toList()) {
+                sql.append(" AND CONCAT(',', tags, ',') LIKE ? ESCAPE '!'");
+                args.add("%," + escapeLike(tag) + ",%");
+            }
+        }
+        if (filter.expiresFrom() != null) {
+            sql.append(" AND expires_on >= ?");
+            args.add(Date.valueOf(filter.expiresFrom()));
+        }
+        if (filter.expiresTo() != null) {
+            sql.append(" AND expires_on <= ?");
+            args.add(Date.valueOf(filter.expiresTo()));
+        }
+        FoodSearchFilter.ExpiryState expiry = filter.expiryState() == null
+            ? FoodSearchFilter.ExpiryState.ALL : filter.expiryState();
+        switch (expiry) {
+            case EXPIRED -> { sql.append(" AND expires_on < ?"); args.add(Date.valueOf(today)); }
+            case EXPIRING -> {
+                sql.append(" AND expires_on >= ? AND expires_on <= ?");
+                args.add(Date.valueOf(today));
+                args.add(Date.valueOf(today.plusDays(3)));
+            }
+            case FRESH -> { sql.append(" AND expires_on > ?"); args.add(Date.valueOf(today.plusDays(3))); }
+            case ALL -> { }
+        }
+        FoodSearchFilter.Sort sort = filter.sort() == null ? FoodSearchFilter.Sort.EXPIRES_ASC : filter.sort();
+        sql.append(switch (sort) {
+            case EXPIRES_ASC -> " ORDER BY expires_on ASC, id ASC";
+            case EXPIRES_DESC -> " ORDER BY expires_on DESC, id ASC";
+            case NAME_ASC -> " ORDER BY name ASC, id ASC";
+            case CREATED_DESC -> " ORDER BY created_at DESC, id ASC";
+        });
+        return jdbcTemplate.query(sql.toString(), ROW_MAPPER, args.toArray()).stream().map(this::view).toList();
+    }
+
+    private String escapeLike(String value) {
+        return value.replace("!", "!!").replace("%", "!%").replace("_", "!_");
     }
 
     private void recordOperation(

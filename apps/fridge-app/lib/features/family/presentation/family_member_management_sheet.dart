@@ -1,3 +1,4 @@
+import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
@@ -8,9 +9,10 @@ import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 Future<void> showFamilyMemberManagementSheet(BuildContext context) {
   return showModalBottomSheet<void>(
     context: context,
+    useRootNavigator: true,
     useSafeArea: true,
     isScrollControlled: true,
-    backgroundColor: AppColors.cream,
+    backgroundColor: AppColors.paper,
     builder: (context) => const FamilyMemberManagementSheet(),
   );
 }
@@ -117,7 +119,7 @@ class FamilyMemberManagementSheet extends ConsumerWidget {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('取消'),
           ),
-          FilledButton(
+          AppFilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('移除'),
           ),
@@ -151,7 +153,7 @@ class FamilyMemberManagementSheet extends ConsumerWidget {
             onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('取消'),
           ),
-          FilledButton(
+          AppFilledButton(
             onPressed: () => Navigator.of(dialogContext).pop(true),
             child: const Text('确认转交'),
           ),

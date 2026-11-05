@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_fridge_app/features/family/presentation/family_action_dialog.dart';
 import 'package:smart_fridge_app/core/session/session_store.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
@@ -12,6 +13,74 @@ import 'package:smart_fridge_app/features/family/domain/family_member.dart';
 import 'package:smart_fridge_app/features/profile/presentation/profile_page.dart';
 
 void main() {
+  testWidgets('family forms validate and retain failed input for retry', (
+    tester,
+  ) async {
+    var calls = 0;
+    var reject = true;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.light,
+        home: Scaffold(
+          body: FamilyActionDialog(
+            join: true,
+            onSubmit: (value) async {
+              calls++;
+              if (reject) throw StateError('邀请码无效');
+              return null;
+            },
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('join-family-submit')));
+    await tester.pumpAndSettle();
+    expect(calls, 0);
+    expect(find.text('请输入 8 位字母或数字邀请码'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('invite-code-input')),
+      'TEST2026',
+    );
+    await tester.tap(find.byKey(const ValueKey('join-family-submit')));
+    await tester.pumpAndSettle();
+    expect(calls, 1);
+    expect(find.text('TEST2026'), findsOneWidget);
+    expect(find.text('邀请码无效'), findsOneWidget);
+    reject = false;
+  });
+
+  testWidgets('all settings rows open an honest capability dialog', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1366, 1100));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
+          familyDataSourceProvider.overrideWithValue(_EmptyFamilySource()),
+          familySelectionStoreProvider.overrideWithValue(
+            _MemoryFamilySelectionStore(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: AppTheme.light,
+          home: const Scaffold(body: ProfilePage()),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    for (final title in ['临期提醒', '冰箱布局', '外观与可访问性']) {
+      await tester.ensureVisible(find.text(title));
+      await tester.tap(find.text(title));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsOneWidget);
+      await tester.tap(find.text('关闭'));
+      await tester.pumpAndSettle();
+      expect(find.byType(AlertDialog), findsNothing);
+    }
+    expect(find.byType(Switch), findsNothing);
+  });
   testWidgets('profile displays data returned by the family API', (
     tester,
   ) async {

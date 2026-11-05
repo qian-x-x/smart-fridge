@@ -22,7 +22,12 @@ public class FamilyAccessService {
     public String requireMember(long familyId, String authorization) {
         try {
             FamilyAccessEnvelope response = client.getFamily(familyId, authorization);
-            String role = response.data() == null ? null : response.data().currentUserRole();
+            if (response == null || !"OK".equals(response.code()) || response.data() == null ||
+                response.data().currentUserRole() == null) {
+                throw new BusinessException(ErrorCode.INTERNAL_ERROR, HttpStatus.SERVICE_UNAVAILABLE,
+                    "家庭权限服务返回了无效响应");
+            }
+            String role = response.data().currentUserRole();
             if (!MEMBER_ROLES.contains(role)) {
                 throw BusinessException.forbidden("无权访问该家庭");
             }

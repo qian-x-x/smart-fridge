@@ -1,3 +1,4 @@
+import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,7 +33,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: '欢迎回家',
-      subtitle: '登录后，冰箱里的变化家人也能马上看见。',
+      subtitle: '管理食材与菜谱，和家人共享同一份库存。',
       child: Form(
         key: _formKey,
         child: Column(
@@ -79,7 +80,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               _ErrorBanner(message: _error!),
             ],
             const SizedBox(height: 20),
-            FilledButton(
+            AppFilledButton(
               onPressed: _submitting ? null : _submit,
               child: _submitting
                   ? const SizedBox(
@@ -93,7 +94,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   : const Text('进入我的冰箱'),
             ),
             const SizedBox(height: 12),
-            OutlinedButton(
+            AppOutlinedButton(
               onPressed: _submitting ? null : _openDemo,
               child: const Text('先用演示数据看看'),
             ),

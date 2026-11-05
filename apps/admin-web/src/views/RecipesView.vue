@@ -88,7 +88,7 @@ function tagTone(value: RecipeRow['status']) {
 }
 
 function comingSoon(action: string) {
-  ElMessage.info(`${action}接口将在菜谱服务进入 S2 后接入`)
+  ElMessage.info(`${action}操作将在运营接口接入后启用`)
 }
 </script>
 
@@ -99,7 +99,7 @@ function comingSoon(action: string) {
         <p class="page-kicker">CONTENT LIBRARY</p>
         <h1 class="page-title">菜谱与分类</h1>
         <p class="page-description">
-          维护推荐菜谱、原料结构和上下架状态。V1.2 要求至少提供 80 道可演示菜谱。
+          整理菜谱内容、食材结构与制作步骤，让每一份灵感清楚易读。
         </p>
       </div>
       <el-button type="primary" @click="comingSoon('新增菜谱')">
@@ -110,18 +110,18 @@ function comingSoon(action: string) {
     <section class="recipe-summary">
       <div>
         <span>菜谱总数</span>
-        <strong>80</strong>
-        <small>距离验收基线完成</small>
+        <strong>{{ recipes.length }}</strong>
+        <small>当前演示目录</small>
       </div>
       <div>
         <span>已上架</span>
-        <strong>64</strong>
-        <small>80% 内容可用</small>
+        <strong>{{ recipes.filter(recipe => recipe.status === '已上架').length }}</strong>
+        <small>示例发布状态</small>
       </div>
       <div>
-        <span>待审核</span>
-        <strong>9</strong>
-        <small>最早提交于昨天</small>
+        <span>草稿</span>
+        <strong>{{ recipes.filter(recipe => recipe.status === '草稿').length }}</strong>
+        <small>尚未发布的示例</small>
       </div>
       <div class="featured">
         <span class="featured-emoji">🍅</span>
@@ -212,7 +212,7 @@ function comingSoon(action: string) {
   overflow: hidden;
   border: 1px solid rgba(91, 67, 54, 0.08);
   border-radius: 21px;
-  background: #fffdf9;
+  background: #ffffff;
   box-shadow: var(--shadow);
   grid-template-columns: repeat(3, 1fr) 1.2fr;
 }
@@ -234,7 +234,7 @@ function comingSoon(action: string) {
 
 .recipe-summary span {
   color: #928377;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .recipe-summary strong {
@@ -246,7 +246,7 @@ function comingSoon(action: string) {
 
 .recipe-summary small {
   color: #b0a398;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .recipe-summary .featured {
@@ -293,7 +293,7 @@ function comingSoon(action: string) {
 .result-count {
   margin-left: auto;
   color: #a09489;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .recipe-cell {
@@ -325,7 +325,7 @@ function comingSoon(action: string) {
 .recipe-cell small {
   margin-top: 3px;
   color: #aea197;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .usage-value {
@@ -337,9 +337,9 @@ function comingSoon(action: string) {
   margin-right: 8px;
   padding: 0;
   border: 0;
-  color: #b85c45;
+  color: #bc4d30;
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   cursor: pointer;
 }
 

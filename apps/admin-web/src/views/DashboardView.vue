@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { EChartsCoreOption } from 'echarts/core'
 import { computed } from 'vue'
+import { ElMessage } from 'element-plus'
 import ChartPanel from '../components/ChartPanel.vue'
 
 const metrics = [
@@ -84,12 +85,12 @@ const userTrendOption = computed<EChartsCoreOption>(() => ({
     data: ['10/20', '10/21', '10/22', '10/23', '10/24', '10/25', '今天'],
     axisLine: { lineStyle: { color: '#e9e0d5' } },
     axisTick: { show: false },
-    axisLabel: { color: '#9b8c80', fontSize: 9 },
+    axisLabel: { color: '#9b8c80', fontSize: 11 },
   },
   yAxis: {
     type: 'value',
     splitLine: { lineStyle: { color: '#f0e9df' } },
-    axisLabel: { color: '#a7988c', fontSize: 9 },
+    axisLabel: { color: '#a7988c', fontSize: 11 },
   },
   series: [
     {
@@ -99,8 +100,8 @@ const userTrendOption = computed<EChartsCoreOption>(() => ({
       symbol: 'circle',
       symbolSize: 5,
       data: [820, 1040, 980, 1320, 1460, 1580, 1710],
-      lineStyle: { width: 3, color: '#b85c45' },
-      itemStyle: { color: '#b85c45', borderColor: '#fffdf9', borderWidth: 2 },
+      lineStyle: { width: 3, color: '#bc4d30' },
+      itemStyle: { color: '#bc4d30', borderColor: '#ffffff', borderWidth: 2 },
       areaStyle: {
         color: {
           type: 'linear',
@@ -140,7 +141,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
     icon: 'circle',
     itemWidth: 7,
     itemHeight: 7,
-    textStyle: { color: '#7f7065', fontSize: 10 },
+    textStyle: { color: '#7f7065', fontSize: 11 },
   },
   series: [
     {
@@ -148,13 +149,13 @@ const orderOption = computed<EChartsCoreOption>(() => ({
       radius: ['51%', '72%'],
       center: ['36%', '50%'],
       avoidLabelOverlap: true,
-      itemStyle: { borderColor: '#fffdf9', borderWidth: 4 },
+      itemStyle: { borderColor: '#ffffff', borderWidth: 4 },
       label: { show: false },
       emphasis: { scale: true, scaleSize: 4 },
       data: [
         { value: 48, name: '已支付', itemStyle: { color: '#71836b' } },
         { value: 26, name: '待支付', itemStyle: { color: '#e0b476' } },
-        { value: 16, name: '配送中', itemStyle: { color: '#b85c45' } },
+        { value: 16, name: '配送中', itemStyle: { color: '#bc4d30' } },
         { value: 10, name: '已取消', itemStyle: { color: '#d7cbc0' } },
       ],
     },
@@ -173,8 +174,8 @@ const orderOption = computed<EChartsCoreOption>(() => ({
         </p>
       </div>
       <div class="heading-actions">
-        <el-button>导出报表</el-button>
-        <el-button type="primary">生成运营简报</el-button>
+        <el-button @click="ElMessage.info('当前为演示数据，报表导出尚未接入')">导出报表</el-button>
+        <el-button type="primary" @click="ElMessage.info('运营简报将在真实统计接口接入后启用')">生成运营简报</el-button>
       </div>
     </div>
 
@@ -239,7 +240,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
             <h2 class="panel-title">需要关注</h2>
             <p class="panel-subtitle">临期、库存、内容与订单的实时提醒</p>
           </div>
-          <button class="quiet-link">查看全部 →</button>
+          <button class="quiet-link" @click="ElMessage.info('当前展示全部演示提醒，真实提醒列表尚未接入')">查看全部 →</button>
         </div>
         <div class="alert-list">
           <div v-for="alert in alerts" :key="alert.content" class="alert-row">
@@ -309,7 +310,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
   color: #f7f2ea;
   background:
     radial-gradient(circle at 88% 15%, rgba(185, 105, 78, 0.3), transparent 30%),
-    #352c26;
+    #442b22;
   box-shadow: 0 22px 48px rgba(53, 44, 38, 0.14);
 }
 
@@ -321,7 +322,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 
 .hero-kicker {
   color: #d59b7a;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 800;
   letter-spacing: 0.18em;
 }
@@ -335,7 +336,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 .insight-hero p {
   margin: 0;
   color: rgba(247, 242, 234, 0.56);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1.75;
 }
 
@@ -360,7 +361,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 .hero-number span {
   margin-top: 4px;
   color: rgba(247, 242, 234, 0.45);
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .hero-orbit {
@@ -426,20 +427,20 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 }
 
 .metric-glyph.cocoa {
-  color: #5b4336;
+  color: #442b22;
   background: #eee5da;
 }
 
 .metric-trend {
   color: #71836b;
-  font-size: 9px;
+  font-size: 12px;
   font-weight: 750;
 }
 
 .metric-value {
   display: block;
   margin: 17px 0 8px;
-  color: #352c26;
+  color: #442b22;
   font-family: 'Songti SC', serif;
   font-size: 25px;
 }
@@ -449,12 +450,12 @@ const orderOption = computed<EChartsCoreOption>(() => ({
   align-items: center;
   justify-content: space-between;
   color: #7b6c61;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .metric-footer small {
   color: #b0a298;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .chart-grid {
@@ -473,7 +474,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
   border: 0;
   color: #8d7b6e;
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -499,7 +500,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
   padding: 4px 7px;
   border-radius: 99px;
   text-align: center;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -531,7 +532,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 .alert-copy strong {
   overflow: hidden;
   color: #51453d;
-  font-size: 10px;
+  font-size: 12px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -539,12 +540,12 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 .alert-copy small {
   margin-top: 3px;
   color: #a6998f;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .alert-row time {
   color: #b3a69c;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .rank-item {
@@ -562,7 +563,7 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 .rank-number {
   color: #c3b5aa;
   font-family: Georgia, serif;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .rank-emoji {
@@ -582,13 +583,13 @@ const orderOption = computed<EChartsCoreOption>(() => ({
 
 .rank-item strong {
   color: #51453d;
-  font-size: 10px;
+  font-size: 12px;
 }
 
 .rank-item small {
   margin-top: 3px;
   color: #a6998f;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 @media (max-width: 1200px) {

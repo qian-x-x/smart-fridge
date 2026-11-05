@@ -108,13 +108,13 @@ function action(label: string) {
     <section class="inventory-hero">
       <div class="hero-copy">
         <span>库存健康度</span>
-        <strong>84.6</strong>
-        <small>30 个初始化商品中，25 个处于健康区间</small>
+        <strong>{{ (products.filter(product => product.stock >= product.safeStock).length / products.length * 100).toFixed(1) }}%</strong>
+        <small>{{ products.length }} 个演示商品中，{{ products.filter(product => product.stock >= product.safeStock).length }} 个库存充足</small>
       </div>
       <div class="health-bar">
-        <span class="healthy" />
-        <span class="warning" />
-        <span class="danger" />
+        <span class="healthy" :style="{ width: `${products.filter(product => product.stock >= product.safeStock).length / products.length * 100}%` }" />
+        <span class="warning" :style="{ width: `${products.filter(product => product.stock > 0 && product.stock < product.safeStock).length / products.length * 100}%` }" />
+        <span class="danger" :style="{ width: `${products.filter(product => product.stock === 0).length / products.length * 100}%` }" />
       </div>
       <div class="health-legend">
         <span><i class="healthy" />充足 25</span>
@@ -123,7 +123,7 @@ function action(label: string) {
       </div>
       <div class="restock-note">
         <span>补货提醒</span>
-        <strong>5 个 SKU 建议在本周补货</strong>
+        <strong>{{ products.filter(product => product.stock < product.safeStock).length }} 个示例 SKU 需要关注</strong>
         <button @click="action('生成补货建议')">生成建议 →</button>
       </div>
     </section>
@@ -204,7 +204,7 @@ function action(label: string) {
   border-radius: 23px;
   background:
     linear-gradient(90deg, rgba(113, 131, 107, 0.08), transparent 45%),
-    #fffdf9;
+    #ffffff;
   box-shadow: var(--shadow);
   grid-template-columns: 170px 1fr 230px;
 }
@@ -217,7 +217,7 @@ function action(label: string) {
 
 .hero-copy span {
   color: #8d7e72;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .hero-copy strong {
@@ -229,7 +229,7 @@ function action(label: string) {
 
 .hero-copy small {
   color: #aca096;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .health-bar {
@@ -284,7 +284,7 @@ function action(label: string) {
 
 .restock-note span {
   color: #a69181;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .restock-note strong {
@@ -296,9 +296,9 @@ function action(label: string) {
 .restock-note button {
   padding: 0;
   border: 0;
-  color: #b85c45;
+  color: #bc4d30;
   background: transparent;
-  font-size: 8px;
+  font-size: 12px;
   cursor: pointer;
 }
 
@@ -320,7 +320,7 @@ function action(label: string) {
 .result-count {
   margin-left: auto;
   color: #a09489;
-  font-size: 9px;
+  font-size: 12px;
 }
 
 .product-cell {
@@ -352,7 +352,7 @@ function action(label: string) {
 .product-cell small {
   margin-top: 3px;
   color: #aea197;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .price {
@@ -367,14 +367,14 @@ function action(label: string) {
 
 .stock-cell small {
   color: #aaa095;
-  font-size: 8px;
+  font-size: 12px;
 }
 
 .stock-status {
   display: inline-flex;
   padding: 4px 8px;
   border-radius: 99px;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 700;
 }
 
@@ -397,9 +397,9 @@ function action(label: string) {
   margin-right: 8px;
   padding: 0;
   border: 0;
-  color: #b85c45;
+  color: #bc4d30;
   background: transparent;
-  font-size: 9px;
+  font-size: 12px;
   cursor: pointer;
 }
 

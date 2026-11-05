@@ -58,6 +58,7 @@ spring:
             allow-credentials: true
 
 smart-fridge:
+  auth-service-url: ${AUTH_SERVICE_URL:http://127.0.0.1:8081}
   jwt:
     secret: ${JWT_SECRET:dev-only-smart-fridge-secret-change-before-release-2026}
 

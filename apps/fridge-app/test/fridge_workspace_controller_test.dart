@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/core/session/session_store.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
@@ -12,6 +13,75 @@ import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 
 void main() {
+  test(
+    'successful add is not retried when only the inventory reload fails',
+    () async {
+      final source = _FakeFridgeDataSource()..failAfterWrite = true;
+      final container = ProviderContainer(
+        retry: (_, _) => null,
+        overrides: [
+          sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(_FridgeFamilySource()),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeSelectionStore(),
+          ),
+          fridgeDataSourceProvider.overrideWithValue(source),
+        ],
+      );
+      addTearDown(container.dispose);
+      final workspace = await container.read(fridgeWorkspaceProvider.future);
+      final controller = container.read(fridgeWorkspaceProvider.notifier);
+      await controller.addFood(
+        NewFoodInput(
+          zone: workspace.zones.first,
+          name: '新食材',
+          category: '其他',
+          quantity: 1,
+          unit: '份',
+          productionDate: DateTime(2026, 10, 31),
+          expiresOn: DateTime(2026, 11, 1),
+        ),
+      );
+      expect(source.writes, 1);
+      await expectLater(
+        container.read(fridgeWorkspaceProvider.future),
+        throwsA(isA<ApiFailure>()),
+      );
+      expect(container.read(fridgeWorkspaceProvider).hasError, isTrue);
+      await controller.refresh();
+      expect(container.read(fridgeWorkspaceProvider).hasValue, isTrue);
+      expect(source.writes, 1);
+    },
+  );
+  test(
+    'creation validates name and requires the selected family owner',
+    () async {
+      final source = _FakeFridgeDataSource();
+      final container = ProviderContainer(
+        overrides: [
+          sessionStoreProvider.overrideWithValue(_RealSessionStore()),
+          familyDataSourceProvider.overrideWithValue(_FridgeFamilySource()),
+          familySelectionStoreProvider.overrideWithValue(
+            _FridgeSelectionStore(),
+          ),
+          fridgeDataSourceProvider.overrideWithValue(source),
+        ],
+      );
+      addTearDown(container.dispose);
+      await container.read(fridgeWorkspaceProvider.future);
+      final controller = container.read(fridgeWorkspaceProvider.notifier);
+      await expectLater(controller.createFridge('  '), throwsStateError);
+      await expectLater(controller.createFridge('名' * 81), throwsStateError);
+      expect(source.createdFamilyId, isNull);
+      await controller.createFridge(' 厨房冰箱 ');
+      expect(source.createdFamilyId, 4);
+      expect(source.createdName, '厨房冰箱');
+      await container.read(familyControllerProvider.notifier).selectFamily(5);
+      await container.read(fridgeWorkspaceProvider.future);
+      await expectLater(controller.createFridge('新冰箱'), throwsStateError);
+      expect(source.createdFamilyId, 4);
+    },
+  );
   test('loads the selected family and reloads after switching', () async {
     final fridgeSource = _FakeFridgeDataSource();
     final familySource = _FridgeFamilySource();
@@ -40,10 +110,29 @@ void main() {
 }
 
 class _FakeFridgeDataSource implements FridgeDataSource {
+  bool failAfterWrite = false;
+  bool failNextLoad = false;
+  int writes = 0;
+  int? createdFamilyId;
+  String? createdName;
+  @override
+  Future<void> createFridge(
+    AuthSession session,
+    int familyId,
+    String name,
+  ) async {
+    createdFamilyId = familyId;
+    createdName = name;
+  }
+
   int? lastFamilyId;
 
   @override
   Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
+    if (failNextLoad) {
+      failNextLoad = false;
+      throw const ApiFailure('读取库存失败');
+    }
     lastFamilyId = familyId;
     return FridgeWorkspaceData(
       familyId: familyId,
@@ -85,7 +174,10 @@ class _FakeFridgeDataSource implements FridgeDataSource {
     AuthSession session,
     FridgeWorkspaceData workspace,
     NewFoodInput input,
-  ) async {}
+  ) async {
+    writes++;
+    failNextLoad = failAfterWrite;
+  }
 
   @override
   Future<void> consume(
