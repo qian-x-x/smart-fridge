@@ -1,0 +1,163 @@
+{
+  "scope": "Design mockup only; no production code or real backend acceptance",
+  "date": "2026-10-31",
+  "checks": [
+    {
+      "theme": "morning",
+      "check": "food selection opens correct details",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "quantity is bounded by stock",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "saving locks button",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "save success feedback",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "recipe filter updates visible cards",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "empty recipe results retain filter controls",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "food name filter returns one result",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "reset restores list",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "cancel confirmation restores underlying detail",
+      "passed": true
+    },
+    {
+      "theme": "morning",
+      "check": "page transition preview changes destination",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "food selection opens correct details",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "quantity is bounded by stock",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "saving locks button",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "save success feedback",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "recipe filter updates visible cards",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "empty recipe results retain filter controls",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "food name filter returns one result",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "reset restores list",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "cancel confirmation restores underlying detail",
+      "passed": true
+    },
+    {
+      "theme": "glacier",
+      "check": "page transition preview changes destination",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "food selection opens correct details",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "quantity is bounded by stock",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "saving locks button",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "save success feedback",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "recipe filter updates visible cards",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "empty recipe results retain filter controls",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "food name filter returns one result",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "reset restores list",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "cancel confirmation restores underlying detail",
+      "passed": true
+    },
+    {
+      "theme": "market",
+      "check": "page transition preview changes destination",
+      "passed": true
+    },
+    {
+      "check": "reduced motion disables animation",
+      "passed": true
+    }
+  ],
+  "overflows": [],
+  "errors": [],
+  "passed": true
+}

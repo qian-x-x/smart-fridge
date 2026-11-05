@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>B 暖橙品牌风</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1600px; height: 1000px; overflow: hidden; }
+  body {
+    background:
+      radial-gradient(900px 520px at 92% -8%, #ffe9d2 0%, rgba(255,233,210,0) 62%),
+      radial-gradient(760px 480px at -6% 108%, #f7e7d3 0%, rgba(247,231,211,0) 60%),
+      #fcf5e9;
+    color: #442b22;
+    font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+    padding: 44px 60px 32px;
+    display: flex; flex-direction: column;
+  }
+  .head { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 16px; }
+  .mark {
+    width: 52px; height: 52px; border-radius: 18px; background: #bc4d30;
+    display: grid; place-items: center; color: #fff; font-size: 22px;
+    box-shadow: 0 10px 22px rgba(188,77,48,.28);
+  }
+  .kicker { font-size: 10px; letter-spacing: 3.6px; color: #a4876f; margin-bottom: 7px; }
+  h1 { font-size: 31px; font-weight: 600; letter-spacing: -0.4px; }
+  h1 span { color: #bc4d30; }
+  .motto {
+    display: inline-flex; align-items: center; gap: 8px; margin-top: 7px;
+    font-size: 11.5px; color: #806a5c;
+  }
+  .motto i { width: 16px; height: 1px; background: #d8b08c; display: block; }
+  .pills { display: flex; gap: 8px; }
+  .pill {
+    font-size: 11px; padding: 7px 14px; border-radius: 999px;
+    background: #fffdf6; border: 1px solid #ecdfcf; color: #806a5c;
+  }
+  .pill.on { background: #bc4d30; color: #fff; border-color: #bc4d30; }
+
+  .layers { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .row { display: flex; align-items: center; gap: 18px; }
+  .tag { width: 104px; flex: none; }
+  .tag .nm {
+    display: inline-block; font-size: 11.5px; font-weight: 600; color: #bc4d30;
+    background: #f8e7d6; border-radius: 999px; padding: 5px 12px;
+  }
+  .tag .no { display: block; font-size: 9px; letter-spacing: 2px; color: #bda78f; margin: 6px 0 0 4px; }
+  .boxes { flex: 1; display: flex; gap: 10px; }
+  .box {
+    flex: 1; background: #fffdf6; border: 1px solid #f0e3d2; border-radius: 18px;
+    padding: 11px 15px 12px; box-shadow: 0 8px 20px rgba(120,80,40,.05);
+    position: relative;
+  }
+  .box.lead { background: #fff8ee; border-color: #eccdb2; box-shadow: 0 10px 24px rgba(188,77,48,.10); }
+  .box.skel { background: #fbf3e7; border-style: dashed; border-color: #e6d4bd; box-shadow: none; }
+  .box h3 { font-size: 13.5px; font-weight: 600; }
+  .box h3 span { font-size: 10px; color: #b08968; font-weight: 400; margin-left: 5px; }
+  .box p { font-size: 10.5px; line-height: 1.7; color: #8d7666; margin-top: 5px; }
+  .box .flag {
+    position: absolute; top: -7px; right: 12px; font-size: 9px; color: #a98a6c;
+    background: #f6e6d5; border-radius: 999px; padding: 2px 8px;
+  }
+
+  .bottom { margin-top: 18px; display: flex; gap: 18px; }
+  .chain { margin-top: 14px; }
+  .chain h2 { font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+  .chain h2 b { font-size: 9.5px; letter-spacing: 1.4px; color: #fff; background: #bc4d30; border-radius: 999px; padding: 3px 8px; }
+  .chain-row { display: flex; align-items: center; gap: 6px; font-size: 10.5px; margin-bottom: 6px; }
+  .chain-row .cl { width: 74px; flex: none; color: #a4876f; font-size: 10px; }
+  .chain-row .step { background: #fffdf6; border: 1px solid #f0e3d2; border-radius: 999px; padding: 4px 11px; color: #5b4136; }
+  .chain-row .step.hl { background: #f8e7d6; border-color: #eccdb2; color: #bc4d30; font-weight: 600; }
+  .chain-row i { color: #d8b08c; font-style: normal; font-size: 10px; }
+  .card {
+    background: #fffdf6; border: 1px solid #f0e3d2; border-radius: 22px;
+    padding: 16px 20px 12px; box-shadow: 0 10px 26px rgba(120,80,40,.055);
+  }
+  .card h2 { font-size: 12px; font-weight: 600; color: #442b22; display: flex; align-items: center; gap: 8px; }
+  .card h2 b {
+    font-size: 9.5px; letter-spacing: 1.4px; color: #fff; background: #bc4d30;
+    border-radius: 999px; padding: 3px 8px;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  th { text-align: left; font-weight: 600; color: #a4876f; padding: 7px 8px; font-size: 10px; letter-spacing: .5px; border-bottom: 1px solid #f0e3d2; }
+  td { padding: 6.5px 8px; border-bottom: 1px dashed #f2e7d9; color: #4d342a; }
+  td.mono { font-family: Consolas, monospace; font-size: 10.5px; color: #bc4d30; }
+  td .dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  td .on { background: #7e8c6a; } td .off { background: #dcc9b4; }
+  .notes { font-size: 11px; line-height: 1.95; color: #6d5647; margin-top: 10px; }
+  .notes li { list-style: none; padding-left: 18px; position: relative; }
+  .notes li::before { content: ''; position: absolute; left: 3px; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: #d8b08c; }
+  .legend { margin-top: 12px; background: #fbf1e4; border-radius: 14px; padding: 12px 14px; font-size: 10.5px; line-height: 1.85; color: #86705f; }
+  .legend strong { color: #bc4d30; font-size: 10.5px; }
+  .foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; font-size: 9.5px; color: #bda78f; letter-spacing: 1.6px; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div class="brand">
+      <div class="mark">易</div>
+      <div>
+        <div class="kicker">PROJECT MATERIAL · ① FUNCTIONAL MAP</div>
+        <h1>小易冰箱 <span>/</span> 功能架构图</h1>
+        <div class="motto"><i></i>查食材，看菜谱，都容易<i></i></div>
+      </div>
+    </div>
+    <div class="pills">
+      <div class="pill on">Flutter 用户端</div>
+      <div class="pill">Vue 运营端</div>
+      <div class="pill">7 个 Spring Boot 服务</div>
+    </div>
+  </div>
+
+  <div class="layers">
+    <div class="row">
+      <div class="tag"><div class="nm">用户端</div><div class="no">LAYER 01</div></div>
+      <div class="boxes">
+        <div class="box lead"><h3>3D 冰箱首页</h3><p>WebGL 实时模型 · 四分区 · 门抽屉开合</p></div>
+        <div class="box"><h3>食材管理</h3><p>新增 · 移动 · 使用 · 丢弃 · 组合筛选</p></div>
+        <div class="box"><h3>菜谱推荐</h3><p>库存覆盖率 · 缺料提示 · 临期优先</p></div>
+        <div class="box"><h3>家庭协作</h3><p>邀请码加入 · 角色治理 · 所有权转交</p></div>
+        <div class="box"><h3>个人中心</h3><p>会话续期 · 家庭切换 · 退出登录</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="nm">接入层</div><div class="no">LAYER 02</div></div>
+      <div class="boxes">
+        <div class="box lead"><h3>统一网关<span>gateway :8080</span></h3><p>JWT 验签 · 撤销校验 · 用户头上送 · 路由 · 追踪</p></div>
+        <div class="box"><h3>运营后台</h3><p>Vue 3 · 看板 / 菜谱 / 商品 / 订单</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="nm">业务服务</div><div class="no">LAYER 03</div></div>
+      <div class="boxes">
+        <div class="box"><h3>账号与家庭<span>:8081</span></h3><p>注册登录 · 令牌轮换 · 成员角色</p></div>
+        <div class="box"><h3>冰箱与食材<span>:8082</span></h3><p>结构 · 分区 · 乐观锁 · 流水</p></div>
+        <div class="box"><h3>菜谱<span>:8083</span></h3><p>目录 · 原料 · 步骤</p></div>
+        <div class="box skel"><span class="flag">骨架</span><h3>库存<span>:8084</span></h3><p>SKU · 库存乐观锁</p></div>
+        <div class="box skel"><span class="flag">骨架</span><h3>订单<span>:8085</span></h3><p>补货 · 优惠券 · 支付</p></div>
+        <div class="box skel"><span class="flag">骨架</span><h3>通知<span>:8086</span></h3><p>MQ 消费 · 站内信</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="nm">数据存储</div><div class="no">LAYER 04</div></div>
+      <div class="boxes">
+        <div class="box"><h3>MySQL 8<span>3306 / 3307</span></h3><p>auth_db · fridge_db · recipe_db</p></div>
+        <div class="box"><h3>Redis<span>6379</span></h3><p>刷新会话 · 令牌黑名单</p></div>
+        <div class="box"><h3>MinIO</h3><p>食材图 · 菜谱封面 · 贴纸</p></div>
+        <div class="box"><h3>Nacos</h3><p>注册发现 · 配置中心</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="card" style="flex:1">
+      <h2><b>③</b>服务清单（摘要）</h2>
+      <table>
+        <tr><th style="width:21%">服务</th><th style="width:11%">端口</th><th style="width:46%">职责</th><th style="width:22%">状态</th></tr>
+        <tr><td>gateway-service</td><td class="mono">8080</td><td>唯一入口 · 鉴权 · 路由 · 追踪</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td>auth-family-service</td><td class="mono">8081</td><td>账号 · 令牌 · 家庭与成员治理</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td>fridge-service</td><td class="mono">8082</td><td>冰箱结构 · 食材 · 操作流水</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td>recipe-service</td><td class="mono">8083</td><td>菜谱目录 · 原料 · 步骤</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td>stock / order / notify</td><td class="mono">8084-86</td><td>库存 · 订单 · 通知领域边界</td><td><span class="dot off"></span>骨架</td></tr>
+      </table>
+    </div>
+    <div class="card" style="flex:0 0 500px">
+      <h2><b>④</b>关键约束</h2>
+      <ul class="notes">
+        <li>客户端只访问 Gateway，不直连业务端口</li>
+        <li>权限在服务端二次校验，不信任前端状态</li>
+        <li>写操作携带 version，冲突返回 409</li>
+        <li>数据按家庭隔离，跨家庭 404 / 403</li>
+      </ul>
+      <div class="legend">
+        <strong>图例</strong><br>
+        实心卡片＝已接入真实数据；虚线卡片＝领域边界已定、尚未接入业务。所有响应统一 code / message / data / traceId。
+      </div>
+    </div>
+  </div>
+
+  <div class="chain">
+    <h2><b>④</b>业务调用关系</h2>
+    <div class="chain-row"><span class="cl">登录 / 续期</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway :8080</span><i>→</i><span class="step">auth :8081</span><i>→</i><span class="step">MySQL 账号 · Redis 刷新会话</span></div>
+    <div class="chain-row"><span class="cl">录入食材</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway（验签 + 撤销校验）</span><i>→</i><span class="step">fridge :8082</span><i>→</i><span class="step">auth :8081 校验家庭角色</span><i>→</i><span class="step">MySQL 写入 + 操作流水</span></div>
+    <div class="chain-row"><span class="cl">查看菜谱</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway :8080</span><i>→</i><span class="step">recipe :8083</span><i>→</i><span class="step">MySQL 菜谱目录</span><i>→</i><span class="step">本地按库存计算覆盖率</span></div>
+  </div>
+
+  <div class="foot"><span>XIAOYI FRIDGE · 暖橙食集 V1.5</span><span>2026-11 · 01 / 07</span></div>
+</body>
+</html>

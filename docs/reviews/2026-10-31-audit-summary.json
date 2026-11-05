@@ -1,0 +1,95 @@
+{
+  "checkedAt": "2026-10-31T14:17:58.7285602+08:00",
+  "backend": {
+    "failures": 0.0,
+    "suites": [
+      {
+        "name": "com.smartfridge.auth.AuthFlowIntegrationTest",
+        "tests": 4,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.auth.FamilyCollaborationIntegrationTest",
+        "tests": 8,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.common.api.ApiResponseTest",
+        "tests": 1,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.fridge.FamilyAccessServiceTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.fridge.FridgeApiIntegrationTest",
+        "tests": 20,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.gateway.GatewayCorsTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.gateway.JwtGatewayFilterTest",
+        "tests": 5,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.gateway.TokenIntrospectionClientTest",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0
+      },
+      {
+        "name": "com.smartfridge.recipe.RecipeApiIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0
+      }
+    ],
+    "errors": 0.0,
+    "tests": 47.0
+  },
+  "flutter": {
+    "staticAnalysis": "passed",
+    "webRelease": "passed",
+    "tests": 67
+  },
+  "threeJsTests": 4,
+  "gateway": {
+    "familyChecks": 30,
+    "filterChecks": 25,
+    "apiFailures": 0,
+    "apiAudit": 135
+  },
+  "adminBuild": "passed",
+  "openApi": {
+    "paths": 19,
+    "resolvedRefs": 96
+  },
+  "compose": {
+    "core": "passed",
+    "full": "passed"
+  },
+  "browser": {
+    "ordinaryPointerClicks": "passed",
+    "desktopFoodAdd": "passed",
+    "mobileFoodAddSameDayExpiry": "passed",
+    "mobileEmptyRecipeReturn": "passed",
+    "familyAndSettings": "passed",
+    "consoleErrors": 0,
+    "viewportReset": "1280x720",
+    "evidence": "evidence/2026-10-31-audit"
+  }
+}

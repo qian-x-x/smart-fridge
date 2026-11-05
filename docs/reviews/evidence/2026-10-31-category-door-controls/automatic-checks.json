@@ -1,0 +1,26 @@
+[
+  {
+    "check": "Flutter static analysis",
+    "exitCode": 0,
+    "passed": true,
+    "log": "dart-analyze.log"
+  },
+  {
+    "check": "Flutter regression tests",
+    "exitCode": 0,
+    "passed": true,
+    "log": "flutter-tests.log"
+  },
+  {
+    "check": "Three.js state and model",
+    "exitCode": 0,
+    "passed": true,
+    "log": "three-tests.log"
+  },
+  {
+    "check": "Flutter Web release",
+    "exitCode": 0,
+    "passed": true,
+    "log": "flutter-web-build.log"
+  }
+]

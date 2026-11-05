@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>03-04 服务清单与业务调用关系</title>
+<link rel="stylesheet" href="sketch.css">
+<style>
+  .num { width: 132px; font-size: 26px; }
+  .col-main { gap: 18px; justify-content: space-between; }
+  .routes { margin-top: 0; }
+  .svc { font-family: 'Consolas', monospace; font-size: 12.6px; }
+  td { padding: 13px 9px; }
+  .trace .ln { margin-bottom: 6px; }
+  .trace { gap: 14px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">03·04</div>
+      <div>
+        <h1>服务清单与业务调用关系<span class="en">SERVICE INVENTORY &amp; CALL FLOW</span></h1>
+        <p class="sub">服务边界、端口分配与跨服务调用路径</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+
+      <div>
+        <div class="note" style="padding:0;background:transparent">
+          <h2 style="margin-bottom:8px">③ 服务清单</h2>
+        </div>
+        <table>
+          <tr><th style="width:23%">服务</th><th style="width:8%">端口</th><th style="width:39%">职责</th><th style="width:14%">数据库</th><th style="width:16%">状态</th></tr>
+          <tr><td class="svc">gateway-service</td><td class="k">8080</td><td>客户端唯一入口：鉴权、路由、跨域、追踪</td><td>—</td><td>已实现</td></tr>
+          <tr><td class="svc">auth-family-service</td><td class="k">8081</td><td>注册登录、令牌签发与撤销、家庭与成员治理</td><td>auth_db</td><td>已实现</td></tr>
+          <tr><td class="svc">fridge-service</td><td class="k">8082</td><td>冰箱结构、分区容器、食材增改移用丢、操作流水</td><td>fridge_db</td><td>已实现</td></tr>
+          <tr><td class="svc">recipe-service</td><td class="k">8083</td><td>菜谱目录、原料清单、制作步骤</td><td>recipe_db</td><td>已实现</td></tr>
+          <tr><td class="svc">stock-service</td><td class="k">8084</td><td>商品 SKU 与库存乐观锁</td><td>stock_db</td><td>骨架</td></tr>
+          <tr><td class="svc">order-service</td><td class="k">8085</td><td>补货订单、优惠券、支付</td><td>order_db</td><td>骨架</td></tr>
+          <tr><td class="svc">notification-service</td><td class="k">8086</td><td>MQ 消费、站内信与推送</td><td>notify_db</td><td>骨架</td></tr>
+          <tr><td class="svc">common-core</td><td class="k">—</td><td>统一响应、异常处理、追踪过滤器，被各服务依赖</td><td>—</td><td>已实现</td></tr>
+        </table>
+      </div>
+
+      <div>
+        <div class="note" style="padding:0;background:transparent;margin-bottom:6px">
+          <h2>④ 业务调用关系</h2>
+        </div>
+        <div class="trace">
+          <div class="ln">
+            <span class="nm">登录 / 续期</span>
+            <span class="sp">Flutter</span><span class="ar">→</span>
+            <span class="sp k">Gateway :8080</span><span class="ar">→</span>
+            <span class="sp">auth :8081</span><span class="ar">→</span>
+            <span class="sp">MySQL 账号</span><span class="ar">+</span>
+            <span class="sp">Redis 刷新会话</span>
+            <span class="tx">返回 access + refresh，refresh 一次性轮换</span>
+          </div>
+          <div class="ln">
+            <span class="nm">录入食材</span>
+            <span class="sp">Flutter</span><span class="ar">→</span>
+            <span class="sp k">Gateway 验签 + 撤销校验</span><span class="ar">→</span>
+            <span class="sp">fridge :8082</span><span class="ar">→</span>
+            <span class="sp">auth 取家庭角色</span><span class="ar">→</span>
+            <span class="sp">MySQL 写入 + 流水</span>
+            <span class="tx">VIEWER 在此被拦成 403</span>
+          </div>
+          <div class="ln">
+            <span class="nm">查看菜谱</span>
+            <span class="sp">Flutter</span><span class="ar">→</span>
+            <span class="sp k">Gateway :8080</span><span class="ar">→</span>
+            <span class="sp">recipe :8083</span><span class="ar">→</span>
+            <span class="sp">MySQL 菜谱目录</span>
+            <span class="tx">覆盖率在客户端按库存本地计算，不跨服务</span>
+          </div>
+          <div class="ln">
+            <span class="nm">创建冰箱</span>
+            <span class="sp">Flutter</span><span class="ar">→</span>
+            <span class="sp k">Gateway :8080</span><span class="ar">→</span>
+            <span class="sp">fridge :8082</span><span class="ar">→</span>
+            <span class="sp">auth 确认 OWNER</span><span class="ar">→</span>
+            <span class="sp">MySQL 冰箱 + 四区</span>
+            <span class="tx">一个家庭只允许一台冰箱，重复创建返回 409</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="routes">
+        <div class="rh">路由映射 · GATEWAY ROUTES</div>
+        <div class="rg">
+          <div class="rt"><code>/api/v1/auth/**, /families/**</code><span>→ auth-family :8081</span></div>
+          <div class="rt"><code>/api/v1/fridges/**, /foods/**</code><span>→ fridge :8082</span></div>
+          <div class="rt"><code>/api/v1/recipes/**</code><span>→ recipe :8083</span></div>
+          <div class="rt"><code>/api/v1/products/**, /orders/**</code><span>→ stock / order</span></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="col-side">
+      <div class="note">
+        <div class="tape"></div>
+        <h2>调用路径说明</h2>
+        <ul>
+          <li>客户端请求统一经网关转发，<strong>不直连</strong> 8081–8086。</li>
+          <li>仅存在两条跨服务调用：冰箱与菜谱服务回查认证服务的家庭角色，方向单一且无环。</li>
+          <li>深色标注为网关的验签与撤销校验，属每笔请求的必经环节。</li>
+          <li>菜谱服务不反向调用冰箱服务，原料匹配在客户端完成。</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>核对项</h2>
+        <div class="check">
+          <div><span class="bx"></span><span>每条链能指出在哪一步做权限校验</span></div>
+          <div><span class="bx"></span><span>跨服务调用不超过必要次数</span></div>
+          <div><span class="bx"></span><span>失败时返回 401 / 403 / 404 而不是 500</span></div>
+          <div><span class="bx empty"></span><span>补货链（库存→订单→通知）尚未联通</span></div>
+        </div>
+      </div>
+      <div class="note" style="background:#fdf6e3">
+        <h2>并发与幂等</h2>
+        <ul>
+          <li>写操作携带 version，冲突返回 409，由前端刷新后重试。</li>
+          <li>refresh 令牌为一次性消费，重复使用即失效。</li>
+          <li>重复加入家庭返回已有角色，不产生重复成员。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

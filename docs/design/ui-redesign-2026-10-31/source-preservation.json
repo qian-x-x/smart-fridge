@@ -1,0 +1,12 @@
+{
+  "Date": "2026-10-31",
+  "Scope": "Existing tracked working diff against HEAD",
+  "BeforeSHA256": "9C72F75590467055900178C80C425CB1F76B14DE55D91819CCEE7A8176FD9143",
+  "AfterSHA256": "9C72F75590467055900178C80C425CB1F76B14DE55D91819CCEE7A8176FD9143",
+  "Unchanged": true,
+  "NewArtifacts": "docs/design/ui-redesign-2026-10-31/",
+  "Stage": "Design proposals awaiting user review",
+  "Committed": false,
+  "Pushed": false,
+  "Deployed": false
+}

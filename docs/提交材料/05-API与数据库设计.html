@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>05 API 与数据库设计</title>
+<link rel="stylesheet" href="sketch.css">
+<style>
+  .num { width: 112px; font-size: 30px; }
+  .col-side { flex: 0 0 600px; }
+  .api td { padding: 12.5px 8px; font-size: 12.2px; }
+  .api .m { white-space: nowrap; }
+  .api th { padding: 9px 8px; }
+  .api .m {
+    font-family: Consolas, monospace; font-size: 10.4px; letter-spacing: .4px;
+    padding: 1px 5px; border-radius: 2px; border: 1px solid #a99f8d; color: #4a4438;
+  }
+  .api .m.get { border-color: #8fa07a; color: #55663f; }
+  .api .m.post { border-color: #c39a63; color: #8a6432; }
+  .api .m.put { border-color: #8d94a8; color: #525a72; }
+  .api .m.del { border-color: #bd8b82; color: #8a4b40; }
+  .api .p { font-family: Consolas, monospace; font-size: 11.4px; }
+  .grp td { background: #f4ecdc; font-size: 11.2px; letter-spacing: 2px; color: #6f6759; padding: 5px 8px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">05</div>
+      <div>
+        <h1>API 与数据库设计<span class="en">API &amp; DATA MODEL</span></h1>
+        <p class="sub">接口契约、权限要求与数据表结构</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+      <div class="note" style="padding:0;background:transparent;margin-bottom:6px">
+        <h2>接口清单 · 统一前缀 /api/v1，响应 code / message / data / traceId</h2>
+      </div>
+      <table class="api">
+        <tr><th style="width:12%">方法</th><th style="width:38%">路径</th><th style="width:35%">说明</th><th style="width:15%">权限</th></tr>
+        <tr class="grp"><td colspan="4">认证</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/auth/register</td><td>注册并直接返回令牌</td><td>公开</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/auth/login</td><td>账号或手机号 + 密码登录</td><td>公开</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/auth/refresh</td><td>刷新令牌，旧 refresh 立即作废</td><td>持 refresh</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/auth/logout</td><td>access 加入黑名单、refresh 撤销</td><td>登录用户</td></tr>
+
+        <tr class="grp"><td colspan="4">家庭</td></tr>
+        <tr><td><span class="m get">GET</span> <span class="m post">POST</span></td><td class="p">/families</td><td>我的家庭列表 / 创建家庭（创建者即 OWNER）</td><td>登录用户</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/families/join</td><td>8 位邀请码加入，默认 VIEWER，重复加入幂等</td><td>登录用户</td></tr>
+        <tr><td><span class="m get">GET</span></td><td class="p">/families/{id}</td><td>家庭详情，返回当前用户角色（服务间鉴权用）</td><td>家庭成员</td></tr>
+        <tr><td><span class="m get">GET</span> <span class="m put">PATCH</span></td><td class="p">/families/{id}/members</td><td>成员列表 / 调整 EDITOR、VIEWER</td><td>OWNER</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/families/{id}/transfer-owner</td><td>转交所有权，原 OWNER 降为 EDITOR</td><td>OWNER</td></tr>
+
+        <tr class="grp"><td colspan="4">冰箱与食材</td></tr>
+        <tr><td><span class="m post">POST</span> <span class="m get">GET</span></td><td class="p">/fridges</td><td>创建冰箱并生成四区 / 按 familyId 查冰箱</td><td>OWNER · 成员</td></tr>
+        <tr><td><span class="m get">GET</span></td><td class="p">/foods?fridgeId&amp;query&amp;category&amp;tags&amp;zoneId&amp;expiryState&amp;sort</td><td>组合筛选与四种排序，默认到期升序</td><td>家庭成员</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/foods</td><td>新增食材，校验分区与容器归属</td><td>OWNER / EDITOR</td></tr>
+        <tr><td><span class="m put">PUT</span> <span class="m del">DELETE</span></td><td class="p">/foods/{id}</td><td>整体编辑 / 软删除，均需携带 version</td><td>OWNER / EDITOR</td></tr>
+        <tr><td><span class="m post">POST</span></td><td class="p">/foods/{id}/move · /consume</td><td>移动分区 / 按量扣减，超额返回 409</td><td>OWNER / EDITOR</td></tr>
+
+        <tr class="grp"><td colspan="4">菜谱</td></tr>
+        <tr><td><span class="m get">GET</span></td><td class="p">/recipes · /recipes/{id}</td><td>菜谱目录与详情（含原料、步骤）</td><td>登录用户</td></tr>
+      </table>
+    </div>
+
+    <div class="col-side">
+      <div class="note" style="padding:0;background:transparent;margin-bottom:6px">
+        <h2>数据库设计 · MySQL 8 / Flyway 版本化</h2>
+      </div>
+      <div class="dbgrid">
+        <div class="dbt">
+          <h4>app_user</h4>
+          <div class="cols">id · username（唯一）· phone（唯一）· password_hash · display_name · status</div>
+          <div class="rel">密码 BCrypt，用户名与手机号至少填一项</div>
+        </div>
+        <div class="dbt">
+          <h4>family</h4>
+          <div class="cols">id · name · invite_code（唯一）· owner_user_id</div>
+          <div class="rel">一家庭一冰箱，由 uk_fridge_family 约束</div>
+        </div>
+        <div class="dbt">
+          <h4>family_member</h4>
+          <div class="cols">family_id · user_id · role · joined_at</div>
+          <div class="rel">(family_id, user_id) 唯一，role ∈ OWNER/EDITOR/VIEWER</div>
+        </div>
+        <div class="dbt">
+          <h4>refresh_session</h4>
+          <div class="cols">token_id · user_id · expires_at · revoked</div>
+          <div class="rel">消费即失效，支撑一次性轮换</div>
+        </div>
+        <div class="dbt">
+          <h4>fridge · fridge_zone · fridge_container</h4>
+          <div class="cols">fridge(family_id, name, timezone) · zone(code, name, temperature_c) · container(zone_id, name, type)</div>
+          <div class="rel">建冰箱自动生成 FRESH / VARIABLE / FREEZER / PANTRY</div>
+        </div>
+        <div class="dbt">
+          <h4>food_item</h4>
+          <div class="cols">fridge_id · zone_id · container_id · name · category · quantity · unit · production_date · expires_on · tags · version · status</div>
+          <div class="rel">version 乐观锁；quantity ≥ 0；软删置 DISCARDED</div>
+        </div>
+        <div class="dbt">
+          <h4>food_operation</h4>
+          <div class="cols">food_item_id · actor_user_id · action · old/new 分区、容器、数量 · original_operation_id</div>
+          <div class="rel">只追加不删除，original 字段为撤销预留</div>
+        </div>
+        <div class="dbt">
+          <h4>recipe · recipe_ingredient</h4>
+          <div class="cols">recipe(name, steps, featured) · ingredient(recipe_id, name, quantity, unit, optional)</div>
+          <div class="rel">步骤以 | 分隔存储，读取时拆分为列表</div>
+        </div>
+      </div>
+      <div class="legend" style="margin-top:12px;border-bottom:none">
+        <div class="it"><span class="sw f"></span>核心表</div>
+        <div class="it">所有业务表按 family_id / fridge_id 做逻辑隔离</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

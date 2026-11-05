@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>C 蓝图科技风</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1600px; height: 1000px; overflow: hidden; }
+  body {
+    background:
+      linear-gradient(rgba(79,209,197,.055) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, rgba(79,209,197,.055) 1px, transparent 1px) 0 0 / 32px 100%,
+      radial-gradient(1100px 620px at 78% -14%, #143039 0%, rgba(20,48,57,0) 66%),
+      #0b171d;
+    color: #e8f1f2;
+    font-family: 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
+    padding: 40px 56px 28px;
+    display: flex; flex-direction: column;
+  }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1px solid rgba(79,209,197,.28); padding-bottom: 14px; }
+  .kicker { font-family: Consolas, monospace; font-size: 10px; letter-spacing: 2.6px; color: #4fd1c5; margin-bottom: 10px; }
+  h1 { font-size: 32px; font-weight: 600; letter-spacing: .6px; }
+  h1 span { color: #4fd1c5; font-weight: 400; }
+  .head .side { text-align: right; font-family: Consolas, monospace; font-size: 10.5px; line-height: 2; color: #7f99a1; }
+  .head .side b { color: #f0a24b; font-weight: 400; }
+
+  .layers { margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .row { display: flex; align-items: stretch; gap: 16px; }
+  .tag { width: 118px; flex: none; display: flex; flex-direction: column; justify-content: center; border-left: 2px solid #4fd1c5; padding-left: 10px; }
+  .tag .no { font-family: Consolas, monospace; font-size: 9.5px; letter-spacing: 1.6px; color: #4fd1c5; }
+  .tag .nm { font-size: 13px; font-weight: 600; margin-top: 4px; }
+  .boxes { flex: 1; display: flex; gap: 9px; }
+  .box {
+    flex: 1; background: rgba(255,255,255,.028); border: 1px solid rgba(79,209,197,.30);
+    border-radius: 3px; padding: 12px 13px 13px; position: relative;
+  }
+  .box::before {
+    content: ''; position: absolute; left: -1px; top: -1px; width: 9px; height: 9px;
+    border-left: 2px solid #4fd1c5; border-top: 2px solid #4fd1c5;
+  }
+  .box.lead { background: rgba(79,209,197,.09); border-color: rgba(79,209,197,.62); box-shadow: 0 0 26px rgba(79,209,197,.10) inset; }
+  .box.skel { border-style: dashed; border-color: rgba(240,162,75,.45); background: transparent; }
+  .box.skel::before { border-color: #f0a24b; }
+  .box h3 { font-size: 13px; font-weight: 600; letter-spacing: .2px; }
+  .box h3 span { font-family: Consolas, monospace; font-size: 9.5px; color: #7ee0d6; font-weight: 400; margin-left: 4px; }
+  .box p { font-size: 10px; line-height: 1.7; color: #86a2aa; margin-top: 5px; }
+  .box .flag {
+    position: absolute; top: 8px; right: 8px; font-family: Consolas, monospace;
+    font-size: 8.5px; letter-spacing: 1px; color: #f0a24b;
+  }
+
+  .bottom { margin-top: 22px; display: flex; gap: 16px; }
+  .chain { margin-top: 20px; border-top: 1px solid rgba(79,209,197,.18); padding-top: 10px; }
+  .chain h2 { font-size: 11px; letter-spacing: .6px; display: flex; align-items: center; gap: 9px; margin-bottom: 8px; }
+  .chain h2 b { font-family: Consolas, monospace; color: #0b171d; background: #4fd1c5; font-size: 9.5px; padding: 2px 6px; border-radius: 2px; }
+  .chain-row { display: flex; align-items: center; gap: 6px; font-size: 10px; margin-bottom: 5px; }
+  .chain-row .cl { width: 74px; flex: none; color: #6f8b93; font-size: 9.5px; letter-spacing: .5px; }
+  .chain-row .step { border: 1px solid rgba(79,209,197,.26); border-radius: 2px; padding: 3px 9px; color: #bfd2d6; }
+  .chain-row .step.hl { border-color: rgba(79,209,197,.62); background: rgba(79,209,197,.10); color: #7ee0d6; }
+  .chain-row i { color: #3d5b63; font-style: normal; font-size: 9px; }
+  .panel {
+    background: rgba(255,255,255,.022); border: 1px solid rgba(79,209,197,.18);
+    border-radius: 3px; padding: 14px 16px 10px;
+  }
+  .panel h2 { font-size: 11.5px; letter-spacing: .6px; display: flex; align-items: center; gap: 9px; }
+  .panel h2 b { font-family: Consolas, monospace; color: #0b171d; background: #4fd1c5; font-size: 9.5px; padding: 2px 6px; border-radius: 2px; }
+  table { width: 100%; border-collapse: collapse; font-size: 10.5px; margin-top: 8px; }
+  th { text-align: left; font-family: Consolas, monospace; font-size: 9px; letter-spacing: 1px; color: #6f8b93; padding: 6px 8px; border-bottom: 1px solid rgba(79,209,197,.22); font-weight: 400; }
+  td { padding: 7px 8px; border-bottom: 1px solid rgba(255,255,255,.05); color: #c6d6d9; }
+  td.mono { font-family: Consolas, monospace; color: #7ee0d6; font-size: 10px; }
+  td .dot { display: inline-block; width: 5px; height: 5px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  td .on { background: #4fd1c5; box-shadow: 0 0 7px #4fd1c5; } td .off { background: #6b532f; }
+  .notes { font-size: 10.5px; line-height: 1.95; color: #93aeb5; margin-top: 9px; }
+  .notes li { list-style: none; padding-left: 16px; position: relative; }
+  .notes li::before { content: '▸'; position: absolute; left: 0; color: #4fd1c5; font-size: 9px; top: 1px; }
+  .legend { margin-top: 10px; border: 1px dashed rgba(79,209,197,.28); padding: 10px 12px; font-size: 10px; line-height: 1.8; color: #8ba6ad; }
+  .legend strong { color: #4fd1c5; font-family: Consolas, monospace; font-size: 9.5px; letter-spacing: 1px; }
+  .foot { margin-top: auto; padding-top: 12px; display: flex; justify-content: space-between; font-family: Consolas, monospace; font-size: 9px; letter-spacing: 1.8px; color: #55707a; }
+</style>
+</head>
+<body>
+  <div class="head">
+    <div>
+      <div class="kicker">① FUNCTIONAL ARCHITECTURE / SMART FRIDGE PLATFORM</div>
+      <h1>小易冰箱 <span>//</span> 功能架构图</h1>
+    </div>
+    <div class="side">
+      QUERY FOOD · BROWSE RECIPES<br>
+      <b>FLUTTER / VUE / SPRING BOOT ×7</b>
+    </div>
+  </div>
+
+  <div class="layers">
+    <div class="row">
+      <div class="tag"><div class="no">L01</div><div class="nm">用户端</div></div>
+      <div class="boxes">
+        <div class="box lead"><h3>3D 冰箱首页</h3><p>WebGL 实时模型 · 四分区 · 门抽屉开合</p></div>
+        <div class="box"><h3>食材管理</h3><p>新增 · 移动 · 使用 · 丢弃 · 筛选</p></div>
+        <div class="box"><h3>菜谱推荐</h3><p>覆盖率 · 缺料提示 · 临期优先</p></div>
+        <div class="box"><h3>家庭协作</h3><p>邀请码 · 角色治理 · 所有权转交</p></div>
+        <div class="box"><h3>个人中心</h3><p>会话续期 · 家庭切换 · 登出</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="no">L02</div><div class="nm">接入层</div></div>
+      <div class="boxes">
+        <div class="box lead"><h3>统一网关<span>:8080</span></h3><p>JWT 验签 · 撤销校验 · 用户头上送 · 路由 · 追踪</p></div>
+        <div class="box"><h3>运营后台</h3><p>Vue 3 · 看板 / 菜谱 / 商品 / 订单</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="no">L03</div><div class="nm">业务服务</div></div>
+      <div class="boxes">
+        <div class="box"><h3>账号与家庭<span>:8081</span></h3><p>注册登录 · 令牌轮换 · 成员角色</p></div>
+        <div class="box"><h3>冰箱与食材<span>:8082</span></h3><p>结构 · 分区 · 乐观锁 · 流水</p></div>
+        <div class="box"><h3>菜谱<span>:8083</span></h3><p>目录 · 原料 · 步骤</p></div>
+        <div class="box skel"><span class="flag">SKELETON</span><h3>库存<span>:8084</span></h3><p>SKU · 库存乐观锁</p></div>
+        <div class="box skel"><span class="flag">SKELETON</span><h3>订单<span>:8085</span></h3><p>补货 · 优惠券 · 支付</p></div>
+        <div class="box skel"><span class="flag">SKELETON</span><h3>通知<span>:8086</span></h3><p>MQ 消费 · 站内信</p></div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="tag"><div class="no">L04</div><div class="nm">数据存储</div></div>
+      <div class="boxes">
+        <div class="box"><h3>MySQL 8<span>3306/3307</span></h3><p>auth_db · fridge_db · recipe_db</p></div>
+        <div class="box"><h3>Redis<span>6379</span></h3><p>刷新会话 · 令牌黑名单</p></div>
+        <div class="box"><h3>MinIO</h3><p>食材图 · 菜谱封面 · 贴纸</p></div>
+        <div class="box"><h3>Nacos</h3><p>注册发现 · 配置中心</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="panel" style="flex:1">
+      <h2><b>③</b>服务清单（摘要）</h2>
+      <table>
+        <tr><th style="width:22%">SERVICE</th><th style="width:10%">PORT</th><th style="width:44%">RESPONSIBILITY</th><th style="width:24%">STATUS</th></tr>
+        <tr><td class="mono">gateway-service</td><td class="mono">8080</td><td>唯一入口 · 鉴权 · 路由 · 追踪</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td class="mono">auth-family-service</td><td class="mono">8081</td><td>账号 · 令牌 · 家庭与成员治理</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td class="mono">fridge-service</td><td class="mono">8082</td><td>冰箱结构 · 食材 · 操作流水</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td class="mono">recipe-service</td><td class="mono">8083</td><td>菜谱目录 · 原料 · 步骤</td><td><span class="dot on"></span>已实现</td></tr>
+        <tr><td class="mono">stock / order / notify</td><td class="mono">8084-86</td><td>库存 · 订单 · 通知领域边界</td><td><span class="dot off"></span>骨架</td></tr>
+      </table>
+    </div>
+    <div class="panel" style="flex:0 0 470px">
+      <h2><b>④</b>关键约束</h2>
+      <ul class="notes">
+        <li>客户端只访问 Gateway，不直连业务端口</li>
+        <li>权限服务端二次校验，不信任前端状态</li>
+        <li>写操作携带 version，冲突返回 409</li>
+        <li>数据按家庭隔离，跨家庭 404 / 403</li>
+      </ul>
+      <div class="legend">
+        <strong>LEGEND</strong><br>
+        实线＝已接入真实数据；虚线＝领域边界已定、尚未接入业务。响应统一 code / message / data / traceId。
+      </div>
+    </div>
+  </div>
+
+  <div class="chain">
+    <h2><b>④</b>业务调用关系</h2>
+    <div class="chain-row"><span class="cl">登录 / 续期</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway :8080</span><i>→</i><span class="step">auth :8081</span><i>→</i><span class="step">MySQL 账号 · Redis 刷新会话</span></div>
+    <div class="chain-row"><span class="cl">录入食材</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway（验签 + 撤销校验）</span><i>→</i><span class="step">fridge :8082</span><i>→</i><span class="step">auth :8081 校验家庭角色</span><i>→</i><span class="step">MySQL 写入 + 操作流水</span></div>
+    <div class="chain-row"><span class="cl">查看菜谱</span><span class="step">Flutter</span><i>→</i><span class="step hl">Gateway :8080</span><i>→</i><span class="step">recipe :8083</span><i>→</i><span class="step">MySQL 菜谱目录</span><i>→</i><span class="step">本地按库存计算覆盖率</span></div>
+  </div>
+
+  <div class="foot"><span>XIAOYI FRIDGE / FUNCTIONAL MAP / V1.0</span><span>2026-11 / 01 OF 07</span></div>
+</body>
+</html>

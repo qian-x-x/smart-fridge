@@ -1,0 +1,32 @@
+[
+  {
+    "check": "Flutter static analysis",
+    "exitCode": 0,
+    "passed": true,
+    "log": "dart-analyze.log"
+  },
+  {
+    "check": "Flutter regression tests",
+    "exitCode": 0,
+    "passed": true,
+    "log": "flutter-tests.log"
+  },
+  {
+    "check": "Flutter Web release",
+    "exitCode": 0,
+    "passed": true,
+    "log": "flutter-web-build.log"
+  },
+  {
+    "check": "Three.js structure and inventory",
+    "exitCode": 0,
+    "passed": true,
+    "log": "three-tests.log"
+  },
+  {
+    "check": "Vue typecheck and production build",
+    "exitCode": 0,
+    "passed": true,
+    "log": "vue-build.log"
+  }
+]

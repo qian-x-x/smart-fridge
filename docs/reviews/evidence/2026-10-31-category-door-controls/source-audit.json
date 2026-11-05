@@ -1,0 +1,27 @@
+{
+  "date": "2026-10-31",
+  "changedSnapshotFiles": [
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_sheets.dart",
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+    "apps/fridge-app/web/fridge3d/index.html",
+    "apps/fridge-app/web/fridge3d/fridge3d.js",
+    "apps/fridge-app/web/fridge3d/kitchen-scene.js",
+    "apps/fridge-app/test/fridge_home_test.dart",
+    "scripts/tests/fridge3d.test.mjs",
+    "docs/开发状态.md",
+    "docs/开发运行手册.md",
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/food_search_sheet.dart",
+    "apps/fridge-app/test/food_search_test.dart"
+  ],
+  "newSourceFiles": [
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/food_category_options.dart"
+  ],
+  "protectedBackendContractsInfraAdminDiffUnchanged": true,
+  "gitDiffCheckExit": 0,
+  "gitDiffCheckOutput": "",
+  "androidSourceFilesChecked": 94,
+  "androidSourceMismatches": [],
+  "sceneBrowserChecks": 36,
+  "sceneBrowserPassed": true,
+  "realCategoryBrowserPassed": true
+}

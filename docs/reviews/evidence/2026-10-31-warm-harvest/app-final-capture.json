@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-31",
+  "mode": "local demo for final visual capture; real Gateway acceptance recorded separately",
+  "checks": [
+    {
+      "name": "native mobile navigation to recipes",
+      "passed": true
+    },
+    {
+      "name": "hidden scene remains connected and inactive",
+      "passed": true
+    },
+    {
+      "name": "Chinese UI font uses bundled family",
+      "passed": true,
+      "remoteNotoSansRequests": 0
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

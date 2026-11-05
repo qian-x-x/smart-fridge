@@ -1,0 +1,20 @@
+{
+  "mode": "built-in image_gen",
+  "date": "2026-10-31",
+  "purpose": "Design review only; no production asset replacement",
+  "prompts": [
+    {
+      "key": "morning",
+      "prompt": "Use case: product-mockup. Asset type: editorial kitchen hero artwork for a Chinese smart refrigerator UI design review. Create one beautifully art-directed photorealistic 3D architectural render, landscape 3:2. A front-facing brushed silver French-door refrigerator, upper two doors OPEN revealing clean lit glass shelves holding green lettuce, milk bottle, a carton of eggs and small tomatoes. Two closed bottom drawers. Appliance set in a quiet minimal sunlit home kitchen with ivory stone, pale oak cabinet to left and olive green wall detail to right. Refrigerator occupies center 55% and entire appliance is visible with floor below. Premium Muji-like calm domestic still-life, realistic soft morning light, delicate contact shadows, rich silver material. Mostly warm off-white background. No interface, no charts, no labels, no text, no logos, no watermark. This is the visual content that will sit inside a legible UI, do not render any UI."
+    },
+    {
+      "key": "glacier",
+      "prompt": "Use case: product-mockup. Asset type: architectural hero artwork for a smart-fridge UI design proposal. Create one refined product CGI render, landscape 3:2. Brushed titanium French-door refrigerator in a minimal cool-white kitchen, both upper doors OPEN revealing glass shelves, white milk bottle, small green lettuce, tomatoes, eggs. Two bottom drawers closed. Complete fridge visible including floor, centered and prominent. Cool pale blue indirect architectural lighting, ice blue frosted glass panels behind, clean grey stone platform and slim handle details. Restrained technical precision like premium appliance photography, very high fidelity soft reflections, no sci-fi excess. Background very light blue-white. No interface, no floating graphics, no charts, no labels, no text, no logos, no watermark."
+    },
+    {
+      "key": "market",
+      "prompt": "Use case: product-mockup. Asset type: inviting kitchen hero artwork for a Chinese household smart refrigerator interface design. Create one premium editorial photographic 3D render in landscape 3:2. Front-facing cream-white French-door fridge, both upper doors OPEN revealing glass shelves with fresh green lettuce, milk bottle, eggs and tomatoes, two bottom drawers closed. Warm terracotta tile backsplash, cream stone counter with a small bowl of oranges to left and leafy herbs in ceramic pot to right, subtle walnut cabinetry. Whole fridge visible from top to floor, centered dominant focal point, believable ergonomic architecture. Soft afternoon sunlight, tactile ceramic and matte enamel, warm editorial lifestyle aesthetic, elegant not cartoon. No interface, no charts, no typography, no labels, no logos, no watermark."
+    }
+  ],
+  "recipeAtlas": "Use case: product-mockup. Asset type: 2 by 2 recipe photography texture atlas for UI review mockups. Produce one single square image divided into FOUR EXACTLY EQUAL SQUARE QUADRANTS, edge to edge with NO GUTTERS, no text, no dividers, no watermark. Each quadrant is a separate beautiful TOP-DOWN food photograph, table fills entire quadrant and plate centered. TOP LEFT: Chinese tomato and scrambled eggs on warm ivory shallow plate on a pale beige tabletop. TOP RIGHT: stir-fried bright broccoli with garlic on light blue ceramic plate on pale blue tabletop. BOTTOM LEFT: pumpkin and creamy golden porridge with simple ceramic bowl on warm beige tabletop. BOTTOM RIGHT: soft steamed eggs custard with scallion on white bowl on light neutral tabletop. Restrained modern food editorial photography, soft window light, realistic edible texture, inviting fresh meals, appetizing orange red green yellow natural colors. Each quadrant must contain exactly one centered plate, each meal fully visible. No utensils crossing quadrant boundaries. These are four small food thumbnails for a smart refrigerator app concept."
+}

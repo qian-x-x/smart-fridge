@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>02 技术架构图</title>
+<link rel="stylesheet" href="sketch.css">
+<style>
+  .tech { display: flex; flex-direction: column; }
+  .tech .card h3 { font-size: 13.5px; }
+  .tech .card .ver { font-family: 'Segoe Print', cursive; font-size: 9.5px; color: #a2988a; display: block; margin-top: 3px; }
+  .tech .card p { font-size: 10.6px; margin-top: 6px; }
+  .tech .card .st {
+    position: absolute; top: -8px; right: 9px; font-size: 9px; letter-spacing: .8px;
+    color: #6f6759; background: #fbf8f1; padding: 0 5px;
+  }
+  .tech .card .st.plan { color: #a2988a; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">02</div>
+      <div>
+        <h1>技术架构图<span class="en">TECHNICAL ARCHITECTURE</span></h1>
+        <p class="sub">各层技术选型、版本基线及在本系统中承担的职责</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+      <div class="layers tech">
+
+        <div class="row">
+          <div class="tagcell"><div class="lbl">LAYER 01</div><div class="tag">客户端</div><div class="arrow">↓</div></div>
+          <div class="boxes tight">
+            <div class="card hi"><h3>Flutter</h3><span class="ver">3.47.8 / Dart 3.13</span><p>Android 与 Web 双端一套代码，Riverpod 管状态、go_router 管路由。</p></div>
+            <div class="card"><h3>Three.js</h3><span class="ver">WebGL 2</span><p>冰箱三维模型与厨房场景，产物随仓库打包，不依赖 CDN。</p></div>
+            <div class="card"><h3>Vue 3 + TS</h3><span class="ver">Vite 8 / Element Plus</span><p>运营后台四个页面，ECharts 看板；当前为演示数据。</p></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell"><div class="lbl">LAYER 02</div><div class="tag">接入层</div><div class="arrow">↓</div></div>
+          <div class="boxes tight">
+            <div class="card hi"><h3>Spring Cloud Gateway</h3><span class="ver">WebFlux / 4.1</span><p>唯一入口，路径前缀路由到 8081–8086，跨域与追踪集中处理。</p></div>
+            <div class="card"><h3>jjwt</h3><span class="ver">0.12.6</span><p>网关本地验签 + 认证服务 introspect 二次校验撤销状态。</p></div>
+            <div class="card"><h3>Redis</h3><span class="ver">7.2.5</span><p>刷新会话记录与访问令牌黑名单，登出即时失效。</p></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell"><div class="lbl">LAYER 03</div><div class="tag">应用层</div><div class="arrow">↓</div></div>
+          <div class="boxes tight">
+            <div class="card hi"><h3>Spring Boot</h3><span class="ver">3.2.12 / JDK 17</span><p>七个服务共用 service-parent，控制层只管映射与校验。</p></div>
+            <div class="card"><h3>Spring Cloud Alibaba</h3><span class="ver">2023.0.3.4</span><p>Nacos 注册与配置；local 模式关闭，先保证单机能起。</p></div>
+            <div class="card"><h3>OpenFeign</h3><span class="ver">—</span><p>冰箱与菜谱服务回查认证服务，按家庭角色决定能否写。</p></div>
+            <div class="card"><h3>Flyway</h3><span class="ver">—</span><p>五套迁移脚本版本化建表，禁止手工改已发布脚本。</p></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell"><div class="lbl">LAYER 04</div><div class="tag">数据层</div><div class="arrow">↓</div></div>
+          <div class="boxes tight">
+            <div class="card"><h3>MySQL</h3><span class="ver">8.0.39 × 2</span><p>核心实例存账号/冰箱/菜谱，交易实例预留给库存与订单。</p></div>
+            <div class="card"><h3>MinIO</h3><span class="ver">—</span><p>三类对象桶已建，图片上传尚未接入业务。</p></div>
+            <div class="card"><h3>H2</h3><span class="ver">测试</span><p>集成测试用内存库跑 MockMvc，不依赖本机 MySQL。</p></div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell"><div class="lbl">LAYER 05</div><div class="tag">支撑</div></div>
+          <div class="boxes tight">
+            <div class="card"><h3>Docker Compose</h3><span class="ver">core / full</span><p>core 起中间件；full 追加 RocketMQ、Seata、Sentinel、SkyWalking。</p></div>
+            <div class="card"><h3>Maven BOM</h3><span class="ver">3.9</span><p>父 POM 统一版本，八个模块一次编译。</p></div>
+            <div class="card"><h3>GitHub Actions</h3><span class="ver">CI</span><p>推送即跑后端测试、Flutter 分析测试与 Web 构建。</p></div>
+            <div class="card dashed"><h3>Seata / Sentinel / MQ</h3><span class="ver">待接入</span><p>编排已就绪，尚未形成真实业务证据（仅配置）。</p></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="legend">
+        <div class="it"><span class="sw f"></span>选型主力</div>
+        <div class="it"><span class="sw"></span>已接入并运行</div>
+        <div class="it"><span class="sw d"></span>只有编排配置</div>
+      </div>
+    </div>
+
+    <div class="col-side">
+      <div class="note">
+        <div class="tape"></div>
+        <h2>选型依据</h2>
+        <ul>
+          <li>课程要求覆盖微服务、网关、注册中心、分布式事务与消息队列，故按业务能力划分服务，而非按页面划分。</li>
+          <li>三维冰箱以 Flutter Web 内嵌 Three.js 场景实现，较纯 Dart 建模成本更低。</li>
+          <li>七个服务共用父 POM 与统一响应结构，新增服务仅需实现业务逻辑。</li>
+          <li>中间件先保证本机可启动，再逐步接入真实业务，避免仅存配置而无运行证据。</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>标注口径</h2>
+        <div class="check">
+          <div><span class="bx"></span><span>已接入：具备接口、数据表与联调记录</span></div>
+          <div><span class="bx"></span><span>仅配置：仅含容器编排与依赖，无业务调用</span></div>
+          <div><span class="bx"></span><span>骨架服务不计入已完成范围</span></div>
+          <div><span class="bx empty"></span><span>待补齐 Seata 回滚与 MQ 消费证据</span></div>
+        </div>
+      </div>
+      <div class="note" style="background:#fdf6e3">
+        <h2>版本基线</h2>
+        <ul>
+          <li>JDK 17 · Maven 3.9 · Node 22 · Docker Compose v2</li>
+          <li>所有镜像固定小版本，不使用 latest。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

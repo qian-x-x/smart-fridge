@@ -1,0 +1,231 @@
+/* ============================================================
+   小易冰箱 · 项目前置材料 —— 手绘学院风共享样式
+   1600 × 1000 单页版式（无页眉说明、无页脚、无总结条）
+   ============================================================ */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  width: 1600px; height: 1000px; overflow: hidden;
+  background: #fbf8f1;
+  color: #2b2b2b;
+  font-family: 'KaiTi', 'STKaiti', 'Microsoft YaHei', serif;
+}
+.page {
+  position: relative; width: 1600px; height: 1000px;
+  padding: 38px 54px 26px;
+  display: flex; flex-direction: column;
+  background-image: radial-gradient(rgba(60, 52, 40, .11) .9px, transparent .9px);
+  background-size: 26px 26px;
+}
+.page::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 99;
+  opacity: .045; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- 页头 ---------- */
+.head { display: flex; align-items: flex-end; justify-content: space-between; }
+.head .left { display: flex; align-items: flex-end; gap: 22px; }
+.num {
+  position: relative; flex: none; width: 104px; height: 64px;
+  display: grid; place-items: center;
+  font-family: 'Segoe Print', 'Comic Sans MS', 'KaiTi', cursive;
+  font-size: 35px; letter-spacing: 1px; color: #2b2b2b;
+}
+.num::before {
+  content: ''; position: absolute; inset: -7px -11px;
+  border: 2.2px solid #2b2b2b; border-radius: 50% 46% 54% 44% / 52% 48% 56% 44%;
+  transform: rotate(-4deg);
+  filter: url(#rough);
+}
+h1 {
+  font-size: 46px; font-weight: 400; letter-spacing: 3px; line-height: 1.14; margin: 0;
+}
+h1 .en {
+  display: block; font-family: 'Segoe Print', 'Comic Sans MS', cursive;
+  font-size: 12px; letter-spacing: 4.4px; color: #a2988a; margin-top: 8px;
+}
+.head .sub { font-size: 16px; color: #6f6759; letter-spacing: .8px; margin: 10px 0 0; }
+.rule { margin-top: 14px; height: 3px; position: relative; }
+.rule::before {
+  content: ''; position: absolute; inset: 0; border-top: 2px solid #2b2b2b;
+  filter: url(#rough);
+  border-bottom: 1px solid #c9c1b2;
+}
+
+/* ---------- 手绘框 ---------- */
+.sk { position: relative; background: #fffdf7; border-radius: 8px 12px 7px 14px; }
+.sk::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  border: 1.7px solid #3a362e; border-radius: inherit; filter: url(#rough);
+}
+.sk.dash { background: transparent; }
+.sk.dash::before { border-style: dashed; border-width: 1.5px; border-color: #8d8474; }
+
+/* ---------- 内容区 ---------- */
+.body { flex: 1; display: flex; gap: 30px; margin-top: 18px; min-height: 0; }
+.col-main { flex: 1; display: flex; flex-direction: column; }
+.col-side { flex: 0 0 400px; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
+
+/* 分层 */
+.layers { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+.layers > .row { flex: 1; align-items: stretch; }
+.row { display: flex; align-items: center; gap: 16px; }
+.tagcell { flex: 0 0 108px; display: flex; flex-direction: column; align-items: center; padding-top: 2px; }
+.tagcell .lbl {
+  font-family: 'Segoe Print', 'Comic Sans MS', cursive; font-size: 10.5px;
+  color: #a2988a; letter-spacing: 1.6px; margin-bottom: 6px;
+}
+.tag {
+  position: relative; padding: 10px 16px; font-size: 16.5px; letter-spacing: 3px; white-space: nowrap;
+  background: #2b2b2b; color: #fbf8f1; border-radius: 5px 9px 4px 10px;
+  transform: rotate(-0.8deg);
+}
+.tag::before {
+  content: ''; position: absolute; inset: 0; border: 1.8px solid #2b2b2b;
+  border-radius: inherit; filter: url(#rough);
+}
+.arrow { color: #b3a998; font-size: 17px; line-height: 1; margin-top: 10px; }
+.boxes { flex: 1; display: flex; gap: 11px; align-items: stretch; }
+.card {
+  flex: 1; padding: 15px 16px 16px; background: #fffdf7;
+  border-radius: 8px 12px 7px 14px; position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.card::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  border: 1.7px solid #a99f8d; border-radius: inherit; filter: url(#rough);
+}
+.card.hi { background: #fdf6e3; }
+.card.hi::before { border-color: #3a362e; border-width: 2px; }
+.card.dashed { background: transparent; }
+.card.dashed::before { border-style: dashed; border-color: #a99f8d; }
+.card h3 { font-size: 16.5px; font-weight: 400; margin: 0; letter-spacing: .8px; white-space: nowrap; }
+.card h3 .port {
+  font-family: 'Segoe Print', cursive; font-size: 11px; color: #a2988a; margin-left: 5px;
+}
+.card p {
+  font-size: 12.6px; line-height: 1.72; color: #625b4e; margin: 7px 0 0;
+  font-family: 'Microsoft YaHei UI', sans-serif;
+}
+.card .skl {
+  position: absolute; top: -8px; right: 10px; font-size: 9.8px; letter-spacing: 1px;
+  color: #8d8474; background: #fbf8f1; padding: 0 5px;
+}
+.boxes .card:nth-child(odd) { transform: rotate(-0.22deg); }
+.boxes .card:nth-child(even) { transform: rotate(0.18deg); }
+
+/* 侧栏便签 */
+.note { padding: 18px 20px 17px; position: relative; background: #fffdf7; }
+.note::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  border: 1.7px solid #3a362e; border-radius: 6px 10px 8px 12px; filter: url(#rough);
+}
+.note { transform: rotate(0.25deg); }
+.note:nth-child(2) { transform: rotate(-0.3deg); }
+.note h2 {
+  font-size: 16.5px; font-weight: 400; margin: 0 0 12px; letter-spacing: 1.4px;
+  display: flex; align-items: center; gap: 9px;
+}
+.note h2::before {
+  content: ''; width: 20px; height: 2px; background: #2b2b2b; flex: none;
+  filter: url(#rough);
+}
+.note ul { margin: 0; padding: 0; list-style: none; }
+.note li {
+  font-size: 12.8px; line-height: 1.82; color: #453f34; padding-left: 16px;
+  position: relative; margin-bottom: 8px; font-family: 'Microsoft YaHei UI', sans-serif;
+}
+.note li::before {
+  content: '·'; position: absolute; left: 3px; top: -2px; font-size: 19px; color: #8d8474;
+}
+.tape {
+  position: absolute; top: -9px; left: 50%; width: 78px; height: 20px;
+  transform: translateX(-50%) rotate(-2.2deg);
+  background: rgba(226, 203, 160, .62); border-left: 1px dashed rgba(150, 128, 96, .35);
+  border-right: 1px dashed rgba(150, 128, 96, .35);
+}
+
+/* 检查清单 */
+.check { font-size: 12.6px; line-height: 1.9; color: #453f34; font-family: 'Microsoft YaHei UI', sans-serif; }
+.check div { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 7px; }
+.check .bx {
+  flex: none; width: 13px; height: 13px; margin-top: 3px; position: relative;
+  border: 1.5px solid #6f6759; border-radius: 2px 4px 2px 3px; transform: rotate(-2deg);
+}
+.check .bx::after {
+  content: '✓'; position: absolute; left: -1px; top: -10px; font-size: 16px; color: #2b2b2b;
+}
+.check .empty::after { content: ''; }
+
+/* ---------- 表格 ---------- */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left; font-weight: 400; font-size: 15px; letter-spacing: 1.6px; color: #2b2b2b;
+  padding: 9px 9px 8px; border-bottom: 1.8px solid #3a362e;
+}
+td {
+  padding: 8px 9px; font-size: 12.6px; color: #3a362e;
+  border-bottom: 1px dashed #d8d0c1; font-family: 'Microsoft YaHei UI', sans-serif;
+}
+td.k { font-family: 'Consolas', monospace; font-size: 12px; color: #2b2b2b; }
+
+/* ---------- 图例条 ---------- */
+.legend {
+  margin-top: auto; padding: 12px 16px 4px; border-top: 1px dashed #d8d0c1;
+  display: flex; align-items: center; gap: 28px;
+}
+.legend .it { display: flex; align-items: center; gap: 9px; font-size: 12px; color: #625b4e; letter-spacing: .6px; }
+.legend .sw { width: 28px; height: 16px; border: 1.7px solid #3a362e; border-radius: 3px 6px 3px 5px; }
+.legend .sw.d { border-style: dashed; border-color: #a99f8d; }
+.legend .sw.f { background: #fdf6e3; }
+.legend .sw.t { background: #2b2b2b; border-color: #2b2b2b; }
+
+/* ---------- 调用链 ---------- */
+.trace { display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+.trace .ln { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
+.trace .nm { flex: 0 0 96px; font-size: 12.6px; color: #625b4e; letter-spacing: 1px; }
+.trace .sp {
+  position: relative; padding: 7px 12px; font-size: 12.2px; background: #fffdf7;
+  border-radius: 6px 9px 5px 10px; white-space: nowrap;
+  font-family: 'Microsoft YaHei UI', sans-serif;
+}
+.trace .sp::before {
+  content: ''; position: absolute; inset: 0; border: 1.5px solid #a99f8d;
+  border-radius: inherit; filter: url(#rough);
+}
+.trace .sp.k { background: #fdf6e3; }
+.trace .sp.k::before { border-color: #3a362e; border-width: 1.8px; }
+.trace .ar { color: #b3a998; font-size: 13px; }
+.trace .tx { font-size: 12px; color: #8d8474; font-family: 'Microsoft YaHei UI', sans-serif; }
+
+/* ---------- 数据库表卡片 ---------- */
+.dbgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.dbt {
+  padding: 12px 14px; background: #fffdf7; position: relative;
+  border-radius: 7px 11px 6px 12px;
+}
+.dbt::before {
+  content: ''; position: absolute; inset: 0; border: 1.5px solid #a99f8d;
+  border-radius: inherit; filter: url(#rough); pointer-events: none;
+}
+.dbt h4 { margin: 0 0 7px; font-size: 13.5px; font-weight: 400; letter-spacing: .6px; font-family: Consolas, monospace; }
+.dbt .cols { font-size: 11.4px; line-height: 1.72; color: #625b4e; font-family: 'Microsoft YaHei UI', sans-serif; }
+.dbt .rel { margin-top: 7px; font-size: 10.6px; color: #a2988a; letter-spacing: .4px; }
+
+/* ---------- 路由映射条 ---------- */
+.routes { padding-top: 12px; border-top: 1px dashed #d8d0c1; }
+.routes .rh { font-size: 11.6px; letter-spacing: 2px; color: #a2988a; margin-bottom: 9px; }
+.routes .rg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 26px; }
+.routes .rt { display: flex; align-items: baseline; gap: 10px; font-size: 11.8px; }
+.routes code {
+  font-family: Consolas, monospace; font-size: 11.4px; color: #3a362e;
+  background: #f4ecdc; padding: 2px 6px; border-radius: 3px;
+}
+.routes span { color: #8d8474; font-family: 'Microsoft YaHei UI', sans-serif; white-space: nowrap; }
+
+/* 紧凑卡片（每行卡片较多时） */
+.boxes.tight .card { padding: 13px 13px 14px; }
+.boxes.tight .card h3 { font-size: 14.8px; letter-spacing: .4px; }
+.boxes.tight .card h3 .port { font-size: 10.4px; margin-left: 3px; }
+.boxes.tight .card p { font-size: 11.8px; line-height: 1.7; margin-top: 6px; }

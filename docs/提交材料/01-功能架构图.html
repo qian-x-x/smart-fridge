@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>01 功能架构图</title>
+<link rel="stylesheet" href="sketch.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">01</div>
+      <div>
+        <h1>功能架构图<span class="en">FUNCTIONAL ARCHITECTURE</span></h1>
+        <p class="sub">按用户端、接入层、业务服务、数据层四层划分功能边界</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+      <div class="layers">
+
+        <div class="row">
+          <div class="tagcell">
+            <div class="lbl">LAYER 01</div>
+            <div class="tag">用户端</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="boxes">
+            <div class="card hi">
+              <h3>3D 冰箱首页</h3>
+              <p>WebGL 实时模型：冷藏双门、变温与冷冻抽屉可独立开合，点分区即联动右侧库存清单。</p>
+            </div>
+            <div class="card">
+              <h3>食材管理</h3>
+              <p>新增、移动、使用、丢弃；支持名称、分类、多标签、分区、到期状态组合筛选与四种排序。</p>
+            </div>
+            <div class="card">
+              <h3>菜谱推荐</h3>
+              <p>按当前库存算原料覆盖率，标出缺哪几样，临期食材命中的菜谱优先展示。</p>
+            </div>
+            <div class="card">
+              <h3>家庭协作</h3>
+              <p>邀请码加入家庭，拥有者调整成员角色、移除成员、转交所有权，可切换多个家庭。</p>
+            </div>
+            <div class="card">
+              <h3>个人中心</h3>
+              <p>访问令牌临近过期自动续期，失效后回到登录页；演示账号只读。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell">
+            <div class="lbl">LAYER 02</div>
+            <div class="tag">接入层</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="boxes">
+            <div class="card hi" style="flex:2.3">
+              <h3>统一网关<span class="port">gateway :8080</span></h3>
+              <p>客户端唯一入口：JWT 验签 → 撤销校验 → 改写并上送用户身份头 → 路由转发 → 写入请求追踪号；跨域、健康检查、异常兜底集中在此层完成。认证服务不可用时返回 503，客户端保留会话后重试。</p>
+            </div>
+            <div class="card" style="flex:1">
+              <h3>运营后台</h3>
+              <p>Vue 3 独立站点：数据看板、菜谱、商品库存、订单四个页面，与用户端共用同一套暖橙主题。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell">
+            <div class="lbl">LAYER 03</div>
+            <div class="tag">业务服务</div>
+            <div class="arrow">↓</div>
+          </div>
+          <div class="boxes tight">
+            <div class="card">
+              <h3>账号与家庭<span class="port">:8081</span></h3>
+              <p>注册登录、令牌轮换与登出撤销；家庭、邀请码、成员角色。</p>
+            </div>
+            <div class="card">
+              <h3>冰箱与食材<span class="port">:8082</span></h3>
+              <p>冰箱结构、分区容器、食材增改移用丢；乐观锁与操作流水。</p>
+            </div>
+            <div class="card">
+              <h3>菜谱<span class="port">:8083</span></h3>
+              <p>菜谱目录、原料与步骤；只读，不跨服务调用。</p>
+            </div>
+            <div class="card dashed">
+              <span class="skl">骨架</span>
+              <h3>库存<span class="port">:8084</span></h3>
+              <p>SKU 与库存乐观锁，待补货流程接入。</p>
+            </div>
+            <div class="card dashed">
+              <span class="skl">骨架</span>
+              <h3>订单<span class="port">:8085</span></h3>
+              <p>补货订单、优惠券与支付。</p>
+            </div>
+            <div class="card dashed">
+              <span class="skl">骨架</span>
+              <h3>通知<span class="port">:8086</span></h3>
+              <p>MQ 消费与站内信。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="tagcell">
+            <div class="lbl">LAYER 04</div>
+            <div class="tag">数据层</div>
+          </div>
+          <div class="boxes">
+            <div class="card">
+              <h3>MySQL 8<span class="port">3306 / 3307</span></h3>
+              <p>auth_db、fridge_db、recipe_db 同属核心实例；库存与订单使用独立交易实例。</p>
+            </div>
+            <div class="card">
+              <h3>Redis<span class="port">6379</span></h3>
+              <p>刷新会话记录与访问令牌黑名单，登出即时生效。</p>
+            </div>
+            <div class="card">
+              <h3>MinIO</h3>
+              <p>食材图片、菜谱封面与贴纸三类对象桶。</p>
+            </div>
+            <div class="card">
+              <h3>Nacos</h3>
+              <p>cloud 模式下的服务注册与配置下发，local 模式关闭。</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="legend">
+        <div class="it"><span class="sw"></span>已实现并接入真实数据</div>
+        <div class="it"><span class="sw d"></span>领域边界已定、尚未接入</div>
+        <div class="it"><span class="sw f"></span>核心演示路径</div>
+        <div class="it"><span class="sw t"></span>层级标签</div>
+      </div>
+    </div>
+
+    <div class="col-side">
+      <div class="note">
+        <div class="tape"></div>
+        <h2>结构说明</h2>
+        <ul>
+          <li>自上而下分为四层：用户端功能、统一接入、业务服务与数据存储。</li>
+          <li>同一横排属同一层，层内模块<strong>互不调用</strong>；依赖方向自上而下，禁止反向引用。</li>
+          <li>实线框表示已接入真实数据；虚线框表示领域边界已确定、尚未接入业务。</li>
+          <li>权限校验位于服务层；前端按钮状态仅影响交互，不作为授权依据。</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>核对项</h2>
+        <div class="check">
+          <div><span class="bx"></span><span>每项用户功能均可对应到具体服务</span></div>
+          <div><span class="bx"></span><span>骨架服务与已实现服务分别标注</span></div>
+          <div><span class="bx"></span><span>权限校验点位于服务层</span></div>
+          <div><span class="bx empty"></span><span>时间线撤销与恢复功能待补入冰箱服务</span></div>
+        </div>
+      </div>
+      <div class="note" style="background:#fdf6e3">
+        <h2>常见问题</h2>
+        <ul>
+          <li>仅列功能模块而缺少支撑层，易被判定为界面结构图。</li>
+          <li>服务间存在箭头但未标明调用方向与目的。</li>
+          <li>中间件标注为已使用，实际仅有容器编排配置。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

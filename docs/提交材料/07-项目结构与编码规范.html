@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>07 项目结构与编码规范</title>
+<link rel="stylesheet" href="sketch.css">
+<style>
+  .num { width: 112px; font-size: 30px; }
+  .col-side { flex: 0 0 560px; justify-content: flex-start; gap: 12px; }
+  pre.tree {
+    margin: 0; padding: 16px 18px; background: #fffdf7; position: relative;
+    font-family: Consolas, 'Courier New', monospace; font-size: 11.6px; line-height: 1.92;
+    color: #4a4438; border-radius: 8px 12px 7px 13px;
+  }
+  pre.tree::before {
+    content: ''; position: absolute; inset: 0; border: 1.6px solid #a99f8d;
+    border-radius: inherit; filter: url(#rough); pointer-events: none;
+  }
+  pre.tree b { font-weight: 400; color: #2b2b2b; }
+  pre.tree i { font-style: normal; color: #a2988a; }
+  .rules { display: flex; flex-direction: column; gap: 20px; flex: 1; justify-content: space-between; }
+  .rulec { padding: 17px 17px; background: #fffdf7; position: relative; border-radius: 6px 10px 5px 11px; }
+  .rulec::before {
+    content: ''; position: absolute; inset: 0; border: 1.4px solid #a99f8d;
+    border-radius: inherit; filter: url(#rough); pointer-events: none;
+  }
+  .rulec h4 { margin: 0 0 6px; font-size: 13.6px; font-weight: 400; letter-spacing: 1.2px; }
+  .rulec h4 span { font-family: 'Segoe Print', cursive; font-size: 9px; color: #b3a998; margin-left: 6px; letter-spacing: 1px; }
+  .rulec p { margin: 0; font-size: 11.8px; line-height: 1.75; color: #6f6759; font-family: 'Microsoft YaHei UI', sans-serif; }
+  .rulec code { font-family: Consolas, monospace; font-size: 10.8px; background: #f4ecdc; padding: 0 4px; border-radius: 2px; color: #3a362e; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">07</div>
+      <div>
+        <h1>项目结构与编码规范<span class="en">STRUCTURE &amp; CODING STANDARD</span></h1>
+        <p class="sub">仓库目录组织与编码约定</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+      <div class="note" style="padding:0;background:transparent;margin-bottom:6px">
+        <h2>工程结构 · 单仓库多模块</h2>
+      </div>
+<pre class="tree"><b>smart-fridge/</b>
+├─ <b>apps/</b>
+│  ├─ <b>fridge-app/</b>              <i>Flutter 用户端（Android / Web）</i>
+│  │  ├─ lib/core/                 <i>配置 · 网络 · 路由 · 会话 · 主题</i>
+│  │  ├─ lib/features/             <i>auth / family / fridge / recipe / profile</i>
+│  │  │  └─ 每域分 domain · data · application · presentation
+│  │  ├─ lib/shared/               <i>布局、通用按钮、表单退出保护</i>
+│  │  ├─ web/fridge3d/             <i>Three.js 场景与状态模块</i>
+│  │  ├─ web/vendor/               <i>Three.js 本地包与许可证</i>
+│  │  └─ test/                     <i>20 个测试文件，覆盖控制器与页面</i>
+│  └─ <b>admin-web/</b>               <i>Vue 3 运营后台</i>
+│     └─ src/ views · stores · api · layouts · components
+├─ <b>backend/</b>
+│  ├─ pom.xml                      <i>父 POM，统一版本与模块</i>
+│  ├─ service-parent/              <i>各服务共用依赖与打包方式</i>
+│  ├─ common-core/                 <i>响应模型 · 异常 · 追踪过滤器</i>
+│  ├─ gateway-service/  :8080      <i>路由 · 鉴权 · 跨域</i>
+│  ├─ auth-family-service/ :8081   <i>账号与家庭</i>
+│  ├─ fridge-service/   :8082      <i>冰箱与食材</i>
+│  ├─ recipe-service/   :8083      <i>菜谱目录</i>
+│  └─ stock / order / notification  <i>领域骨架</i>
+├─ <b>contracts/openapi/</b>          <i>接口契约，前端与后端共同遵守</i>
+├─ <b>infra/</b>
+│  ├─ compose/                     <i>core.yml 与 full.yml</i>
+│  └─ mysql/                       <i>双实例建库与授权脚本</i>
+├─ <b>docs/</b>                        <i>开发状态 · 评审记录 · 设计说明 · 运行手册</i>
+└─ <b>scripts/</b>                     <i>启动、冒烟断言、构建脚本</i></pre>
+    </div>
+
+    <div class="col-side">
+      <div class="note" style="padding:0;background:transparent;margin-bottom:2px">
+        <h2>编码规范 · 六条硬规则</h2>
+      </div>
+      <div class="rules">
+        <div class="rulec">
+          <h4>命名<span>NAMING</span></h4>
+          <p>服务名 <code>域-职责-service</code>；Java 包 <code>com.smartfridge.域.层</code>；Dart 文件 <code>snake_case</code>、类 <code>UpperCamel</code>；接口路径用复数资源 + kebab-case。</p>
+        </div>
+        <div class="rulec">
+          <h4>分层<span>LAYERING</span></h4>
+          <p>控制器只做参数校验与 HTTP 映射；业务规则写在应用服务；仓储只写 SQL 与映射。跨层调用倒置视为严重缺陷。</p>
+        </div>
+        <div class="rulec">
+          <h4>响应与异常<span>RESPONSE</span></h4>
+          <p>统一 <code>code / message / data / traceId</code>；业务错误抛 <code>BusinessException</code>，参数错 400、未登录 401、越权 403、冲突 409，不把异常抛成 500。</p>
+        </div>
+        <div class="rulec">
+          <h4>数据库<span>DATABASE</span></h4>
+          <p>只用 Flyway 迁移，已发布脚本不得修改；表名列名 <code>snake_case</code>；每张表须包含审计时间字段；所有写操作必须携带并校验 <code>version</code>。</p>
+        </div>
+        <div class="rulec">
+          <h4>提交与审查<span>REVIEW</span></h4>
+          <p>提交信息 <code>type(scope): 主题</code>；每个阶段结束需在 <code>docs/reviews/</code> 记录审查结论并更新开发状态；main 分支保持可编译。</p>
+        </div>
+        <div class="rulec">
+          <h4>协作底线<span>BASELINE</span></h4>
+          <p>密钥、真实用户图片与未授权素材不入库；中间件必须随真实业务接入，不后补静态声明；数据库结构只经 Flyway 变更。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

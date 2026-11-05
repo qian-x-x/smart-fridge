@@ -1,0 +1,536 @@
+{
+  "date": "2026-10-31",
+  "checks": [
+    {
+      "name": "desktop overview highlights every open part",
+      "passed": true
+    },
+    {
+      "name": "desktop combination 0 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [],
+        "pressed": [],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 1 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor"
+        ],
+        "pressed": [
+          "leftDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 3 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 2 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor"
+        ],
+        "pressed": [
+          "rightDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 6 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 7 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 5 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 4 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "middleDrawer"
+        ],
+        "pressed": [
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 12 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 13 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 15 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 14 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 10 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 11 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 9 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop combination 8 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "desktop close all clears every highlighted part",
+      "passed": true
+    },
+    {
+      "name": "mobile overview highlights every open part",
+      "passed": true
+    },
+    {
+      "name": "mobile combination 0 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [],
+        "pressed": [],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 1 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor"
+        ],
+        "pressed": [
+          "leftDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 3 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 2 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor"
+        ],
+        "pressed": [
+          "rightDoor"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 6 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 7 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 5 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "middleDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 4 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "middleDrawer"
+        ],
+        "pressed": [
+          "middleDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 12 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 13 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 15 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 14 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "middleDrawer",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 10 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 11 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "rightDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 9 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "leftDoor",
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "leftDoor",
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile combination 8 matches model and color",
+      "passed": true,
+      "details": {
+        "open": [
+          "freezerDrawer"
+        ],
+        "pressed": [
+          "freezerDrawer"
+        ],
+        "allColored": true,
+        "overviewNotPressed": true
+      }
+    },
+    {
+      "name": "mobile close all clears every highlighted part",
+      "passed": true
+    },
+    {
+      "name": "browser check execution",
+      "passed": false,
+      "message": "page.waitForURL: Timeout 7000ms exceeded.\n=========================== logs ===========================\nwaiting for navigation to \"**/home\" until \"load\"\n  navigated to \"http://127.0.0.1:3000/\"\n  navigated to \"http://127.0.0.1:3000/#/login\"\n============================================================"
+    }
+  ],
+  "errors": [],
+  "passed": false
+}

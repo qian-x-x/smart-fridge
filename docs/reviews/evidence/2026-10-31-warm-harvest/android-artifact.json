@@ -1,0 +1,11 @@
+{
+  "date": "2026-10-31",
+  "command": "aapt dump badging (ASCII artifact path)",
+  "applicationLabel": "application-label:'小易冰箱'",
+  "package": "package: name='com.smartfridge.smart_fridge_app' versionCode='1' versionName='1.0.0' platformBuildVersionName='16' platformBuildVersionCode='36' compileSdkVersion='36' compileSdkVersionCodename='16'",
+  "bytes": 61771982,
+  "asciiSha256": "fb0495a4db65ccd789e9d12e055e2b72857b863af71581ea5bc61d6694be611d",
+  "deliverySha256": "fb0495a4db65ccd789e9d12e055e2b72857b863af71581ea5bc61d6694be611d",
+  "signing": "template debug signing; not a production distribution",
+  "deviceAcceptanceExecuted": false
+}

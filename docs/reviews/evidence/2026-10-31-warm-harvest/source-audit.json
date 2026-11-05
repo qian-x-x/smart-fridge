@@ -1,0 +1,248 @@
+{
+  "date": "2026-10-31",
+  "changedExistingFiles": [
+    {
+      "path": "apps/fridge-app/lib/app.dart",
+      "before": "a49e6b5f6d6085a9e8f6934db959c73c8a489c64b436b1441a6130d86d48185d",
+      "after": "a4ca8834ca4baf1d8f964a5e89ba2970ae2a355b16d557387498b4dcc29199b5"
+    },
+    {
+      "path": "apps/fridge-app/lib/main.dart",
+      "before": "a1465a56f425ef628840d933412bd31bc0bfe6b21476dc475a0fbd612d91e58d",
+      "after": "fa257af2a6527b3ec7c3901c7082363815d8f2f6748014f1e7b23026338f460d"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/router/app_router.dart",
+      "before": "b4c48ed96d5d12bfa130cc9e3ec328e93dbc516762db6e9e4da88fcdb1ad0c67",
+      "after": "483c9155ba19d6496bbd56457dd726665dbdf441432bffd1780c5f7bca79974a"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/theme/app_theme.dart",
+      "before": "aa15023c2ca67c552a9a44ce00a31b0f1cbec6728d1e1a0b635db0f137d9165a",
+      "after": "13a9f30abecbdfde7b30d97f4bb60bd0f9e51ba9f6efb094b04ab67c5baf092c"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/login_page.dart",
+      "before": "a5eb643fb822e06a9f055ea6392fc58069d42ae91081a08dc39f35f624106482",
+      "after": "cf7679a958f584316b2ba7b05e25c18ed7e38ceafabf6627383ed618e3b2e10b"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/register_page.dart",
+      "before": "f9cc29d99ad34dd8b5a82608f6621bdf82ab551a6c8dc19c2dcfb438f9d42785",
+      "after": "04438920e44d68c6daf66ba8d6f9c8394ae3bd7634ab2fc53a55ad09c099e194"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/splash_page.dart",
+      "before": "8d6ba6d785a672560f8b17b048af0a2151c7ee91b58bb2e25e071626a3e17e16",
+      "after": "d66e140d0d2e95746743359e5d124e9d78f9ec795777e96ce6ea9e8d5d6bbdab"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart",
+      "before": "d5c97c4170efd848089190b83916193062229e898fc1a532f5ccd3574763a2bd",
+      "after": "3368ccae9db9addd66980bd4195de393654c9c86020de62fab3dfc6de819a875"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/family/presentation/family_action_dialog.dart",
+      "before": "dfd1bb5236033a70b2cd7eed01106114cdc4707d37e8b618d31299f325be2616",
+      "after": "add3d3914002d12710b4797322a6381e3716f43a1f394db267187ef60be46192"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/family/presentation/family_member_management_sheet.dart",
+      "before": "dda3966b15729efdba3880e17d62a487d52eaf61fc9536accb4d324fcee67413",
+      "after": "0e36aa03b21e3bef8556e3aa0c64cab2848c22be111525c3f144f3b066846836"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/family/presentation/family_workspace_section.dart",
+      "before": "54e4913460fc3c70f4d53c10853bdf5ac9b80001d03f7b25a2dd5c2e34e0f06c",
+      "after": "93b64499b005db48ff12488ab4f0b37a418308cbae16851042a221bb2813e853"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/fridge_home_page.dart",
+      "before": "267d528e4c34b68bcf7879fd86a08569ddf0c86e35805328d381c9cb17617489",
+      "after": "e5b6efdd3225eddff83b4599c7d1d0ca86ff692a4602a5780ceb54d190acbf9e"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/food_search_sheet.dart",
+      "before": "de325bbd7fd1de3479fd193876003cca9982fe1bdd6270a532ebfa87694431b2",
+      "after": "80727b516f0a3dcf9047ebc0017fbadcd6d29ed826e7d5a1b765cfd2ca8819a6"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_scene.dart",
+      "before": "ba6d82c83a50e2cc92911af6547a2fcd0779d2394acac9e978f2ab07e9ffcbe5",
+      "after": "d4d4fee8a5b5c4f96b175bc031617ef9cf3ad39cd1dbd3435c64f226f839e8bc"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_setup_panel.dart",
+      "before": "5fba9928abd7bb2c541e5a4b246d2fc2cdd8711881863f651f8c56820cd89755",
+      "after": "5513f7c7151d72eba8d861ab03ccafd7eb02f4e8319192381e01baecc71ab913"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_sheets.dart",
+      "before": "92c0b6c6c735766e1bef349f82909a10372b1e6af367ffe4aad6e82e09f00d78",
+      "after": "14426715c925f61a3ad9a213e956531e7e907e3d6d189a5470816d55faaf2c32"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart",
+      "before": "4df6d41b4a5131a27f3291e215bb73683d346965a588825e9dfe082bdc8e67cf",
+      "after": "711178bc6626075d8c6f27022980d5f318795e3d73cabb9bd338db85babda608"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+      "before": "63924dc035393182cf7c55b052a39ce5ab04aad6f2f36334a4e81d8eeecef7be",
+      "after": "59a9c1e3af409b27bc3c0102fdd1265626bbe8a6f9015fcb7bf3a14946d66cdc"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/profile/presentation/profile_page.dart",
+      "before": "51db2cc81aecc704bf45b484e4ac64a8ba82e30a38b36e7f3ae55ae2f343fbbd",
+      "after": "1fc96c93f2744bd045f4761fb7ed29e0dd8cc4b8a07c11533f2483eed29a0445"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/presentation/recipes_page.dart",
+      "before": "20465ae7859f040ef1b94cb812e74e0a597f77a9a2ba9cd56e47d9bfc46e17e8",
+      "after": "4b53f8907f4f6c4b5cea4f68751cd54e71c9e825c00d911be592e99bbb1c8051"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/layout/home_shell.dart",
+      "before": "db90bd5f92e2e677cc7d7bdb9c23e7bc99d99ded63d63d0515aff82d0307f71f",
+      "after": "477f493c82ea6fca63f8a19b062f0f5c2f4e38bfa2ab4f9343c20a45908986fa"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/layout/market_branch_container.dart",
+      "before": "ad0dbd67a4adaccfe1a0daaf8e71fb4e3ec7b3c89340ca88614b13a2bc7be803",
+      "after": "2a1fcf293e79ffc77400e516ccb5c667695fb5ffb953aafab5e55d36b8c5eab8"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/widgets/action_button.dart",
+      "before": "ff24061f4584cabae3ee084b2cd0fed74f070980190e5e15e486ebb3ec43ea1c",
+      "after": "fbc67fbbf148fd86f02fe895748276e8636c3253e84e0385324abcf8b8ff521d"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge-model.js",
+      "before": "3ba1b0e0ca12eadc0bd0fc439394a722a84df412fd3a83159c77e1784ccc190a",
+      "after": "0fa27d3b2d734ea4469f2459dd6c550d26f2bfd6a366db203e82480836eeb521"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge-state.js",
+      "before": "a54568d6b7eb823fc1fca05dd639a334ea0f9a83bb1ab1912ee03cc219d2a584",
+      "after": "382d334f21320ebbf594f0a2b61ce27ac7b4ebba759d63d4af4450cf896b6a2f"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge3d.js",
+      "before": "888657097f0e2802fd56e133df838d50acda789754246a9f13478fb231ad997f",
+      "after": "e858239df8e11e1b09029d2dcd54861e0362e11f9e44225897c94afd5f9e6d9c"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/index.html",
+      "before": "a98ab97eb48dbb99a15e9e8a5c506e46e634d9820e82d9fb40ed58b4b85c2b78",
+      "after": "7c627b2ae76f0566436d15bb35be8fcc4c3bdfcbb74c9b6692dc81e336da8296"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/kitchen-scene.js",
+      "before": "4fdf1bc79ca020de7962547d6401ec5afd7953b399bd6f60000d46bb61363036",
+      "after": "ea9d399b840e570ca59469109d80905dc0ae81e3fd0350869f47c49375b6b149"
+    },
+    {
+      "path": "apps/admin-web/src/style.css",
+      "before": "86f008692fde042d50677f3c446ff92005fa4b68907ee52bb57493d9cad9a29f",
+      "after": "32ebef454dd23e7c97dbd35eaae0db9fe9a4a1a96025ce9100a737476780c995"
+    },
+    {
+      "path": "apps/admin-web/src/components/ChartPanel.vue",
+      "before": "dd00984110013c43dc00ad92c69c6b33b12950084697cd21ecda4cd542103a37",
+      "after": "b450c4c6c9fbbed6f7033a07d9f8d53a93ac7ffa8b80b84a1ee5490e984628f9"
+    },
+    {
+      "path": "apps/admin-web/src/layouts/AdminLayout.vue",
+      "before": "829e3c5ecb230f6e53687431248225e1e6b9d412f5b9172864fc8593899857b4",
+      "after": "6d94260c054aee125553d9c094c24ad44bcf33c5e3efd182b62b18c6aaf10450"
+    },
+    {
+      "path": "apps/admin-web/src/router/index.ts",
+      "before": "0a1b4d0eed6a7087e09cb279ca61fd9857cdefb61066021c73e4f76300daab39",
+      "after": "86ec1e5c7d49741ad0fde482cf0200d2aae003409cc640fcd5cd5bc1dab685f4"
+    },
+    {
+      "path": "apps/admin-web/src/views/DashboardView.vue",
+      "before": "3718439bf3df36c7a98b5929dcafdac3ff67e4893033747745770bef78aba001",
+      "after": "ffab110190d404c3e38a5eca58686e5a257a6c923d101c16575777a6eedf6973"
+    },
+    {
+      "path": "apps/admin-web/src/views/LoginView.vue",
+      "before": "1b5211b65eeacc64eaee30e3bdad29f2835dc37c2da62edc24d1e47ffdc2c79a",
+      "after": "c38faf7b454e6fba71a1e581a5c232849136e4b7a6420bbabdd18c06752aca0c"
+    },
+    {
+      "path": "apps/admin-web/src/views/OrdersView.vue",
+      "before": "8fe5f86bf5a55e37a7471f24dcc2863b0a7f3e9b4d862adf21af6f2e2a8b684e",
+      "after": "4b333223ea09f53cfeed34e5a574b0aab763363cccb0b74397ae30bf95419f56"
+    },
+    {
+      "path": "apps/admin-web/src/views/ProductsView.vue",
+      "before": "e347521aa7ac619379d658cd0933553fd80cacab0557aed3ec6eb7d4b6a6f347",
+      "after": "8c3147f803329211492ca1d13b19818fd5920572892c6814ab427e0c7ad7d674"
+    },
+    {
+      "path": "apps/admin-web/src/views/RecipesView.vue",
+      "before": "425762c808a0409749a3f15bf2c61e3cad1438c741f3955e5c4df22107474ae7",
+      "after": "6ee5b9706356f6c5d6a489933aed15450c5838e12dbf6ddc696ab1820f05a5ac"
+    },
+    {
+      "path": "apps/fridge-app/pubspec.yaml",
+      "before": "b03d148d82d240ee3cc4b0ba73473197a242c99d56f0b0a51270737c386cb572",
+      "after": "bf37249f086dcd921b22158d9f8cbc03a682dbbd573e8fae467bca5653e55ee5"
+    },
+    {
+      "path": "apps/fridge-app/web/index.html",
+      "before": "d756365596dcb4b708c7d1993aba6e4a81d5023d6957ded2229bb5a49b1d75e6",
+      "after": "2f71f86f4b1a72c6418ba1cf4f88a576d946c6c53eb426c7bebe5a5910c0435e"
+    },
+    {
+      "path": "apps/fridge-app/web/manifest.json",
+      "before": "77840f5c0a097ef3dedb168995740358ebb0e09be83cde5d68d4322f8a67f0d6",
+      "after": "a77af70ad6e89fe262ca9497380242c7ff2b3b5bc8affd9c57b95c9d1d71b9f6"
+    },
+    {
+      "path": "apps/fridge-app/web/favicon.svg",
+      "before": "851b2f7b58eb672e0fdf8deb95260fcf09f2c2a7cbf71694cafea4f9d4ad367e",
+      "after": "d9738c8dd333eca045b9baca935c0addebfb5d0110f341feccc7d156544de8f6"
+    },
+    {
+      "path": "apps/fridge-app/android/app/src/main/AndroidManifest.xml",
+      "before": "0b716cc34137e5e62774aad2b67e814dbf3af58ee4cd58fc3fdad94e53c7380b",
+      "after": "3acf73fd0204a9a2a23aa74d2e61830b7a683836b600eef9daafbff7c3738a0d"
+    },
+    {
+      "path": "apps/admin-web/index.html",
+      "before": "7bfa769c6eb23fe3fd3353256e284e5690303a5ae7b91cfa42821a43e1e2e558",
+      "after": "7d164bd7d665106d0e48c4112b4750c990b2ade2f7ea5b1ae9029edf051e7fda"
+    },
+    {
+      "path": "apps/admin-web/public/favicon.svg",
+      "before": "3b293c0f5dc7974a98f84407cd1f076b72ab61e194abe29911fa6b53c3dcfd09",
+      "after": "d9738c8dd333eca045b9baca935c0addebfb5d0110f341feccc7d156544de8f6"
+    },
+    {
+      "path": "README.md",
+      "before": "2c62757188736e201aaaf6e89d9dbbe1b20037f269e936a509b590a369d48194",
+      "after": "46fc1050392b601265f8f27d2721ba4972b1b7a11b16dc2a078b8afe4984c09f"
+    },
+    {
+      "path": "docs/开发状态.md",
+      "before": "7bd8211561a5220f75793f2a261ba9d825c1dd742d66316294ed2e2b4461a6a0",
+      "after": "92096873d8e0ea0c725630109988b155c06a5d2796dfc4cc182a8c6ba0576d0d"
+    },
+    {
+      "path": "docs/开发运行手册.md",
+      "before": "d1f5083a3245a4a166a071fc3779c52ee05f836a961ccc0c994cae5d38266bba",
+      "after": "bd9762da68bd226e372f7f7ddf815205ab779ce4b98765aa3b3cff2980a76629"
+    }
+  ],
+  "protectedBusinessFilesChecked": 21,
+  "protectedBusinessFilesChanged": [],
+  "backendContractsInfraDiffUnchanged": true,
+  "backendContractsInfraDiffBeforeSha256": "34ba76686b8efa609f46077a4033a9002ca12d1dfc2e9aa1a676a735fea611dd",
+  "backendContractsInfraDiffAfterSha256": "34ba76686b8efa609f46077a4033a9002ca12d1dfc2e9aa1a676a735fea611dd",
+  "gitDiffCheckExit": 0,
+  "gitDiffCheckOutput": "",
+  "androidCopySourceMismatches": []
+}

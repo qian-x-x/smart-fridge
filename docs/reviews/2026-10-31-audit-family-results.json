@@ -1,0 +1,155 @@
+{
+  "baseUrl": "http://127.0.0.1:8080",
+  "checkedAt": "2026-10-31T08:54:40.3244495+08:00",
+  "familyId": 20,
+  "fridgeId": 14,
+  "passed": 30,
+  "checks": [
+    {
+      "check": "register owner",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "register member",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "create shared family",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "create private family",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "family isolation before join",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "check": "no fridge yet",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "check": "join as viewer",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "joined role is VIEWER",
+      "passed": true
+    },
+    {
+      "check": "repeat join is idempotent",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "list members",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "repeat join does not duplicate members",
+      "passed": true
+    },
+    {
+      "check": "viewer cannot create fridge",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "owner creates fridge",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "default fridge has four zones",
+      "passed": true
+    },
+    {
+      "check": "duplicate fridge rejected",
+      "status": 409,
+      "passed": true
+    },
+    {
+      "check": "viewer cannot add food",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "viewer cannot govern",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "promote editor",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "editor adds food with same token",
+      "status": 201,
+      "passed": true
+    },
+    {
+      "check": "editor still cannot configure fridge",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "transfer ownership",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "verify ownership",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "new owner is consistent",
+      "passed": true
+    },
+    {
+      "check": "old owner cannot govern",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "new owner demotes old owner",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "demotion affects existing token immediately",
+      "status": 403,
+      "passed": true
+    },
+    {
+      "check": "other family remains isolated",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "check": "new owner removes member",
+      "status": 204,
+      "passed": true
+    },
+    {
+      "check": "removed member loses fridge access",
+      "status": 404,
+      "passed": true
+    },
+    {
+      "check": "recipes route works",
+      "status": 200,
+      "passed": true
+    }
+  ]
+}

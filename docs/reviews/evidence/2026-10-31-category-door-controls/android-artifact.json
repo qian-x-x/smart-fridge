@@ -1,0 +1,9 @@
+{
+  "date": "2026-10-31",
+  "label": "application-label:'小易冰箱'",
+  "bytes": 61771982,
+  "sha256": "7b3c2276177cebaf2824b5c415baca783f28f24184638ae1880a1951cfa3f505",
+  "deliverySha256": "7b3c2276177cebaf2824b5c415baca783f28f24184638ae1880a1951cfa3f505",
+  "signing": "template debug",
+  "deviceTested": false
+}

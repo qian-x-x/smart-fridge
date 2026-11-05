@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-31",
+  "method": "Agent-observed ordinary Edge mouse/keyboard interactions during this implementation. This is an observation record, not output from a single fully automated E2E suite.",
+  "environment": {
+    "frontend": "Flutter release Web",
+    "browser": "Edge headless / SwiftShader",
+    "backend": "Gateway 8080, Auth/Family 8081, Fridge 8082, Recipe 8083, local MySQL and Redis"
+  },
+  "isolatedWorkspace": {
+    "ownerFamilyId": 24,
+    "emptyFamilyId": 25,
+    "fridgeId": 16,
+    "noCredentialsRecorded": true
+  },
+  "observations": [
+    {
+      "path": "owner login and inventory load",
+      "result": "family/fridge/foods GET 200; scene ready=true, active=true; initial inventory 3"
+    },
+    {
+      "path": "desktop ordinary click add",
+      "result": "POST foods 201; inventory/scene 3 -> 4; modal disables scene input then restores it",
+      "evidence": "app-desktop-add-success.png"
+    },
+    {
+      "path": "390x844 ordinary click add",
+      "result": "POST foods 201; inventory/scene 4 -> 5",
+      "evidence": "app-mobile-add-success.png"
+    },
+    {
+      "path": "unsaved draft close",
+      "result": "confirmation appears; continuing preserves input; saved successfully later",
+      "evidence": "app-mobile-draft-confirm.png"
+    },
+    {
+      "path": "home -> recipes -> home",
+      "result": "same iframe and browsing frame remain connected; zero extra fridge3d/index.html loads; hidden scene inactive then restored; no observed JS pageerror"
+    },
+    {
+      "path": "family isolation",
+      "result": "5 -> 0 -> 5; empty family has no fridge and expected GET 404; no stale inventory",
+      "evidence": "app-mobile-empty-family.png"
+    },
+    {
+      "path": "VIEWER second account",
+      "result": "joined family as VIEWER; direct food POST 403; separate fresh login displays disabled add and explanation",
+      "evidence": "app-mobile-viewer-final.png"
+    }
+  ],
+  "finalCapture": "app-final-capture.json",
+  "adminAutomatedChecks": "admin-browser-check.json",
+  "scope": "Real API paths were verified during this UI iteration. The final font-only corrections were followed by complete automated/build validation and separate final demo capture. Not a claim that the complete historical API matrix or Android-device E2E was rerun."
+}

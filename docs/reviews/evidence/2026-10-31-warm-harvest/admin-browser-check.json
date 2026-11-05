@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-31",
+  "step": "reduced motion",
+  "checks": [
+    {
+      "name": "brand title",
+      "passed": true
+    },
+    {
+      "name": "dashboard has visible page",
+      "passed": true
+    },
+    {
+      "name": "recipes has visible page",
+      "passed": true
+    },
+    {
+      "name": "products has visible page",
+      "passed": true
+    },
+    {
+      "name": "orders has visible page",
+      "passed": true
+    },
+    {
+      "name": "recipe search returns one",
+      "passed": true
+    },
+    {
+      "name": "order search returns one",
+      "passed": true
+    },
+    {
+      "name": "recipe query survives navigation",
+      "passed": true
+    },
+    {
+      "name": "orders no horizontal page overflow 320",
+      "passed": true
+    },
+    {
+      "name": "orders no horizontal page overflow 390",
+      "passed": true
+    },
+    {
+      "name": "orders no horizontal page overflow 1024",
+      "passed": true
+    },
+    {
+      "name": "orders no horizontal page overflow 1440",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables navigation transitions",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-31",
+  "checks": [
+    {
+      "name": "ordinary mobile UI submits selected dairy category",
+      "passed": true,
+      "details": {
+        "status": 201,
+        "category": "奶制品"
+      }
+    },
+    {
+      "name": "selected category persisted in real Gateway",
+      "passed": true
+    }
+  ],
+  "errors": [],
+  "passed": true
+}

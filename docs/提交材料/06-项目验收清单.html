@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>06 项目验收清单</title>
+<link rel="stylesheet" href="sketch.css">
+<style>
+  .num { width: 112px; font-size: 30px; }
+  .col-main { justify-content: space-between; }
+  .acc td { padding: 14px 8px; font-size: 12.2px; }
+  .acc th { padding: 6px 8px; }
+  .acc .no { font-family: Consolas, monospace; font-size: 10.8px; color: #8d8474; }
+  .tagr {
+    display: inline-block; font-size: 10.8px; padding: 1px 7px; border-radius: 2px;
+    border: 1px solid #8fa07a; color: #55663f; letter-spacing: .5px;
+  }
+  .tagr.part { border-color: #c39a63; color: #8a6432; }
+  .tagr.no { border-color: #bd8b82; color: #8a4b40; }
+  .acc .ev { font-family: Consolas, monospace; font-size: 11px; color: #6f6759; }
+  .cap { margin-top: auto; padding-top: 12px; border-top: 1px dashed #d8d0c1; font-size: 10.4px; color: #8d8474; letter-spacing: .4px; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="rough" x="-12%" y="-12%" width="124%" height="124%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.014 0.021" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="page">
+  <div class="head">
+    <div class="left">
+      <div class="num">06</div>
+      <div>
+        <h1>项目验收清单<span class="en">ACCEPTANCE CHECKLIST</span></h1>
+        <p class="sub">验收项、验证方式与当前结论</p>
+      </div>
+    </div>
+  </div>
+  <div class="rule"></div>
+
+  <div class="body">
+    <div class="col-main">
+      <table class="acc">
+        <tr><th style="width:7%">编号</th><th style="width:30%">验收项</th><th style="width:31%">怎么验</th><th style="width:10%">结果</th><th style="width:22%">证据</th></tr>
+        <tr><td class="no">A-01</td><td>注册、登录、刷新轮换、登出撤销</td><td>接口调用 + 用旧 refresh 再刷新</td><td><span class="tagr">通过</span></td><td class="ev">Java 4 项 · 网关断言</td></tr>
+        <tr><td class="no">A-02</td><td>家庭创建、邀请码加入、改角色、移除、转交</td><td>双账号真实网关联调</td><td><span class="tagr">通过</span></td><td class="ev">30 个断言</td></tr>
+        <tr><td class="no">A-03</td><td>创建冰箱自动生成四个分区与默认容器</td><td>调接口后查 fridge_zone</td><td><span class="tagr">通过</span></td><td class="ev">H2 集成 18 项</td></tr>
+        <tr><td class="no">A-04</td><td>食材新增、编辑、移动、使用、丢弃</td><td>界面操作后查库与列表</td><td><span class="tagr">通过</span></td><td class="ev">POST 201 / GET 一致</td></tr>
+        <tr><td class="no">A-05</td><td>并发写冲突由 version 乐观锁拦截</td><td>同一条记录连发两次不同版本</td><td><span class="tagr">通过</span></td><td class="ev">第二次 409</td></tr>
+        <tr><td class="no">A-06</td><td>只读成员不能写</td><td>VIEWER 账号直接调写接口</td><td><span class="tagr">通过</span></td><td class="ev">403 且界面禁用</td></tr>
+        <tr><td class="no">A-07</td><td>跨家庭数据不可见</td><td>用 A 家令牌查 B 家冰箱</td><td><span class="tagr">通过</span></td><td class="ev">404</td></tr>
+        <tr><td class="no">A-08</td><td>组合筛选与四种排序</td><td>名称 + 分类 + 标签 + 到期条件叠加</td><td><span class="tagr">通过</span></td><td class="ev">25 个断言</td></tr>
+        <tr><td class="no">A-09</td><td>菜谱目录、详情与库存覆盖率</td><td>6 道种子菜谱对照现有库存</td><td><span class="tagr">通过</span></td><td class="ev">3 项集成测试</td></tr>
+        <tr><td class="no">A-10</td><td>三维冰箱开合、分区联动、降级清单</td><td>逐个部件点击 + 关闭 WebGL</td><td><span class="tagr">通过</span></td><td class="ev">32 种组合 · 5 项 Node</td></tr>
+        <tr><td class="no">A-11</td><td>构建与静态检查</td><td>analyze · test · web · apk</td><td><span class="tagr">通过</span></td><td class="ev">74 / 47 / Web / APK</td></tr>
+        <tr><td class="no">A-12</td><td>Android 真机与正式签名</td><td>真机安装、软键盘、GPU 表现</td><td><span class="tagr no">未验收</span></td><td class="ev">仅 debug 签名 APK</td></tr>
+        <tr><td class="no">A-13</td><td>Seata 回滚、RocketMQ 消费、Sentinel 限流</td><td>压测与故障注入留证据</td><td><span class="tagr no">未验收</span></td><td class="ev">仅有编排配置</td></tr>
+        <tr><td class="no">A-14</td><td>后台真实 API 接入</td><td>运营端替换演示数据</td><td><span class="tagr part">部分</span></td><td class="ev">页面齐全，数据为演示</td></tr>
+        <tr><td class="no">A-15</td><td>操作时间线查询与单条撤销</td><td>按流水回放并撤销一步</td><td><span class="tagr no">未实现</span></td><td class="ev">表已预留 original_operation_id</td></tr>
+      </table>
+    </div>
+
+    <div class="col-side">
+      <div class="note">
+        <div class="tape"></div>
+        <h2>验收口径</h2>
+        <ul>
+          <li><strong>自动化通过</strong>：单元与集成测试、静态分析、构建产物。</li>
+          <li><strong>真实环境通过</strong>：本机 Gateway + MySQL + 浏览器，双账号联调。</li>
+          <li>两类结果不可互相替代；本轮未执行的项目不标记为通过。</li>
+        </ul>
+      </div>
+      <div class="note">
+        <h2>本轮执行项</h2>
+        <div class="check">
+          <div><span class="bx"></span><span>Flutter 74 项 · Java 47 项 · Three.js 5 项</span></div>
+          <div><span class="bx"></span><span>网关脚本 190 个断言</span></div>
+          <div><span class="bx"></span><span>Web release 与 APK 构建</span></div>
+          <div><span class="bx empty"></span><span>Android 真机（未执行）</span></div>
+        </div>
+      </div>
+      <div class="note" style="background:#fdf6e3">
+        <h2>待完成项</h2>
+        <ul>
+          <li>时间线撤销 / 恢复的回归用例</li>
+          <li>做饭扣减与幂等库存扣减</li>
+          <li>正式签名与真机端到端</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

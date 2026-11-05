@@ -1,0 +1,524 @@
+--- before/apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_sheets.dart
++++ after/apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_sheets.dart
+@@ -4,6 +4,7 @@
+ import 'package:smart_fridge_app/core/theme/app_theme.dart';
+ import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
+ import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
++import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_category_options.dart';
+ 
+ Future<void> showFoodDetails(
+   BuildContext context,
+@@ -494,7 +495,7 @@
+   final _nameController = TextEditingController();
+   final _quantityController = TextEditingController(text: '1');
+   final _unitController = TextEditingController(text: '份');
+-  final _categoryController = TextEditingController(text: '其他');
++  String _category = '其他';
+   FridgeZone? _zone;
+   DateTime _productionDate = DateUtils.dateOnly(DateTime.now());
+   DateTime _expiresOn = DateUtils.dateOnly(
+@@ -509,7 +510,7 @@
+       _nameController.text.isNotEmpty ||
+       _quantityController.text != '1' ||
+       _unitController.text != '份' ||
+-      _categoryController.text != '其他' ||
++      _category != '其他' ||
+       _zone?.id != widget.zones.firstOrNull?.id ||
+       !DateUtils.isSameDay(_productionDate, _initialProductionDate) ||
+       !DateUtils.isSameDay(_expiresOn, _initialExpiresOn);
+@@ -527,7 +528,6 @@
+     _nameController.dispose();
+     _quantityController.dispose();
+     _unitController.dispose();
+-    _categoryController.dispose();
+     super.dispose();
+   }
+ 
+@@ -615,11 +615,20 @@
+                 ],
+               ),
+               const SizedBox(height: 12),
+-              TextField(
++              DropdownButtonFormField<String>(
+                 key: const ValueKey('food-category-input'),
+-                controller: _categoryController,
+-                enabled: widget.canEdit && !_saving,
++                initialValue: _category,
++                isExpanded: true,
+                 decoration: const InputDecoration(labelText: '分类'),
++                items: [
++                  for (final category in foodCategoryOptions)
++                    DropdownMenuItem(value: category, child: Text(category)),
++                ],
++                onChanged: widget.canEdit && !_saving
++                    ? (value) {
++                        if (value != null) setState(() => _category = value);
++                      }
++                    : null,
+               ),
+               const SizedBox(height: 12),
+               DropdownButtonFormField<FridgeZone>(
+@@ -718,20 +727,18 @@
+     final quantity = double.tryParse(_quantityController.text.trim());
+     if (_nameController.text.trim().isEmpty ||
+         _unitController.text.trim().isEmpty ||
+-        _categoryController.text.trim().isEmpty ||
+         quantity == null ||
+         !quantity.isFinite ||
+         quantity < 0.001 ||
+         quantity > 999999999.999 ||
+         !RegExp(r'^\d+(?:\.\d{1,3})?$')
+             .hasMatch(_quantityController.text.trim())) {
+-      setState(() => _error = '请填写名称、单位和分类；数量至少 0.001，最多 9 位整数和 3 位小数');
++      setState(() => _error = '请填写名称和单位；数量至少 0.001，最多 9 位整数和 3 位小数');
+       return;
+     }
+     if (_nameController.text.trim().length > 80 ||
+-        _categoryController.text.trim().length > 40 ||
+         _unitController.text.trim().length > 20) {
+-      setState(() => _error = '名称最多 80 字、分类最多 40 字、单位最多 20 字');
++      setState(() => _error = '名称最多 80 字、单位最多 20 字');
+       return;
+     }
+     if (_expiresOn.isBefore(_productionDate)) {
+@@ -747,7 +754,7 @@
+         NewFoodInput(
+           zone: _zone!,
+           name: _nameController.text.trim(),
+-          category: _categoryController.text.trim(),
++          category: _category,
+           quantity: quantity,
+           unit: _unitController.text.trim(),
+           productionDate: _productionDate,
+--- before/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart
++++ after/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart
+@@ -38,7 +38,7 @@
+     _viewType = 'smart-fridge-webgl-${DateTime.now().microsecondsSinceEpoch}';
+     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
+       final iframe = web.HTMLIFrameElement()
+-        ..src = 'fridge3d/index.html?rev=warm-harvest-v1.5'
++        ..src = 'fridge3d/index.html?rev=warm-harvest-v1.5.1'
+         ..title = '小易冰箱 WebGL 三维模型'
+         ..setAttribute('allowtransparency', 'true')
+         ..style.border = '0'
+--- before/apps/fridge-app/web/fridge3d/index.html
++++ after/apps/fridge-app/web/fridge3d/index.html
+@@ -14,7 +14,7 @@
+     .controls { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:4px; padding:4px; max-width:calc(100% - 20px); background:rgba(255,255,255,.94); border:1px solid #ecdfcf; border-radius:22px; box-shadow:0 4px 20px #172f1b14; }
+     button { appearance:none; border:0; border-radius:18px; background:transparent; color:#442b22; font:inherit; min-height:36px; padding:6px 10px; cursor:pointer; white-space:nowrap; }
+     button { transition:background 160ms,transform 120ms; } button:active { transform:scale(.96); } button:hover { background:#f6e6d5; } button:focus-visible { outline:2px solid #bc4d30; }
+-    #overview { background:#bc4d30; color:#fff; }
++    button[aria-pressed="true"] { background:#bc4d30; color:#fff; }
+     .loading { position:absolute; inset:0; display:grid; place-content:center; background:#fcf5e9; color:#806a5c; }
+     .is-hidden { display:none; }
+     .fallback { position:absolute; inset:0; display:none; place-content:center; padding:24px; background:#fcf5e9; text-align:center; z-index:2; }
+@@ -29,10 +29,10 @@
+     <canvas id="fridge-canvas" tabindex="0" aria-label="可交互冰箱。拖动查看；数字1到4选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
+     <div class="controls" role="group" aria-label="冰箱结构控制">
+       <button id="overview" type="button">展开概览</button>
+-      <button id="left-door" type="button">左门</button>
+-      <button id="right-door" type="button">右门</button>
+-      <button id="variable-drawer" type="button">变温</button>
+-      <button id="freezer-drawer" type="button">冷冻</button>
++      <button id="left-door" type="button" data-part="leftDoor" aria-pressed="false">左门</button>
++      <button id="right-door" type="button" data-part="rightDoor" aria-pressed="false">右门</button>
++      <button id="variable-drawer" type="button" data-part="middleDrawer" aria-pressed="false">变温</button>
++      <button id="freezer-drawer" type="button" data-part="freezerDrawer" aria-pressed="false">冷冻</button>
+       <button id="close-all" type="button">全部关闭</button>
+     </div>
+     <div id="fallback" class="fallback" role="status"><strong>三维厨房暂不可用</strong><span>请打开浏览器硬件加速或重新加载。食材仍可通过页面的冰箱清单查看和管理。</span></div>
+@@ -45,6 +45,6 @@
+     window.addEventListener('unhandledrejection', showLoadError);
+   </script>
+   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
+-  <script type="module" src="./fridge3d.js?rev=warm-harvest-v1.5"></script>
++  <script type="module" src="./fridge3d.js?rev=warm-harvest-v1.5.1"></script>
+ </body>
+ </html>
+--- before/apps/fridge-app/web/fridge3d/fridge3d.js
++++ after/apps/fridge-app/web/fridge3d/fridge3d.js
+@@ -1,8 +1,8 @@
+ import * as THREE from '../vendor/three.module.min.js';
+ import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
+-import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=warm-harvest-v1.5';
+-import { buildKitchen, createTexture } from './kitchen-scene.js?rev=warm-harvest-v1.5';
+-import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=warm-harvest-v1.5';
++import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=warm-harvest-v1.5.1';
++import { buildKitchen, createTexture } from './kitchen-scene.js?rev=warm-harvest-v1.5.1';
++import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=warm-harvest-v1.5.1';
+ 
+ const canvas = document.querySelector('#fridge-canvas');
+ const stage = document.querySelector('#scene');
+@@ -101,8 +101,13 @@
+ 
+ function updateStatus() {
+   const openParts = PARTS.filter((part) => view[part] > 0);
++  document.querySelectorAll('.controls [data-part]').forEach((button) => {
++    const isOpen = openParts.includes(button.dataset.part);
++    button.setAttribute('aria-pressed', String(isOpen));
++    button.title = `${button.textContent}：已${isOpen ? '开启，点击关闭' : '关闭，点击开启'}`;
++  });
+   stage.dataset.zone = view.zone; stage.dataset.openParts = openParts.join(',');
+-  stage.dataset.sceneVersion = 'warm-harvest-v1';
++  stage.dataset.sceneVersion = 'warm-harvest-v1.5.1';
+   const label = { fresh: '冷藏室', variable: '变温抽屉', freezer: '冷冻抽屉', pantry: '厨房常温柜台' }[view.zone];
+   liveStatus.textContent = `${label}，${openParts.length === 0 ? '冰箱已关闭' : '可拖动查看内部结构'}`;
+ }
+--- before/apps/fridge-app/web/fridge3d/kitchen-scene.js
++++ after/apps/fridge-app/web/fridge3d/kitchen-scene.js
+@@ -1,5 +1,5 @@
+ import * as THREE from '../vendor/three.module.min.js';
+-import { box } from './fridge-model.js?rev=warm-harvest-v1.5';
++import { box } from './fridge-model.js?rev=warm-harvest-v1.5.1';
+ 
+ export function createTexture(kind) {
+   const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 512;
+--- before/apps/fridge-app/test/fridge_home_test.dart
++++ after/apps/fridge-app/test/fridge_home_test.dart
+@@ -18,6 +18,37 @@
+ 
+ void main() {
+   testWidgets(
++    'changing only the selected category protects the unsaved draft',
++    (tester) async {
++      await tester.binding.setSurfaceSize(const Size(390, 844));
++      addTearDown(() => tester.binding.setSurfaceSize(null));
++      final source = _RemoteFridgeSource();
++      await tester.pumpWidget(_realApp(source));
++      await tester.pumpAndSettle();
++      await tester.tap(find.text('放进一份新食材'));
++      await tester.pumpAndSettle();
++      final field = find.byKey(const ValueKey('food-category-input'));
++      await tester.ensureVisible(field);
++      await tester.tap(field);
++      await tester.pumpAndSettle();
++      for (final category in ['肉类', '奶制品', '蔬菜', '水果', '调味品']) {
++        expect(find.text(category), findsWidgets);
++      }
++      await tester.tap(find.text('奶制品').last);
++      await tester.pumpAndSettle();
++      await tester.ensureVisible(find.byTooltip('关闭新增'));
++      await tester.tap(find.byTooltip('关闭新增'));
++      await tester.pumpAndSettle();
++      expect(find.text('放弃未保存的内容？'), findsOneWidget);
++      await tester.tap(find.text('继续编辑'));
++      await tester.pumpAndSettle();
++      expect(find.text('奶制品'), findsOneWidget);
++      expect(source.addedFood, isNull);
++      expect(tester.takeException(), isNull);
++    },
++  );
++
++  testWidgets(
+     'focusing an unchanged food field does not create a dirty draft',
+     (tester) async {
+       await tester.binding.setSurfaceSize(const Size(390, 844));
+@@ -386,15 +417,27 @@
+       '2',
+     );
+     await tester.enterText(find.byKey(const ValueKey('food-unit-input')), '颗');
+-    await tester.enterText(
+-      find.byKey(const ValueKey('food-category-input')),
+-      '蔬菜',
+-    );
++    final categoryField = find.byKey(const ValueKey('food-category-input'));
++    expect(
++      tester.widget(categoryField),
++      isA<DropdownButtonFormField<String>>(),
++    );
++    expect(
++      find.descendant(of: categoryField, matching: find.byType(TextField)),
++      findsNothing,
++    );
++    await tester.ensureVisible(categoryField);
++    await tester.tap(categoryField);
++    await tester.pumpAndSettle();
++    await tester.tap(find.text('蔬菜').last);
++    await tester.pumpAndSettle();
++    await tester.ensureVisible(find.byKey(const ValueKey('save-food-button')));
+     await tester.tap(find.byKey(const ValueKey('save-food-button')));
+     await tester.pumpAndSettle();
+ 
+     expect(source.addedFood?.name, '西兰花');
+     expect(source.addedFood?.quantity, 2);
++    expect(source.addedFood?.category, '蔬菜');
+   });
+ 
+   testWidgets('editor consumes food with its current version', (tester) async {
+--- before/scripts/tests/fridge3d.test.mjs
++++ after/scripts/tests/fridge3d.test.mjs
+@@ -2,7 +2,23 @@
+ import assert from 'node:assert/strict';
+ import * as THREE from '../../apps/fridge-app/web/vendor/three.module.min.js';
+ import { buildFridge, createMaterials, poseFridge, replaceInventory, SIZE } from '../../apps/fridge-app/web/fridge3d/fridge-model.js';
+-import { createViewState, transition, fitDistance, normalizeFoods } from '../../apps/fridge-app/web/fridge3d/fridge-state.js';
++import { PARTS, createViewState, transition, fitDistance, normalizeFoods } from '../../apps/fridge-app/web/fridge3d/fridge-state.js';
++
++test('all doors and drawers keep independent open states until individually or collectively closed', () => {
++  let state = transition(createViewState(), 'closeAll');
++  for (const part of PARTS) {
++    state = transition(state, 'togglePart', part);
++    assert.equal(state[part], 1);
++  }
++  assert.ok(PARTS.every((part) => state[part] > 0));
++  state = transition(state, 'togglePart', 'leftDoor');
++  assert.equal(state.leftDoor, 0);
++  assert.ok(PARTS.filter((part) => part !== 'leftDoor').every((part) => state[part] > 0));
++  state = transition(state, 'focusZone', 'fresh');
++  assert.ok(PARTS.every((part) => state[part] > 0));
++  state = transition(state, 'closeAll');
++  assert.ok(PARTS.every((part) => state[part] === 0));
++});
+ 
+ test('both upper doors serve the fresh cavity; ambient storage does not move either', () => {
+   const closed = transition(createViewState(), 'closeAll');
+--- before/docs/开发状态.md
++++ after/docs/开发状态.md
+@@ -4,7 +4,7 @@
+ 
+ 产品基线：小易冰箱，口号「查食材，看菜谱，都容易」；当前视觉与交互采用用户选定的 [V1.5 暖橙食集](superpowers/specs/2026-10-31-warm-harvest-xiaoyi.md)。V1.4 Word 文档保留几何模型和结构设计，既有业务需求与接口继续沿用工程契约。
+ 
+-当前阶段：S2 家庭协作、冰箱创建引导、组合筛选和暖橙食集前端/品牌改版已完成。本轮 UI 代码审查、Flutter 72 项、Three.js 4 项、Web/Vue/Android 构建及本地真实 Gateway 关键路径浏览器验收通过；Android 真机与正式签名尚未验收。详细范围与未执行检查见 [本轮审查](reviews/2026-10-31-warm-harvest-xiaoyi.md)。后续业务阶段为操作时间线查询及撤销/恢复，本次 UI 任务没有进入该阶段。
++当前阶段：S2 家庭协作、冰箱创建引导、组合筛选和暖橙食集前端/品牌改版已完成。最新增量已将食材分类改为预设选择，并修复门/抽屉多项开启时按钮高亮不同步。Flutter 74 项、Three.js 5 项、静态分析、Web/Android 构建及本地浏览器专项验收通过；Android 真机与正式签名尚未验收。最新范围见 [分类与开合状态审查](reviews/2026-10-31-category-door-controls.md)，完整改版历史见 [暖橙食集审查](reviews/2026-10-31-warm-harvest-xiaoyi.md)。后续业务阶段为操作时间线查询及撤销/恢复，本次 UI 任务没有进入该阶段。
+ 
+ 最近已有提交：`d7b4369`（家庭加入与成员治理）、`9f399f6`（客户端家庭选择与成员管理）；接口契约与验证记录提交：`060604d`。本轮工作区改动尚未提交。
+ 
+@@ -199,3 +199,11 @@
+ - 本轮真实环境：Gateway/MySQL/Redis 桌面与手机普通点击新增均 POST 201，库存/场景 3 → 4 → 5；空家庭切换 5 → 0 → 5；VIEWER 写接口 403 且 UI 禁用新增；跨页不重载场景。运营演示端 13 项浏览器检查通过，覆盖四页、筛选保留、320/390/1024/1440 响应式及减少动态效果。最终独立演示上下文复查了中文字体、移动导航与隐藏场景。
+ - 上一轮 Java 47 项和 Gateway 190 个断言未在本轮重跑；本轮未执行 Android 真机/软键盘/实际 GPU 性能、压力测试、cloud 故障注入或正式环境验收。推送、布局编辑、时间线撤销/恢复、运营真实 API 和正式 Android 签名仍未完成。
+ - 审查及自动化验证通过，实际执行的本地浏览器关键路径验收通过；不宣称全部平台端到端验收完成。证据：[审查报告](reviews/2026-10-31-warm-harvest-xiaoyi.md)、[实际截图](design/warm-harvest/验收记录.md)、[自动检查](reviews/evidence/2026-10-31-warm-harvest/automatic-checks.json)。未提交、推送或部署。
++
++## 2026-10-31 分类选择与开合状态修复
++
++- 新增食材和清单筛选的分类均改为下拉选择，共用 12 项预设；筛选追加当前库存已有分类，保留历史记录。提交禁用、草稿关闭确认、请求字段与权限规则继续生效。
++- 左门、右门、变温和冷冻的底部按钮分别按模型开合状态高亮，多个部件可同时显示开启；概览不再永久高亮。统一缓存修订为 warm-harvest-v1.5.1。
++- 本轮代码/差异审查通过，后端/契约/运营端既有差异保持不变。最终 `dart analyze lib test` 无问题，Flutter 74 项、Three.js 5 项通过，Web release 和 Android 测试 APK 构建成功；工作区测试包已更新。
++- 本轮浏览器验收：桌面/手机共 32 种开合组合及初始/关闭状态，共 36 项场景断言通过；手机真实新增选择「奶制品」，POST 201 且 GET 持久化确认通过。两组检查均无 pageerror。
++- 证据及初次失败/修正记录见 [分类与开合状态审查](reviews/2026-10-31-category-door-controls.md)。未重跑完整后端、运营端构建、Android 真机或实际 GPU 性能；APK 仍为模板 debug 签名。未提交、推送或部署。
+--- before/docs/开发运行手册.md
++++ after/docs/开发运行手册.md
+@@ -97,7 +97,7 @@
+ 
+ 没有启动后端时，可在登录页选择“先用演示数据看看”。演示会话只用于检查界面和交互，不代表真实数据链路已验收。
+ 
+-小易冰箱当前使用 V1.5「暖橙食集」视觉：奶油底、陶土橙和暖木。Web 首页继续运行本地 Three.js/WebGL 2 几何厨房；启动前确认浏览器已开启硬件加速。3D 资源位于 `web/fridge3d` 和 `web/vendor`，不访问外部 CDN。模块使用 `warm-harvest-v1.5` 修订参数，修改静态资源发布时应同步更新缓存版本。主页面切换保留场景，隐藏或弹层打开时暂停交互/渲染。WebGL 不可用时显示明确状态，并保留食材清单；非 Web 端使用标明用途的暖橙参考图与真实清单。
++小易冰箱当前使用 V1.5「暖橙食集」视觉：奶油底、陶土橙和暖木。Web 首页继续运行本地 Three.js/WebGL 2 几何厨房；启动前确认浏览器已开启硬件加速。3D 资源位于 `web/fridge3d` 和 `web/vendor`，不访问外部 CDN。模块使用 `warm-harvest-v1.5.1` 修订参数，修改静态资源发布时应同步更新缓存版本。主页面切换保留场景，隐藏或弹层打开时暂停交互/渲染。底部左门/右门/变温/冷冻按钮独立高亮，可同时开启。WebGL 不可用时显示明确状态，并保留食材清单；非 Web 端使用标明用途的暖橙参考图与真实清单。
+ 
+ 界面内置带 OFL 许可证的 Xiaoyi UI 常用中文字库。重新制作字库可执行 `python scripts/Prepare-UiFonts.py --cache-dir <字体缓存绝对路径>`，需要 fontTools 和下载源字体的网络连接；覆盖 GB2312、当前界面及种子菜谱文字，生僻字或彩色 emoji 仍可能使用平台/引擎回退。
+ 
+--- before/apps/fridge-app/lib/features/fridge/presentation/widgets/food_search_sheet.dart
++++ after/apps/fridge-app/lib/features/fridge/presentation/widgets/food_search_sheet.dart
+@@ -5,6 +5,7 @@
+ import 'package:smart_fridge_app/features/fridge/application/food_search_provider.dart';
+ import 'package:smart_fridge_app/features/fridge/domain/food_filter.dart';
+ import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
++import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_category_options.dart';
+ 
+ class FoodSearchSheet extends ConsumerStatefulWidget {
+   const FoodSearchSheet({
+@@ -22,7 +23,7 @@
+ class _FoodSearchSheetState extends ConsumerState<FoodSearchSheet> {
+   final _form = GlobalKey<FormState>();
+   final _query = TextEditingController();
+-  final _category = TextEditingController();
++  String _category = '';
+   final _tags = TextEditingController();
+   final _from = TextEditingController();
+   final _to = TextEditingController();
+@@ -36,7 +37,7 @@
+ 
+   @override
+   void dispose() {
+-    for (final controller in [_query, _category, _tags, _from, _to]) {
++    for (final controller in [_query, _tags, _from, _to]) {
+       controller.dispose();
+     }
+     super.dispose();
+@@ -61,7 +62,7 @@
+         fridgeId: widget.workspace.fridgeId,
+         filter: FoodFilter(
+           query: _query.text,
+-          category: _category.text,
++          category: _category,
+           tags: _tags.text
+               .split(RegExp('[,，]'))
+               .map((tag) => tag.trim())
+@@ -82,10 +83,11 @@
+     // Reset old FormField values before setting our defaults: dropdown reset
+     // invokes onChanged with its previous initialValue.
+     _form.currentState!.reset();
+-    for (final controller in [_query, _category, _tags, _from, _to]) {
++    for (final controller in [_query, _tags, _from, _to]) {
+       controller.clear();
+     }
+     setState(() {
++      _category = '';
+       _zoneId = null;
+       _expiry = 'ALL';
+       _sort = 'EXPIRES_ASC';
+@@ -105,10 +107,23 @@
+           prefixIcon: Icon(Icons.search),
+         ),
+       ),
+-      TextFormField(
+-        controller: _category,
+-        maxLength: 40,
+-        decoration: const InputDecoration(labelText: '分类（完整名称）'),
++      DropdownButtonFormField<String>(
++        key: ValueKey('search-category-$_category'),
++        initialValue: _category,
++        isExpanded: true,
++        decoration: const InputDecoration(labelText: '分类'),
++        items: [
++          const DropdownMenuItem(value: '', child: Text('全部分类')),
++          for (final category in {
++            ...foodCategoryOptions,
++            // Keep existing inventory categories selectable without rewriting it.
++            ...widget.workspace.foods
++                .map((food) => food.category)
++                .where((category) => category.trim().isNotEmpty),
++          })
++            DropdownMenuItem(value: category, child: Text(category)),
++        ],
++        onChanged: (value) => setState(() => _category = value ?? ''),
+       ),
+       TextFormField(
+         controller: _tags,
+@@ -280,9 +295,12 @@
+                       crossAxisAlignment: CrossAxisAlignment.stretch,
+                       children: [
+                         Expanded(
+-                          child: ListView(
++                          child: SingleChildScrollView(
+                             controller: controller,
+-                            children: spacedFields,
++                            child: Column(
++                              crossAxisAlignment: CrossAxisAlignment.stretch,
++                              children: spacedFields,
++                            ),
+                           ),
+                         ),
+                         const SizedBox(width: 28),
+--- before/apps/fridge-app/test/food_search_test.dart
++++ after/apps/fridge-app/test/food_search_test.dart
+@@ -14,6 +14,47 @@
+ import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_search_sheet.dart';
+ 
+ void main() {
++  testWidgets('category selection is sent to the API and reset clears it', (
++    tester,
++  ) async {
++    await tester.binding.setSurfaceSize(const Size(390, 844));
++    addTearDown(() => tester.binding.setSurfaceSize(null));
++    final api = _Harness();
++    final container = _container(api);
++    addTearDown(container.dispose);
++    await tester.pumpWidget(
++      UncontrolledProviderScope(
++        container: container,
++        child: MaterialApp(
++          home: Scaffold(
++            body: FoodSearchSheet(workspace: _workspace, onFoodTap: (_) {}),
++          ),
++        ),
++      ),
++    );
++    await tester.pumpAndSettle();
++    final category = find.byKey(const ValueKey('search-category-'));
++    expect(
++      find.descendant(of: category, matching: find.byType(TextField)),
++      findsNothing,
++    );
++    await tester.ensureVisible(category);
++    await tester.tap(category);
++    await tester.pumpAndSettle();
++    await tester.tap(find.text('奶制品').last);
++    await tester.pumpAndSettle();
++    await _apply(tester);
++    expect(api.requests.last.uri.queryParameters['category'], '奶制品');
++    await tester.tap(find.text('重置'));
++    await tester.pumpAndSettle();
++    expect(
++      api.requests.last.uri.queryParameters.containsKey('category'),
++      isFalse,
++    );
++    expect(find.byKey(const ValueKey('search-category-')), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
+   test(
+     'query uses repeated tags, authorization and separate result snapshot',
+     () async {
+@@ -176,13 +217,18 @@
+     );
+     await tester.pumpAndSettle();
+     await tester.enterText(find.widgetWithText(TextFormField, '食材名称'), 'slow');
+-    await tester.scrollUntilVisible(
+-      find.text('应用筛选'),
+-      250,
+-      scrollable: find.byType(Scrollable).first,
+-    );
+-    await tester.tap(find.text('应用筛选'));
+-    await tester.pump();
++    await _apply(tester, settleResponse: false);
++    for (
++      var attempt = 0;
++      attempt < 20 &&
++          !api.requests.any(
++            (request) => request.uri.queryParameters['query'] == 'slow',
++          );
++      attempt++
++    ) {
++      await tester.pump(const Duration(milliseconds: 10));
++    }
++    expect(api.requests.last.uri.queryParameters['query'], 'slow');
+     await tester.scrollUntilVisible(
+       find.widgetWithText(TextFormField, '食材名称'),
+       -250,
+@@ -200,14 +246,22 @@
+   });
+ }
+ 
+-Future<void> _apply(WidgetTester tester) async {
+-  await tester.scrollUntilVisible(
+-    find.text('应用筛选'),
+-    250,
+-    scrollable: find.byType(Scrollable).first,
+-  );
++Future<void> _apply(WidgetTester tester, {bool settleResponse = true}) async {
++  // Scroll until the action is actually clickable, rather than merely built in
++  // a lazy viewport. Do not settle an unrelated pending query's progress ticker.
++  for (var attempt = 0;
++      attempt < 20 && find.text('应用筛选').hitTestable().evaluate().isEmpty;
++      attempt++) {
++    await tester.drag(find.byType(Scrollable).first, const Offset(0, -150));
++    await tester.pump(const Duration(milliseconds: 200));
++  }
++  expect(find.text('应用筛选').hitTestable(), findsOneWidget);
+   await tester.tap(find.text('应用筛选'));
+-  await tester.pumpAndSettle();
++  if (settleResponse) {
++    await tester.pumpAndSettle();
++  } else {
++    await tester.pump();
++  }
+ }
+ 
+ ProviderContainer _container(_Harness api) => ProviderContainer(
+--- /dev/null
++++ after/apps/fridge-app/lib/features/fridge/presentation/widgets/food_category_options.dart
+@@ -0,0 +1,14 @@
++const foodCategoryOptions = [
++  '肉类',
++  '奶制品',
++  '蛋类',
++  '蔬菜',
++  '水果',
++  '海鲜',
++  '主食',
++  '豆制品',
++  '调味品',
++  '饮品',
++  '熟食',
++  '其他',
++];
