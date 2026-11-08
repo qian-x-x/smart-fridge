@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:smart_fridge_app/core/session/session_storage.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 
 final sessionStoreProvider = Provider<SessionStore>((ref) {
@@ -17,15 +17,16 @@ abstract interface class SessionStore {
 }
 
 class SecureSessionStore implements SessionStore {
-  SecureSessionStore({this._storage = const FlutterSecureStorage()});
+  SecureSessionStore({SessionStorage? storage})
+    : _storage = storage ?? createSessionStorage();
 
   static const _sessionKey = 'smart_fridge.auth_session';
 
-  final FlutterSecureStorage _storage;
+  final SessionStorage _storage;
 
   @override
   Future<AuthSession?> read() async {
-    final raw = await _storage.read(key: _sessionKey);
+    final raw = await _storage.read(_sessionKey);
     if (raw == null || raw.isEmpty) {
       return null;
     }
@@ -39,12 +40,9 @@ class SecureSessionStore implements SessionStore {
 
   @override
   Future<void> write(AuthSession session) {
-    return _storage.write(
-      key: _sessionKey,
-      value: jsonEncode(session.toJson()),
-    );
+    return _storage.write(_sessionKey, jsonEncode(session.toJson()));
   }
 
   @override
-  Future<void> clear() => _storage.delete(key: _sessionKey);
+  Future<void> clear() => _storage.delete(_sessionKey);
 }

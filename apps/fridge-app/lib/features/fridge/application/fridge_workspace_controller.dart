@@ -74,6 +74,22 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
     await _mutate(() => _source.discardFood(session, food));
   }
 
+  Future<void> updateFood(FoodEditInput input) async {
+    final session = await _requireEditableSession();
+    await _mutate(() => _source.updateFood(session, input));
+  }
+
+  /// Discards every expired item and returns how many were removed.
+  Future<int> discardExpired() async {
+    final session = await _requireEditableSession();
+    final workspace = state.requireValue;
+    var removed = 0;
+    await _mutate(() async {
+      removed = await _source.discardExpired(session, workspace.fridgeId);
+    });
+    return removed;
+  }
+
   Future<List<FoodOperation>> loadOperations(int fridgeId) async {
     final session = await _session();
     if (session.isDemo) {

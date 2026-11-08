@@ -1,5 +1,6 @@
 package com.smartfridge.fridge.food;
 
+import com.smartfridge.fridge.config.FridgeSettings;
 import com.smartfridge.fridge.fridge.FridgeView;
 import org.springframework.stereotype.Component;
 
@@ -11,14 +12,19 @@ import java.time.temporal.ChronoUnit;
 /**
  * Adds fridge-local expiry information to a stored food row. Shared by the food
  * endpoints and the operation timeline so both report identical numbers.
+ *
+ * <p>The "expiring" flag uses the threshold from {@link FridgeSettings} instead
+ * of a hard-coded number, so it follows the value published from Nacos.
  */
 @Component
 public class FoodViewMapper {
 
     private final Clock clock;
+    private final FridgeSettings settings;
 
-    public FoodViewMapper(Clock clock) {
+    public FoodViewMapper(Clock clock, FridgeSettings settings) {
         this.clock = clock;
+        this.settings = settings;
     }
 
     public FoodView withExpiry(FoodView food, FridgeView fridge) {
@@ -36,7 +42,7 @@ public class FoodViewMapper {
             food.productionDate(),
             food.expiresOn(),
             remainingDays,
-            remainingDays <= 3,
+            remainingDays <= settings.expiringThresholdDays(),
             food.tags(),
             food.modelKey(),
             food.photoUrl(),

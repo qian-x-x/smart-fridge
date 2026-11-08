@@ -29,6 +29,11 @@ abstract interface class FridgeDataSource {
 
   Future<void> discardFood(AuthSession session, FridgeFood food);
 
+  Future<void> updateFood(AuthSession session, FoodEditInput input);
+
+  /// Discards every already-expired item and returns how many left the fridge.
+  Future<int> discardExpired(AuthSession session, int fridgeId);
+
   Future<List<FoodOperation>> loadOperations(
     AuthSession session,
     int fridgeId, {
@@ -64,6 +69,40 @@ class NewFoodInput {
   });
 
   final FridgeZone zone;
+  final String name;
+  final String category;
+  final double quantity;
+  final String unit;
+  final DateTime productionDate;
+  final DateTime expiresOn;
+  final List<String> tags;
+  final String? modelKey;
+}
+
+/// Fields the edit sheet sends back for an existing item.
+///
+/// [version] is the version the client last saw; the server rejects the write
+/// with 409 when another member changed the row in the meantime.
+class FoodEditInput {
+  const FoodEditInput({
+    required this.foodId,
+    required this.version,
+    required this.zone,
+    required this.containerId,
+    required this.name,
+    required this.category,
+    required this.quantity,
+    required this.unit,
+    required this.productionDate,
+    required this.expiresOn,
+    this.tags = const [],
+    this.modelKey,
+  });
+
+  final int foodId;
+  final int version;
+  final FridgeZone zone;
+  final int? containerId;
   final String name;
   final String category;
   final double quantity;
@@ -180,6 +219,36 @@ class ApiFridgeRepository implements FridgeDataSource {
       queryParameters: {'version': food.version},
       accessToken: session.accessToken,
     );
+  }
+
+  @override
+  Future<void> updateFood(AuthSession session, FoodEditInput input) async {
+    _requireRealSession(session);
+    await _api.put('/api/v1/foods/${input.foodId}', {
+      'zoneId': input.zone.serverId,
+      'containerId': input.containerId,
+      'name': input.name,
+      'category': input.category,
+      'quantity': input.quantity,
+      'unit': input.unit,
+      'productionDate': _date(input.productionDate),
+      'expiresOn': _date(input.expiresOn),
+      'tags': input.tags,
+      'modelKey': input.modelKey,
+      'version': input.version,
+    }, accessToken: session.accessToken);
+  }
+
+  @override
+  Future<int> discardExpired(AuthSession session, int fridgeId) async {
+    _requireRealSession(session);
+    final body = await _api.post(
+      '/api/v1/fridges/$fridgeId/discard-expired',
+      const <String, dynamic>{},
+      accessToken: session.accessToken,
+    );
+    final data = _map(body['data']);
+    return (data['count'] as num?)?.toInt() ?? 0;
   }
 
   @override

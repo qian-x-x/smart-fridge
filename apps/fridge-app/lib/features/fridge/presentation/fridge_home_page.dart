@@ -96,6 +96,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           onFoodTap: (food) => _openFoodDetails(context, workspace, food),
           onOpenTable: () => _openTable(context, workspace),
           onOpenTimeline: () => _openTimeline(context, workspace),
+          onCleanExpired: () => _openExpiredCleanup(context, workspace),
         );
         final scene = FridgeScene(
           key: const ValueKey('family-fridge-scene'),
@@ -370,7 +371,70 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     onMove: (zone) =>
         ref.read(fridgeWorkspaceProvider.notifier).moveFood(food, zone),
     onDiscard: () => ref.read(fridgeWorkspaceProvider.notifier).discard(food),
+    onEdit: () => showEditFood(
+      context,
+      zones: workspace.zones,
+      canEdit: workspace.canEdit && !workspace.isDemo,
+      food: food,
+      onSave: (input) =>
+          ref.read(fridgeWorkspaceProvider.notifier).updateFood(input),
+    ),
   );
+
+  /// Bulk cleanup. Confirmation lives in a sheet so the user sees exactly what
+  /// will leave the fridge before it happens.
+  Future<void> _openExpiredCleanup(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+  ) async {
+    final expired = workspace.foods
+        .where((food) => food.expiresInDays < 0)
+        .toList()
+      ..sort((a, b) => a.expiresInDays.compareTo(b.expiresInDays));
+    if (expired.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('当前没有已过期的食材'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    if (!workspace.canEdit || workspace.isDemo) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('只读成员不能清理库存'),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    final confirmed = await showExpiredCleanupSheet(context, expired: expired);
+    if (confirmed != true || !context.mounted) {
+      return;
+    }
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final removed = await ref
+          .read(fridgeWorkspaceProvider.notifier)
+          .discardExpired();
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            removed > 0 ? '已清理 $removed 份过期食材' : '没有可清理的过期食材',
+          ),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } on Object catch (error) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(error.toString()),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    }
+  }
 
   Future<void> _openTimeline(
     BuildContext context,
@@ -477,12 +541,14 @@ class _StockPanel extends StatelessWidget {
     required this.onFoodTap,
     required this.onOpenTable,
     required this.onOpenTimeline,
+    required this.onCleanExpired,
   });
   final FridgeWorkspaceData workspace;
   final FridgeZoneId selected;
   final ValueChanged<FridgeFood> onFoodTap;
   final VoidCallback onOpenTable;
   final VoidCallback onOpenTimeline;
+  final VoidCallback onCleanExpired;
   @override
   Widget build(BuildContext context) {
     final foods =
@@ -491,6 +557,9 @@ class _StockPanel extends StatelessWidget {
     final zone = workspace.zones
         .where((zone) => zone.id == selected)
         .firstOrNull;
+    final expiredCount = workspace.foods
+        .where((food) => food.expiresInDays < 0)
+        .length;
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
@@ -627,6 +696,15 @@ class _StockPanel extends StatelessWidget {
               ),
             ),
           const SizedBox(height: 6),
+          if (expiredCount > 0) ...[
+            AppOutlinedButton.icon(
+              key: const ValueKey('clean-expired-button'),
+              onPressed: onCleanExpired,
+              icon: const Icon(Icons.cleaning_services_outlined, size: 16),
+              label: Text('清理 $expiredCount 份过期食材'),
+            ),
+            const SizedBox(height: 8),
+          ],
           AppOutlinedButton.icon(
             onPressed: onOpenTable,
             icon: const Icon(Icons.tune, size: 16),

@@ -133,9 +133,39 @@ public class FoodService {
         FoodRecord food = foodRepository.findRecordById(foodId)
             .orElseThrow(() -> BusinessException.notFound("食材不存在"));
         accessGuard.requireEditor(food.fridgeId(), authorization);
-        if (!foodRepository.discard(food, version, user.id())) {
+        if (!foodRepository.discard(food, version, user.id(), null)) {
             throw BusinessException.conflict("食材已被其他成员更新，请刷新后重试");
         }
+    }
+
+    /**
+     * Discards every active food item that is already past its expiry date.
+     * Expiry is evaluated in the fridge timezone with the server clock, so a
+     * client with a wrong clock cannot wipe fresh stock. Each row keeps its own
+     * DISCARD record, which makes the cleanup reversible one item at a time.
+     */
+    @Transactional
+    public ExpiredCleanupView discardExpired(
+        long fridgeId,
+        CurrentUser user,
+        String authorization
+    ) {
+        FridgeView fridge = accessGuard.requireEditor(fridgeId, authorization);
+        LocalDate today = LocalDate.now(clock.withZone(ZoneId.of(fridge.timezone())));
+        List<FoodRecord> expired = foodRepository.findExpired(fridgeId, today);
+        List<FoodView> discarded = new java.util.ArrayList<>(expired.size());
+        for (FoodRecord food : expired) {
+            // Snapshot the view before the row is soft deleted: the item is no
+            // longer ACTIVE afterwards, so it can no longer be read back.
+            FoodView snapshot = foodViewMapper.withExpiry(foodRepository.viewOf(food), fridge);
+            // Version comes from the row we just read, so the only way this
+            // misses is a concurrent write to the same item; that item is then
+            // skipped instead of failing the whole batch.
+            if (foodRepository.discard(food, food.version(), user.id(), "过期清理")) {
+                discarded.add(snapshot);
+            }
+        }
+        return new ExpiredCleanupView(discarded.size(), expired.size() - discarded.size(), discarded);
     }
 
 

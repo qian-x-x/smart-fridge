@@ -124,6 +124,12 @@ class _RecipeFamilyFridgeSource implements FridgeDataSource {
   ) async {}
 
   @override
+  Future<void> updateFood(AuthSession session, FoodEditInput input) async {}
+
+  @override
+  Future<int> discardExpired(AuthSession session, int fridgeId) async => 0;
+
+  @override
   Future<void> cook(
     AuthSession session, {
     required int fridgeId,

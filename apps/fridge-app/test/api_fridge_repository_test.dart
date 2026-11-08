@@ -168,6 +168,56 @@ void main() {
       ],
     });
   });
+
+  test('editing a food sends the chosen category and the held version', () async {
+    final api = _FakeApiClient();
+
+    await ApiFridgeRepository(api).updateFood(
+      session,
+      FoodEditInput(
+        foodId: 31,
+        version: 3,
+        zone: const FridgeZone(
+          id: FridgeZoneId.fresh,
+          serverId: 11,
+          name: '冷藏',
+          description: '',
+          temperature: '4°C',
+          emoji: '🥬',
+          containers: [FridgeContainer(id: 21, name: '上层', type: 'SHELF')],
+        ),
+        containerId: 21,
+        name: '西兰花',
+        category: '蔬菜',
+        quantity: 1,
+        unit: '颗',
+        productionDate: DateTime(2026, 11, 1),
+        expiresOn: DateTime(2026, 11, 10),
+        tags: const ['清淡'],
+        modelKey: 'broccoli',
+      ),
+    );
+
+    expect(api.putCalls.single.$1, '/api/v1/foods/31');
+    final body = api.putCalls.single.$2;
+    expect(body['category'], '蔬菜');
+    expect(body['version'], 3);
+    expect(body['zoneId'], 11);
+    expect(body['containerId'], 21);
+    expect(body['productionDate'], '2026-11-01');
+    expect(body['expiresOn'], '2026-11-10');
+    expect(api.putCalls.single.$3, 'access-token');
+  });
+
+  test('bulk cleanup posts once and reports how many items left', () async {
+    final api = _FakeApiClient();
+
+    final removed = await ApiFridgeRepository(api).discardExpired(session, 1);
+
+    expect(api.postCalls.single.$1, '/api/v1/fridges/1/discard-expired');
+    expect(api.postCalls.single.$3, 'access-token');
+    expect(removed, 2);
+  });
 }
 
 class _FakeApiClient extends ApiClient {
@@ -175,6 +225,7 @@ class _FakeApiClient extends ApiClient {
 
   final List<(String, Map<String, dynamic>?, String?)> getCalls = [];
   final List<(String, Map<String, dynamic>, String?)> postCalls = [];
+  final List<(String, Map<String, dynamic>, String?)> putCalls = [];
   final List<String?> tokens = [];
   ApiFailure? fridgeFailure;
 
@@ -268,7 +319,20 @@ class _FakeApiClient extends ApiClient {
     String? accessToken,
   }) async {
     postCalls.add((path, body, accessToken));
+    if (path.endsWith('/discard-expired')) {
+      return _envelope({'count': 2, 'skipped': 0, 'foods': []});
+    }
     return _envelope({'id': 31, 'quantity': 1.5, 'version': 4});
+  }
+
+  @override
+  Future<Map<String, dynamic>> put(
+    String path,
+    Map<String, dynamic> body, {
+    String? accessToken,
+  }) async {
+    putCalls.add((path, body, accessToken));
+    return _envelope({'id': 31, 'category': body['category'], 'version': 4});
   }
 
   Map<String, dynamic> _envelope(Object? data) {

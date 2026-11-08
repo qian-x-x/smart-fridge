@@ -406,7 +406,31 @@ public class FoodRepository {
         return true;
     }
 
-    public boolean discard(FoodRecord food, int expectedVersion, long userId) {
+    /**
+     * Rows already past their expiry date, oldest first. Used by the bulk
+     * cleanup endpoint so the server, not the client clock, decides what counts
+     * as expired.
+     */
+    public List<FoodRecord> findExpired(long fridgeId, LocalDate today) {
+        return jdbcTemplate.query(
+            """
+                SELECT id, fridge_id, zone_id, container_id, name, category,
+                       quantity, unit, production_date, expires_on, tags,
+                       model_key, photo_url, status, version, created_by,
+                       updated_by, created_at, updated_at
+                FROM food_item
+                WHERE fridge_id = ?
+                  AND status = 'ACTIVE'
+                  AND expires_on < ?
+                ORDER BY expires_on, id
+                """,
+            ROW_MAPPER,
+            fridgeId,
+            Date.valueOf(today)
+        );
+    }
+
+    public boolean discard(FoodRecord food, int expectedVersion, long userId, String note) {
         int updated = jdbcTemplate.update(
             """
                 UPDATE food_item
@@ -437,7 +461,7 @@ public class FoodRepository {
             food.zoneId(),
             food.containerId(),
             java.math.BigDecimal.ZERO,
-            null
+            note
         );
         return true;
     }
