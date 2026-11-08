@@ -1,0 +1,74 @@
+{
+  "runAt": "2026-11-05T20:28:10.670Z",
+  "app": "http://10.66.46.139:3000",
+  "plan": {
+    "login": {
+      "user": [
+        338,
+        401
+      ],
+      "pass": [
+        338,
+        461
+      ],
+      "submit": [
+        338,
+        528
+      ]
+    },
+    "food": [
+      1106,
+      426
+    ],
+    "edit": [
+      704,
+      737
+    ],
+    "category": [
+      524,
+      592
+    ],
+    "pickCategory": [
+      424,
+      647
+    ],
+    "save": [
+      704,
+      777
+    ]
+  },
+  "total": 6,
+  "passed": 6,
+  "steps": [
+    {
+      "name": "lan-viewport",
+      "pass": true,
+      "detail": "{\"w\":1414,\"h\":807}"
+    },
+    {
+      "name": "lan-login",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "lan-workspace-loaded",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "api-same-origin",
+      "pass": true,
+      "detail": "page=http://10.66.46.139:3000"
+    },
+    {
+      "name": "edit-form-prefilled",
+      "pass": true,
+      "detail": "name=ui020247"
+    },
+    {
+      "name": "edit-request-accepted",
+      "pass": true,
+      "detail": "status=200 calls=1"
+    }
+  ]
+}

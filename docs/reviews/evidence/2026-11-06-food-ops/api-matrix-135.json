@@ -1,0 +1,1377 @@
+{
+  "checkedAt": "2026-11-06T04:31:17.9702322+08:00",
+  "baseUrl": "http://127.0.0.1:8080",
+  "familyId": 39,
+  "fridgeId": 29,
+  "total": 135,
+  "passed": 135,
+  "failed": 0,
+  "checks": [
+    {
+      "check": "register owner",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 414
+    },
+    {
+      "check": "register member",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 262
+    },
+    {
+      "check": "register stranger",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 248
+    },
+    {
+      "check": "phone-only registration",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 262
+    },
+    {
+      "check": "phone login",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 263
+    },
+    {
+      "check": "phone account passes gateway with nullable username",
+      "method": "GET",
+      "path": "/api/v1/families",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 61
+    },
+    {
+      "check": "health 8080",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8081",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8082",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8083",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8084",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8085",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "health 8086",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "check": "fridges ping",
+      "method": "GET",
+      "path": "/api/v1/fridges/ping",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 34
+    },
+    {
+      "check": "fridges ping requires token",
+      "method": "GET",
+      "path": "/api/v1/fridges/ping",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 8
+    },
+    {
+      "check": "recipes ping",
+      "method": "GET",
+      "path": "/api/v1/recipes/ping",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 74
+    },
+    {
+      "check": "recipes ping requires token",
+      "method": "GET",
+      "path": "/api/v1/recipes/ping",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 6
+    },
+    {
+      "check": "products ping",
+      "method": "GET",
+      "path": "/api/v1/products/ping",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 68
+    },
+    {
+      "check": "products ping requires token",
+      "method": "GET",
+      "path": "/api/v1/products/ping",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 18
+    },
+    {
+      "check": "orders ping",
+      "method": "GET",
+      "path": "/api/v1/orders/ping",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 76
+    },
+    {
+      "check": "orders ping requires token",
+      "method": "GET",
+      "path": "/api/v1/orders/ping",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 15
+    },
+    {
+      "check": "notifications ping",
+      "method": "GET",
+      "path": "/api/v1/notifications/ping",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 81
+    },
+    {
+      "check": "notifications ping requires token",
+      "method": "GET",
+      "path": "/api/v1/notifications/ping",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 11
+    },
+    {
+      "check": "duplicate registration",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "用户名已存在",
+      "passed": true,
+      "elapsedMs": 23
+    },
+    {
+      "check": "invalid registration",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 40
+    },
+    {
+      "check": "malformed auth JSON",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 25
+    },
+    {
+      "check": "UTF8 password over storage limit",
+      "method": "POST",
+      "path": "/api/v1/auth/register",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "login UTF8 password limit",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 15
+    },
+    {
+      "check": "wrong login password",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "账号或密码错误",
+      "passed": true,
+      "elapsedMs": 265
+    },
+    {
+      "check": "valid login",
+      "method": "POST",
+      "path": "/api/v1/auth/login",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 266
+    },
+    {
+      "check": "introspect access token",
+      "method": "POST",
+      "path": "/api/v1/auth/introspect",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "introspect missing token",
+      "method": "POST",
+      "path": "/api/v1/auth/introspect",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 33
+    },
+    {
+      "check": "refresh rejects access token",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "令牌无效或已过期",
+      "passed": true,
+      "elapsedMs": 28
+    },
+    {
+      "check": "refresh rejects malformed token",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "令牌无效或已过期",
+      "passed": true,
+      "elapsedMs": 31
+    },
+    {
+      "check": "missing access token",
+      "method": "GET",
+      "path": "/api/v1/families",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "缺少访问令牌",
+      "passed": true,
+      "elapsedMs": 7
+    },
+    {
+      "check": "invalid access token",
+      "method": "GET",
+      "path": "/api/v1/recipes",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "访问令牌无效或已过期",
+      "passed": true,
+      "elapsedMs": 9
+    },
+    {
+      "check": "refresh token cannot access API",
+      "method": "GET",
+      "path": "/api/v1/recipes",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "令牌类型无效",
+      "passed": true,
+      "elapsedMs": 8
+    },
+    {
+      "check": "create family",
+      "method": "POST",
+      "path": "/api/v1/families",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 108
+    },
+    {
+      "check": "list families",
+      "method": "GET",
+      "path": "/api/v1/families",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "get family",
+      "method": "GET",
+      "path": "/api/v1/families/39",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 24
+    },
+    {
+      "check": "family isolation",
+      "method": "GET",
+      "path": "/api/v1/families/39",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "家庭不存在或无权访问",
+      "passed": true,
+      "elapsedMs": 39
+    },
+    {
+      "check": "blank family name",
+      "method": "POST",
+      "path": "/api/v1/families",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 21
+    },
+    {
+      "check": "long family name",
+      "method": "POST",
+      "path": "/api/v1/families",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 44
+    },
+    {
+      "check": "invalid family path type",
+      "method": "GET",
+      "path": "/api/v1/families/not-a-number",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 40
+    },
+    {
+      "check": "unknown family endpoint",
+      "method": "GET",
+      "path": "/api/v1/families/1/unknown",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "接口不存在",
+      "passed": true,
+      "elapsedMs": 86
+    },
+    {
+      "check": "unsupported method",
+      "method": "PUT",
+      "path": "/api/v1/families",
+      "expected": 405,
+      "status": 405,
+      "code": "VALIDATION_ERROR",
+      "message": "请求方法或媒体类型不受支持",
+      "passed": true,
+      "elapsedMs": 43
+    },
+    {
+      "check": "invalid invitation",
+      "method": "POST",
+      "path": "/api/v1/families/join",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 37
+    },
+    {
+      "check": "unknown invitation",
+      "method": "POST",
+      "path": "/api/v1/families/join",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "邀请码无效",
+      "passed": true,
+      "elapsedMs": 57
+    },
+    {
+      "check": "join viewer",
+      "method": "POST",
+      "path": "/api/v1/families/join",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 44
+    },
+    {
+      "check": "join defaults to VIEWER",
+      "passed": true
+    },
+    {
+      "check": "repeat join",
+      "method": "POST",
+      "path": "/api/v1/families/join",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 574
+    },
+    {
+      "check": "list members",
+      "method": "GET",
+      "path": "/api/v1/families/39/members",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 78
+    },
+    {
+      "check": "repeat join remains idempotent",
+      "passed": true
+    },
+    {
+      "check": "viewer cannot govern",
+      "method": "PATCH",
+      "path": "/api/v1/families/39/members/63",
+      "expected": 403,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "message": "只有家庭拥有者可以管理成员",
+      "passed": true,
+      "elapsedMs": 46
+    },
+    {
+      "check": "invalid role",
+      "method": "PATCH",
+      "path": "/api/v1/families/39/members/64",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 33
+    },
+    {
+      "check": "fridge absent",
+      "method": "GET",
+      "path": "/api/v1/fridges?familyId=39",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "该家庭尚未创建冰箱",
+      "passed": true,
+      "elapsedMs": 47
+    },
+    {
+      "check": "missing family query",
+      "method": "GET",
+      "path": "/api/v1/fridges",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 35
+    },
+    {
+      "check": "invalid family query",
+      "method": "GET",
+      "path": "/api/v1/fridges?familyId=abc",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 31
+    },
+    {
+      "check": "invalid fridge payload",
+      "method": "POST",
+      "path": "/api/v1/fridges",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 87
+    },
+    {
+      "check": "viewer cannot create fridge",
+      "method": "POST",
+      "path": "/api/v1/fridges",
+      "expected": 403,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "message": "仅家庭拥有者可以创建和配置冰箱",
+      "passed": true,
+      "elapsedMs": 41
+    },
+    {
+      "check": "create fridge",
+      "method": "POST",
+      "path": "/api/v1/fridges",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 63
+    },
+    {
+      "check": "four default zones",
+      "passed": true
+    },
+    {
+      "check": "get fridge by family",
+      "method": "GET",
+      "path": "/api/v1/fridges?familyId=39",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 34
+    },
+    {
+      "check": "get fridge by id",
+      "method": "GET",
+      "path": "/api/v1/fridges/29",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 45
+    },
+    {
+      "check": "fridge isolation",
+      "method": "GET",
+      "path": "/api/v1/fridges/29",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "家庭不存在或无权访问",
+      "passed": true,
+      "elapsedMs": 64
+    },
+    {
+      "check": "duplicate fridge",
+      "method": "POST",
+      "path": "/api/v1/fridges",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "该家庭已经创建冰箱",
+      "passed": true,
+      "elapsedMs": 64
+    },
+    {
+      "check": "viewer cannot add food",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 403,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "message": "只读成员不能修改食材",
+      "passed": true,
+      "elapsedMs": 46
+    },
+    {
+      "check": "owner adds food",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 201,
+      "status": 201,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 55
+    },
+    {
+      "check": "food creation response fields",
+      "passed": true
+    },
+    {
+      "check": "invalid food: blank name",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 20
+    },
+    {
+      "check": "invalid food: long name",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "invalid food: zero quantity",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 22
+    },
+    {
+      "check": "invalid food: negative quantity",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 34
+    },
+    {
+      "check": "invalid food: quantity below storage precision",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 39
+    },
+    {
+      "check": "invalid food: quantity excess scale",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "invalid food: quantity overflow",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 23
+    },
+    {
+      "check": "invalid food: invalid date",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 31
+    },
+    {
+      "check": "invalid food: blank category",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 36
+    },
+    {
+      "check": "invalid food: null quantity",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "invalid food: long unit",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 16
+    },
+    {
+      "check": "invalid food: too many tags",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 31
+    },
+    {
+      "check": "invalid food: tags overflow storage",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "标签总长度不能超过 500 个字符",
+      "passed": true,
+      "elapsedMs": 38
+    },
+    {
+      "check": "invalid food: tag contains delimiter",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "malformed food JSON",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 23
+    },
+    {
+      "check": "missing food body",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 23
+    },
+    {
+      "check": "unsupported food media type",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 415,
+      "status": 415,
+      "code": "VALIDATION_ERROR",
+      "message": "请求方法或媒体类型不受支持",
+      "passed": true,
+      "elapsedMs": 21
+    },
+    {
+      "check": "foreign zone",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "存放区域不属于该冰箱",
+      "passed": true,
+      "elapsedMs": 44
+    },
+    {
+      "check": "container in other zone",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "储物容器不属于该区域",
+      "passed": true,
+      "elapsedMs": 43
+    },
+    {
+      "check": "date order conflict",
+      "method": "POST",
+      "path": "/api/v1/foods",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "到期日期不能早于生产日期",
+      "passed": true,
+      "elapsedMs": 37
+    },
+    {
+      "check": "get food",
+      "method": "GET",
+      "path": "/api/v1/foods/88",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 34
+    },
+    {
+      "check": "get food isolation",
+      "method": "GET",
+      "path": "/api/v1/foods/88",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "家庭不存在或无权访问",
+      "passed": true,
+      "elapsedMs": 36
+    },
+    {
+      "check": "missing fridge query",
+      "method": "GET",
+      "path": "/api/v1/foods",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 23
+    },
+    {
+      "check": "invalid food path",
+      "method": "GET",
+      "path": "/api/v1/foods/abc",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 21
+    },
+    {
+      "check": "search foods",
+      "method": "GET",
+      "path": "/api/v1/foods?fridgeId=29",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 77
+    },
+    {
+      "check": "search returns created record",
+      "passed": true
+    },
+    {
+      "check": "combined search",
+      "method": "GET",
+      "path": "/api/v1/foods?fridgeId=29&tags=%E6%97%A9%E9%A4%90&tags=%E9%AB%98%E8%9B%8B%E7%99%BD&sort=NAME_ASC&expiryState=EXPIRING",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 54
+    },
+    {
+      "check": "combined search response",
+      "passed": true
+    },
+    {
+      "check": "invalid sort",
+      "method": "GET",
+      "path": "/api/v1/foods?fridgeId=29&sort=INVALID",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 20
+    },
+    {
+      "check": "invalid date range",
+      "method": "GET",
+      "path": "/api/v1/foods?fridgeId=29&expiresFrom=2027-01-01&expiresTo=2026-01-01",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "viewer cannot consume",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 403,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "message": "只读成员不能修改食材",
+      "passed": true,
+      "elapsedMs": 74
+    },
+    {
+      "check": "promote member",
+      "method": "PATCH",
+      "path": "/api/v1/families/39/members/64",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 31
+    },
+    {
+      "check": "excess consume",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "使用数量不能超过剩余数量",
+      "passed": true,
+      "elapsedMs": 41
+    },
+    {
+      "check": "zero consume",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 21
+    },
+    {
+      "check": "fractional precision consume",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数校验失败",
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "editor consumes",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 59
+    },
+    {
+      "check": "consume response quantity and version",
+      "passed": true
+    },
+    {
+      "check": "stale consume conflict",
+      "method": "POST",
+      "path": "/api/v1/foods/88/consume",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "食材已被其他成员更新，请刷新后重试",
+      "passed": true,
+      "elapsedMs": 49
+    },
+    {
+      "check": "move food",
+      "method": "POST",
+      "path": "/api/v1/foods/88/move",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 71
+    },
+    {
+      "check": "move response location and version",
+      "passed": true
+    },
+    {
+      "check": "edit food",
+      "method": "PUT",
+      "path": "/api/v1/foods/88",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 57
+    },
+    {
+      "check": "edit response fields",
+      "passed": true
+    },
+    {
+      "check": "stale delete conflict",
+      "method": "DELETE",
+      "path": "/api/v1/foods/88?version=0",
+      "expected": 409,
+      "status": 409,
+      "code": "CONFLICT",
+      "message": "食材已被其他成员更新，请刷新后重试",
+      "passed": true,
+      "elapsedMs": 40
+    },
+    {
+      "check": "missing delete version",
+      "method": "DELETE",
+      "path": "/api/v1/foods/88",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 19
+    },
+    {
+      "check": "soft delete",
+      "method": "DELETE",
+      "path": "/api/v1/foods/88?version=3",
+      "expected": 204,
+      "status": 204,
+      "code": null,
+      "message": null,
+      "passed": true,
+      "elapsedMs": 82
+    },
+    {
+      "check": "deleted food absent",
+      "method": "GET",
+      "path": "/api/v1/foods/88",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "食材不存在",
+      "passed": true,
+      "elapsedMs": 18
+    },
+    {
+      "check": "recipe catalogue",
+      "method": "GET",
+      "path": "/api/v1/recipes",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 105
+    },
+    {
+      "check": "catalogue contains recipes",
+      "passed": true
+    },
+    {
+      "check": "recipe detail",
+      "method": "GET",
+      "path": "/api/v1/recipes/1",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 47
+    },
+    {
+      "check": "recipe detail contract",
+      "passed": true
+    },
+    {
+      "check": "recipe missing",
+      "method": "GET",
+      "path": "/api/v1/recipes/999999999",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "菜谱不存在",
+      "passed": true,
+      "elapsedMs": 32
+    },
+    {
+      "check": "recipe path type",
+      "method": "GET",
+      "path": "/api/v1/recipes/abc",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "请求参数格式不正确或缺少必填参数",
+      "passed": true,
+      "elapsedMs": 38
+    },
+    {
+      "check": "recipe unknown endpoint",
+      "method": "GET",
+      "path": "/api/v1/recipes/1/unknown",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "接口不存在",
+      "passed": true,
+      "elapsedMs": 159
+    },
+    {
+      "check": "transfer owner",
+      "method": "POST",
+      "path": "/api/v1/families/39/transfer-owner",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 56
+    },
+    {
+      "check": "old owner cannot govern",
+      "method": "PATCH",
+      "path": "/api/v1/families/39/members/64",
+      "expected": 403,
+      "status": 403,
+      "code": "FORBIDDEN",
+      "message": "只有家庭拥有者可以管理成员",
+      "passed": true,
+      "elapsedMs": 32
+    },
+    {
+      "check": "remove old owner",
+      "method": "DELETE",
+      "path": "/api/v1/families/39/members/63",
+      "expected": 204,
+      "status": 204,
+      "code": null,
+      "message": null,
+      "passed": true,
+      "elapsedMs": 47
+    },
+    {
+      "check": "removed member denied",
+      "method": "GET",
+      "path": "/api/v1/fridges/29",
+      "expected": 404,
+      "status": 404,
+      "code": "NOT_FOUND",
+      "message": "家庭不存在或无权访问",
+      "passed": true,
+      "elapsedMs": 49
+    },
+    {
+      "check": "refresh rotation",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "logout rejects token from another user",
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "expected": 400,
+      "status": 400,
+      "code": "VALIDATION_ERROR",
+      "message": "刷新令牌不属于当前用户",
+      "passed": true,
+      "elapsedMs": 21
+    },
+    {
+      "check": "mismatched logout did not revoke current session",
+      "method": "POST",
+      "path": "/api/v1/auth/introspect",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 29
+    },
+    {
+      "check": "rotated old refresh rejected",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "刷新令牌已失效",
+      "passed": true,
+      "elapsedMs": 17
+    },
+    {
+      "check": "logout",
+      "method": "POST",
+      "path": "/api/v1/auth/logout",
+      "expected": 200,
+      "status": 200,
+      "code": "OK",
+      "message": null,
+      "passed": true,
+      "elapsedMs": 27
+    },
+    {
+      "check": "logout revokes introspection",
+      "method": "POST",
+      "path": "/api/v1/auth/introspect",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "访问令牌已撤销",
+      "passed": true,
+      "elapsedMs": 18
+    },
+    {
+      "check": "logout revokes family access",
+      "method": "GET",
+      "path": "/api/v1/families",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "访问令牌已撤销或失效",
+      "passed": true,
+      "elapsedMs": 63
+    },
+    {
+      "check": "logout revokes recipe access",
+      "method": "GET",
+      "path": "/api/v1/recipes",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "访问令牌已撤销或失效",
+      "passed": true,
+      "elapsedMs": 16
+    },
+    {
+      "check": "logout revokes refresh",
+      "method": "POST",
+      "path": "/api/v1/auth/refresh",
+      "expected": 401,
+      "status": 401,
+      "code": "UNAUTHORIZED",
+      "message": "刷新令牌已失效",
+      "passed": true,
+      "elapsedMs": 16
+    }
+  ]
+}

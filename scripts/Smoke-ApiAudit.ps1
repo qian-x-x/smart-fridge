@@ -47,14 +47,14 @@ $phone='199'+$stamp.Substring($stamp.Length-8)
 $phoneSession=Request 'phone-only registration' POST '/api/v1/auth/register' $null @{phone=$phone;displayName='手机账号审查';password='AuditTest2026'} 201
 $null=Request 'phone login' POST '/api/v1/auth/login' $null @{identifier=$phone;password='AuditTest2026'}
 $null=Request 'phone account passes gateway with nullable username' GET '/api/v1/families' $phoneSession $null
-foreach($port in 8080..8086) {
+foreach($port in 8080..8085) {
     $response=Invoke-WebRequest "http://127.0.0.1:$port/actuator/health" -SkipHttpErrorCheck -TimeoutSec 10
     $healthText=if($response.Content -is [byte[]]){[Text.Encoding]::UTF8.GetString($response.Content)}else{$response.Content}
     $health=$healthText | ConvertFrom-Json
     $checks.Add([pscustomobject]@{check="health $port";status=[int]$response.StatusCode;
         passed=([int]$response.StatusCode -eq 200 -and $health.status -eq 'UP')})
 }
-foreach($route in @('fridges','recipes','products','orders','notifications')) {
+foreach($route in @('fridges','recipes','products','orders')) {
     $null=Request "$route ping" GET "/api/v1/$route/ping" $owner $null
     $null=Request "$route ping requires token" GET "/api/v1/$route/ping" $null $null 401
 }

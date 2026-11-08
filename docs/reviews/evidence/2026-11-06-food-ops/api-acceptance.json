@@ -1,0 +1,139 @@
+{
+  "runAt": "2026-11-06T04:29:42.6446939+08:00",
+  "gateway": "http://127.0.0.1:8080",
+  "total": 26,
+  "passed": 26,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "register-owner",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "name": "register-member",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "name": "create-family",
+      "pass": true,
+      "detail": "status=201 familyId=38"
+    },
+    {
+      "name": "join-family",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "create-fridge",
+      "pass": true,
+      "detail": "status=201 fridgeId=28"
+    },
+    {
+      "name": "add-expired-food",
+      "pass": true,
+      "detail": "status=201 id=85"
+    },
+    {
+      "name": "add-due-today-food",
+      "pass": true,
+      "detail": "status=201 id=86"
+    },
+    {
+      "name": "add-fresh-food",
+      "pass": true,
+      "detail": "status=201 id=87"
+    },
+    {
+      "name": "viewer-cannot-clean",
+      "pass": true,
+      "detail": "status=403"
+    },
+    {
+      "name": "cleanup-accepted",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "cleanup-counts-only-expired",
+      "pass": true,
+      "detail": "count=1 skipped=0"
+    },
+    {
+      "name": "cleanup-returns-snapshot",
+      "pass": true,
+      "detail": "food=过期西兰花"
+    },
+    {
+      "name": "cleanup-keeps-today-and-fresh",
+      "pass": true,
+      "detail": "remaining=86,87"
+    },
+    {
+      "name": "cleanup-removed-expired",
+      "pass": true,
+      "detail": "remaining=86,87"
+    },
+    {
+      "name": "cleanup-writes-discard-record",
+      "pass": true,
+      "detail": "discardRecords=1"
+    },
+    {
+      "name": "cleanup-record-note",
+      "pass": true,
+      "detail": "note=过期清理"
+    },
+    {
+      "name": "cleanup-record-undoable",
+      "pass": true,
+      "detail": "undoable=True"
+    },
+    {
+      "name": "cleanup-is-idempotent",
+      "pass": true,
+      "detail": "status=200 count=0"
+    },
+    {
+      "name": "viewer-cannot-edit",
+      "pass": true,
+      "detail": "status=403"
+    },
+    {
+      "name": "edit-category-accepted",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "edit-category-persisted",
+      "pass": true,
+      "detail": "category=饮品"
+    },
+    {
+      "name": "edit-bumps-version",
+      "pass": true,
+      "detail": "version=1"
+    },
+    {
+      "name": "edit-visible-on-read",
+      "pass": true,
+      "detail": "category=饮品"
+    },
+    {
+      "name": "edit-rejects-stale-version",
+      "pass": true,
+      "detail": "status=409 code=CONFLICT"
+    },
+    {
+      "name": "cleanup-unknown-fridge-404",
+      "pass": true,
+      "detail": "status=404"
+    },
+    {
+      "name": "edit-unknown-food-404",
+      "pass": true,
+      "detail": "status=404"
+    }
+  ]
+}

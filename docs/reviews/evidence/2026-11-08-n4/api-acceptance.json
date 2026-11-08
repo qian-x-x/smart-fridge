@@ -1,0 +1,83 @@
+{
+  "runAt": "2026-11-08T18:54:11",
+  "oap": "http://127.0.0.1:12800/graphql",
+  "traceId": "520decd9a67d4367b3bf5728dafa3d16.121.17941352390940099",
+  "totalDurationMs": 128,
+  "spanCount": 40,
+  "services": [
+    "auth-family-service",
+    "gateway-service",
+    "order-service",
+    "stock-service"
+  ],
+  "reportedServices": [
+    "auth-family-service",
+    "fridge-service",
+    "gateway-service",
+    "mysql-core:3306",
+    "mysql-trade:3306",
+    "order-service",
+    "recipe-service",
+    "redis:6379",
+    "stock-service"
+  ],
+  "checks": [
+    {
+      "name": "oap-reachable",
+      "pass": true,
+      "detail": "窗口 2026-11-08 1833 -> 2026-11-08 1856，已上报 9 个服务/依赖"
+    },
+    {
+      "name": "all-six-services-reported",
+      "pass": true,
+      "detail": "已上报 6/6，缺失 无"
+    },
+    {
+      "name": "dependencies-discovered",
+      "pass": true,
+      "detail": "依赖节点：mysql-core:3306, mysql-trade:3306, redis:6379"
+    },
+    {
+      "name": "login-for-trace",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "order-created-for-trace",
+      "pass": true,
+      "detail": "status=201 orderId=ORD-20261108-F7C3050F"
+    },
+    {
+      "name": "trace-captured",
+      "pass": true,
+      "detail": "traceId=520decd9a67d4367b3bf5728dafa3d16.121.17941352390940099"
+    },
+    {
+      "name": "trace-crosses-four-services",
+      "pass": true,
+      "detail": "覆盖服务：auth-family-service, gateway-service, order-service, stock-service"
+    },
+    {
+      "name": "trace-span-count",
+      "pass": true,
+      "detail": "40 个 span，总耗时 128ms"
+    },
+    {
+      "name": "trace-has-gateway-entry",
+      "pass": true,
+      "detail": "网关入口 span 存在（Spring Cloud Gateway 插件）"
+    },
+    {
+      "name": "trace-has-feign-hop",
+      "pass": true,
+      "detail": "Feign 跨服务节点：/api/v1/products/EGG/deduct"
+    },
+    {
+      "name": "trace-has-mysql-and-redis",
+      "pass": true,
+      "detail": "MySQL 与 Redis 节点均在链路中"
+    }
+  ],
+  "passed": 11,
+  "total": 11
+}

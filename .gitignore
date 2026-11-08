@@ -93,3 +93,7 @@ minio-data/
 rocketmq-data/
 seata-data/
 skywalking-data/
+
+# SkyWalking java agent（39MB，从 apache/skywalking-java-agent 镜像导出，不入库）
+infra/skywalking/agent/
+infra/skywalking/agent-*/

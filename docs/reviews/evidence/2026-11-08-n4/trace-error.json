@@ -1,0 +1,1044 @@
+{
+  "queriedAt": "2026-11-08T18:51:32",
+  "window": {
+    "start": "2026-11-08 1836",
+    "end": "2026-11-08 1853"
+  },
+  "services": [
+    {
+      "id": "c3RvY2stc2VydmljZQ==.1",
+      "name": "stock-service"
+    },
+    {
+      "id": "cmVkaXM6NjM3OQ==.0",
+      "name": "redis:6379"
+    },
+    {
+      "id": "ZnJpZGdlLXNlcnZpY2U=.1",
+      "name": "fridge-service"
+    },
+    {
+      "id": "Z2F0ZXdheS1zZXJ2aWNl.1",
+      "name": "gateway-service"
+    },
+    {
+      "id": "bXlzcWwtdHJhZGU6MzMwNg==.0",
+      "name": "mysql-trade:3306"
+    },
+    {
+      "id": "YXV0aC1mYW1pbHktc2VydmljZQ==.1",
+      "name": "auth-family-service"
+    },
+    {
+      "id": "cmVjaXBlLXNlcnZpY2U=.1",
+      "name": "recipe-service"
+    },
+    {
+      "id": "b3JkZXItc2VydmljZQ==.1",
+      "name": "order-service"
+    },
+    {
+      "id": "bXlzcWwtY29yZTozMzA2.0",
+      "name": "mysql-core:3306"
+    }
+  ],
+  "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+  "totalDurationMs": 269,
+  "spanCount": 36,
+  "spans": [
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066435,
+      "endTime": 1794135066704,
+      "endpointName": "/api/v1/orders",
+      "type": "Entry",
+      "peer": "",
+      "component": "spring-webflux",
+      "isError": true,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://127.0.0.1:8080/api/v1/orders"
+        },
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "http.status_code",
+          "value": "500"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350028",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066435,
+      "endTime": 1794135066436,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664360030",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066436,
+      "endTime": 1794135066436,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664360032",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066436,
+      "endTime": 1794135066437,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664370034",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066437,
+      "endTime": 1794135066445,
+      "endpointName": "/api/v1/auth/introspect",
+      "type": "Exit",
+      "peer": "sf-auth:8081",
+      "component": "spring-webflux-webclient",
+      "isError": false,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://sf-auth:8081/api/v1/auth/introspect"
+        },
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "96381e8c3ee84681b8f8da1d108280bf.103.17941350664390000",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664370034",
+          "parentSpanId": 0,
+          "type": "CROSS_PROCESS"
+        }
+      ],
+      "serviceCode": "auth-family-service",
+      "serviceInstanceName": "2f07f1c6b28f4c1e80abb59b1fcfc7ec@172.18.0.7",
+      "startTime": 1794135066439,
+      "endTime": 1794135066444,
+      "endpointName": "POST:/api/v1/auth/introspect",
+      "type": "Entry",
+      "peer": "",
+      "component": "Tomcat",
+      "isError": false,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://sf-auth:8081/api/v1/auth/introspect"
+        },
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "96381e8c3ee84681b8f8da1d108280bf.103.17941350664390000",
+      "spanId": 1,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "auth-family-service",
+      "serviceInstanceName": "2f07f1c6b28f4c1e80abb59b1fcfc7ec@172.18.0.7",
+      "startTime": 1794135066442,
+      "endTime": 1794135066443,
+      "endpointName": "Lettuce/EXISTS",
+      "type": "Exit",
+      "peer": "redis:6379",
+      "component": "Lettuce",
+      "isError": false,
+      "layer": "Cache",
+      "tags": [
+        {
+          "key": "cache.type",
+          "value": "Redis"
+        },
+        {
+          "key": "cache.cmd",
+          "value": "EXISTS"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664450086",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066445,
+      "endTime": 1794135066445,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664450088",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066445,
+      "endTime": 1794135066445,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664460090",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066446,
+      "endTime": 1794135066446,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664460092",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066446,
+      "endTime": 1794135066446,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664460094",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066446,
+      "endTime": 1794135066446,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.121.17941350664460096",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066446,
+      "endTime": 1794135066446,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664470042",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066447,
+      "endTime": 1794135066447,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664470044",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066447,
+      "endTime": 1794135066448,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664470040",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066447,
+      "endTime": 1794135066447,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664470044",
+      "spanId": 1,
+      "parentSpanId": 0,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066447,
+      "endTime": 1794135066448,
+      "endpointName": "SpringCloudGateway/RoutingFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664480046",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664470044",
+          "parentSpanId": 1,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066448,
+      "endTime": 1794135066703,
+      "endpointName": "SpringCloudGateway/send",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664480046",
+      "spanId": 1,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066448,
+      "endTime": 1794135066703,
+      "endpointName": "SpringCloudGateway/sendRequest",
+      "type": "Exit",
+      "peer": "172.18.0.11:8085",
+      "component": "spring-cloud-gateway",
+      "isError": true,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://172.18.0.11:8085/api/v1/orders"
+        },
+        {
+          "key": "http.status_code",
+          "value": "500"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.295.17941350664480046",
+          "parentSpanId": 1,
+          "type": "CROSS_PROCESS"
+        }
+      ],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066450,
+      "endTime": 1794135066702,
+      "endpointName": "POST:/api/v1/orders",
+      "type": "Entry",
+      "peer": "",
+      "component": "Tomcat",
+      "isError": true,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://172.18.0.11:8085/api/v1/orders"
+        },
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "http.status_code",
+          "value": "500"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 1,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066460,
+      "endTime": 1794135066460,
+      "endpointName": "HikariCP/Connection/getConnection",
+      "type": "Local",
+      "peer": "",
+      "component": "HikariCP",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 2,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066462,
+      "endTime": 1794135066463,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeUpdate",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "order_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "INSERT INTO order_record (order_id, sku, quantity, status, request_id, created_at)\nVALUES (?, ?, ?, 'PENDING', ?, ?)\n"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 3,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066465,
+      "endTime": 1794135066465,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeQuery",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "order_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "SELECT created_at, id, order_id, quantity, request_id, sku, status FROM order_record WHERE (id) in ( (?) )"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 4,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066468,
+      "endTime": 1794135066498,
+      "endpointName": "/api/v1/products/MILK/deduct",
+      "type": "Exit",
+      "peer": "172.18.0.10:8084",
+      "component": "Feign",
+      "isError": false,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "url",
+          "value": "http://172.18.0.10:8084/api/v1/products/MILK/deduct"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+          "parentSpanId": 4,
+          "type": "CROSS_PROCESS"
+        }
+      ],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066471,
+      "endTime": 1794135066497,
+      "endpointName": "POST:/api/v1/products/MILK/deduct",
+      "type": "Entry",
+      "peer": "",
+      "component": "Tomcat",
+      "isError": false,
+      "layer": "Http",
+      "tags": [
+        {
+          "key": "url",
+          "value": "http://172.18.0.10:8084/api/v1/products/MILK/deduct"
+        },
+        {
+          "key": "http.method",
+          "value": "POST"
+        },
+        {
+          "key": "http.status_code",
+          "value": "200"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 1,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066472,
+      "endTime": 1794135066473,
+      "endpointName": "HikariCP/Connection/getConnection",
+      "type": "Local",
+      "peer": "",
+      "component": "HikariCP",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 2,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066474,
+      "endTime": 1794135066476,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeQuery",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "SELECT sku, stock, updated_at FROM stock_item WHERE sku = ?\nAND stock >= ? FOR UPDATE"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 3,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066476,
+      "endTime": 1794135066478,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeUpdate",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "UPDATE stock_item SET stock = stock - ?, updated_at = ? WHERE sku = ? AND stock >= ?"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 4,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066479,
+      "endTime": 1794135066479,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeQuery",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "SELECT sku, stock, updated_at FROM stock_item WHERE (sku) in ( (?) )"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 5,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066480,
+      "endTime": 1794135066480,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeQuery",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "SELECT sku, name, stock FROM stock_item WHERE sku = ?"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 6,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066489,
+      "endTime": 1794135066490,
+      "endpointName": "Mysql/JDBC/PreparedStatement/executeUpdate",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": "INSERT INTO undo_log (branch_id, xid, context, rollback_info, log_status, log_created, log_modified) VALUES (?, ?, ?, ?, ?, now(6), now(6))"
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 7,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066490,
+      "endTime": 1794135066495,
+      "endpointName": "Mysql/JDBC/Connection/commit",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "stock_db"
+        },
+        {
+          "key": "db.statement",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "6f07ca7f1af043eb8b1d976b39701dc6.114.17941350664710000",
+      "spanId": 8,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "stock-service",
+      "serviceInstanceName": "5058961d86ff457eba85a0d3aa80d0b0@172.18.0.10",
+      "startTime": 1794135066495,
+      "endTime": 1794135066495,
+      "endpointName": "HikariCP/Connection/close",
+      "type": "Local",
+      "peer": "",
+      "component": "HikariCP",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 5,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066503,
+      "endTime": 1794135066505,
+      "endpointName": "Mysql/JDBC/Connection/rollback",
+      "type": "Exit",
+      "peer": "mysql-trade:3306",
+      "component": "mysql-connector-java",
+      "isError": false,
+      "layer": "Database",
+      "tags": [
+        {
+          "key": "db.type",
+          "value": "Mysql"
+        },
+        {
+          "key": "db.instance",
+          "value": "order_db"
+        },
+        {
+          "key": "db.statement",
+          "value": ""
+        }
+      ]
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "da181787d6854c5380325053106a18a8.125.17941350664500000",
+      "spanId": 6,
+      "parentSpanId": 0,
+      "refs": [],
+      "serviceCode": "order-service",
+      "serviceInstanceName": "14f634ee430b40bba834dc064f71ac60@172.18.0.11",
+      "startTime": 1794135066506,
+      "endTime": 1794135066506,
+      "endpointName": "HikariCP/Connection/close",
+      "type": "Local",
+      "peer": "",
+      "component": "HikariCP",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    },
+    {
+      "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+      "segmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350667020036",
+      "spanId": 0,
+      "parentSpanId": -1,
+      "refs": [
+        {
+          "traceId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350027",
+          "parentSegmentId": "520decd9a67d4367b3bf5728dafa3d16.293.17941350664350026",
+          "parentSpanId": 0,
+          "type": "CROSS_THREAD"
+        }
+      ],
+      "serviceCode": "gateway-service",
+      "serviceInstanceName": "1d2bce522e0e4df5ad8e8d0a32c98987@172.18.0.12",
+      "startTime": 1794135066702,
+      "endTime": 1794135066702,
+      "endpointName": "SpringCloudGateway/GatewayFilter",
+      "type": "Local",
+      "peer": "",
+      "component": "spring-cloud-gateway",
+      "isError": false,
+      "layer": "Unknown",
+      "tags": []
+    }
+  ]
+}
