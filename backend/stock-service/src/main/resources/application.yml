@@ -4,19 +4,45 @@ spring:
   application:
     name: stock-service
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    active: ${SPRING_PROFILES_ACTIVE:cloud}
+  datasource:
+    # 库存与订单分属两个库：跨库才能体现 Seata 全局事务的必要性。
+    url: ${MYSQL_TRADE_URL:jdbc:mysql://127.0.0.1:3307/stock_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
+    username: ${MYSQL_TRADE_USER:smart_fridge_trade}
+    password: ${MYSQL_TRADE_PASSWORD:smart_fridge_trade_dev}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_SIZE:8}
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
       config:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
+
+# Seata AT：本服务是分支事务参与方，扣减库存时写入 undo_log。
+# 注册与配置都用 file 模式，地址直接给 seata-server，避免多一层注册依赖。
+seata:
+  enabled: ${SEATA_ENABLED:true}
+  application-id: ${spring.application.name}
+  tx-service-group: ${SEATA_TX_GROUP:smart-fridge-tx-group}
+  service:
+    vgroup-mapping:
+      smart-fridge-tx-group: default
+    grouplist:
+      default: ${SEATA_ADDR:127.0.0.1:8091}
+  registry:
+    type: file
+  config:
+    type: file
+  data-source-proxy-mode: AT
+
 management:
   endpoints:
     web:

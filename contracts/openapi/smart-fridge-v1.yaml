@@ -634,6 +634,36 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '409':
           $ref: '#/components/responses/Conflict'
+  /api/v1/fridges/{fridgeId}/discard-expired:
+    post:
+      tags: [Food]
+      summary: 一键清理已过期食材
+      description: 服务端按冰箱时区判定过期（到期日早于今天），逐条软删除并写入 DISCARD 流水，备注为「过期清理」。今天到期的食材不会被清理。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/FridgeId'
+      responses:
+        '200':
+          description: 清理结果，包含实际丢弃的数据与被并发修改而跳过的条数
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ExpiredCleanup'
+                  traceId:
+                    type: string
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/fridges/{fridgeId}/operations:
     get:
       tags: [Operation]
@@ -821,6 +851,190 @@ paths:
           $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
+  /api/v1/products/{sku}:
+    get:
+      tags: [Product]
+      summary: 查询商品库存
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Sku'
+        - name: delayMs
+          in: query
+          required: false
+          description: 仅用于故障注入演示，让接口延迟响应；生产调用不应传
+          schema: {type: integer, minimum: 0, maximum: 10000}
+      responses:
+        '200':
+          description: 库存快照
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ProductStock'
+                  traceId:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/v1/products/{sku}/deduct:
+    post:
+      tags: [Product]
+      summary: 扣减库存
+      description: 库存不足返回 409；扣减使用原子更新，并发下不会扣成负数。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/Sku'
+        - name: delayMs
+          in: query
+          required: false
+          description: 仅用于故障注入演示
+          schema: {type: integer, minimum: 0, maximum: 10000}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeductStockRequest'
+      responses:
+        '200':
+          description: 扣减后的库存
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/ProductStock'
+                  traceId:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/v1/orders:
+    get:
+      tags: [Order]
+      summary: 查询最近订单
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: limit
+          in: query
+          description: 返回条数，默认 20，最大 100
+          schema: {type: integer, minimum: 1, maximum: 100, default: 20}
+      responses:
+        '200':
+          description: 按创建时间倒序的订单
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OrderRow'
+                  traceId:
+                    type: string
+    post:
+      tags: [Order]
+      summary: 下单并扣减库存
+      description: 通过服务名调用库存服务扣减。三种结果：201 创建成功、429 被 Sentinel 流控拦截、503 库存服务不可用或被熔断。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: 订单已创建
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Order'
+                  traceId:
+                    type: string
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          description: 被流控规则拦截（QPS 上限 2）
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: 库存服务不可用或熔断打开
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 订单落库后主动失败触发全局回滚；只有演示参数 failAfterDeduct 会走到这里，回滚后订单与库存都不留下
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/orders/{orderId}:
+    get:
+      tags: [Order]
+      summary: 查询单笔订单
+      description: 全局回滚后该订单查不到（404），用于验证回滚确实撤销了已写入的订单行。
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/OrderId'
+      responses:
+        '200':
+          description: 订单详情
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: string
+                    example: OK
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/OrderRow'
+                  traceId:
+                    type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/v1/recipes:
     get:
       tags: [Recipe]
@@ -907,6 +1121,21 @@ components:
       schema:
         type: integer
         format: int64
+    Sku:
+      name: sku
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[A-Za-z0-9_-]{1,32}$'
+
+    OrderId:
+      name: orderId
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^ORD-[0-9]{8}-[A-Z0-9]{8}$'
   securitySchemes:
     bearerAuth:
       type: http
@@ -1610,6 +1839,89 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CookItem'
+    ExpiredCleanup:
+      type: object
+      properties:
+        count:
+          type: integer
+          description: 实际丢弃的条数
+        skipped:
+          type: integer
+          description: 扫描时已过期但被并发修改而跳过的条数
+        foods:
+          type: array
+          description: 被丢弃的食材（丢弃前快照）
+          items:
+            $ref: '#/components/schemas/Food'
+    ProductStock:
+      type: object
+      properties:
+        sku:
+          type: string
+          example: APPLE
+        name:
+          type: string
+          example: 云南小番茄
+        stock:
+          type: integer
+          minimum: 0
+    DeductStockRequest:
+      type: object
+      required: [quantity]
+      properties:
+        quantity:
+          type: integer
+          minimum: 1
+    CreateOrderRequest:
+      type: object
+      required: [sku, quantity]
+      properties:
+        sku:
+          type: string
+          example: APPLE
+        quantity:
+          type: integer
+          minimum: 1
+        stockDelayMs:
+          type: integer
+          nullable: true
+          description: 仅用于演示调用变慢与熔断，正常下单不传
+        failAfterDeduct:
+          type: boolean
+          nullable: true
+          description: 仅用于演示全局回滚：库存扣减成功后主动失败，验证订单与库存一起回滚。正常下单不传
+    OrderRow:
+      type: object
+      properties:
+        orderId:
+          type: string
+          example: ORD-20261108-1A2B3C4D
+        sku:
+          type: string
+          example: APPLE
+        quantity:
+          type: integer
+        status:
+          type: string
+          enum: [PENDING, CREATED]
+        createdAt:
+          type: string
+          format: date-time
+    Order:
+      type: object
+      properties:
+        orderId:
+          type: string
+          example: ORD-20261107-0001
+        sku:
+          type: string
+        quantity:
+          type: integer
+        remainingStock:
+          type: integer
+        status:
+          type: string
+          enum: [CREATED]
     SimpleResponse:
       type: object
       properties:

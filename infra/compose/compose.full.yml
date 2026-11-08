@@ -65,8 +65,11 @@ services:
     image: apache/skywalking-oap-server:10.1.0
     container_name: smart-fridge-skywalking-oap
     environment:
+      # 必须与服务端同时区：否则 GraphQL 查询窗口会差 8 小时，UI 里"查不到链路"。
+      TZ: Asia/Shanghai
       SW_STORAGE: h2
-      JAVA_OPTS: -Xms256m -Xmx512m
+      # 512m 在累积几万条 span 后会 OOM（H2 存储 + 聚合都在堆里），演示环境给到 1g。
+      JAVA_OPTS: -Xms256m -Xmx1024m
     ports:
       - "11800:11800"
       - "12800:12800"
@@ -79,6 +82,7 @@ services:
     image: apache/skywalking-ui:10.1.0
     container_name: smart-fridge-skywalking-ui
     environment:
+      TZ: Asia/Shanghai
       SW_OAP_ADDRESS: http://skywalking-oap:12800
     ports:
       - "8088:8080"

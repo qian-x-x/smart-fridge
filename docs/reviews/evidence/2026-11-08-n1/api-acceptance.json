@@ -1,0 +1,77 @@
+{
+  "runAt": "2026-11-08T03:17:45.7959681+08:00",
+  "gateway": "http://127.0.0.1:8080",
+  "nacos": "http://127.0.0.1:8848",
+  "dataId": "fridge-service.yaml",
+  "group": "SMART_FRIDGE",
+  "total": 13,
+  "passed": 13,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "nacos-reachable",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "six-services-registered",
+      "pass": true,
+      "detail": "count=6 names=recipe-service,order-service,gateway-service,auth-family-service,stock-service,fridge-service"
+    },
+    {
+      "name": "gateway-registered",
+      "pass": true,
+      "detail": "services=recipe-service,order-service,gateway-service,auth-family-service,stock-service,fridge-service"
+    },
+    {
+      "name": "no-notification-service",
+      "pass": true,
+      "detail": "services=recipe-service,order-service,gateway-service,auth-family-service,stock-service,fridge-service"
+    },
+    {
+      "name": "all-instances-healthy",
+      "pass": true,
+      "detail": "unhealthy=0"
+    },
+    {
+      "name": "fridge-instance-address",
+      "pass": true,
+      "detail": "hosts=172.18.0.8:8082"
+    },
+    {
+      "name": "gateway-routes-auth-by-name",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "name": "gateway-routes-fridge-by-name",
+      "pass": true,
+      "detail": "status=201 fridgeId=34"
+    },
+    {
+      "name": "seed-food-created",
+      "pass": true,
+      "detail": "status=201 remainingDays=5"
+    },
+    {
+      "name": "external-config-narrow-threshold",
+      "pass": true,
+      "detail": "threshold=1 remaining=5 expiring=False"
+    },
+    {
+      "name": "refresh-applies-without-restart",
+      "pass": true,
+      "detail": "threshold=10 remaining=5 expiring=True"
+    },
+    {
+      "name": "threshold-restored",
+      "pass": true,
+      "detail": "threshold=3 remaining=5 expiring=False"
+    },
+    {
+      "name": "config-persisted",
+      "pass": true,
+      "detail": "content={\"smart-fridge\": {\"fridge\": {\"expiring-threshold-days\": 3}}}"
+    }
+  ]
+}

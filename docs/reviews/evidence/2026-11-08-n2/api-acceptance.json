@@ -1,0 +1,39 @@
+{
+  "runAt": "2026-11-08T18:32:37",
+  "orderService": "http://127.0.0.1:8085",
+  "total": 6,
+  "passed": 6,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "c3-timeout-returns-explicit-error",
+      "pass": true,
+      "detail": "status=503 elapsed=1599ms message=库存服务调用失败：响应超时（超过 1500ms 未返回）"
+    },
+    {
+      "name": "c2-circuit-breaker-opens",
+      "pass": true,
+      "detail": "slow=[{'status': 201, 'elapsed': 906}, {'status': 201, 'elapsed': 907}] then status=503 elapsed=108ms message=库存服务已熔断，本次未发起调用"
+    },
+    {
+      "name": "c2-blocked-call-skips-downstream",
+      "pass": true,
+      "detail": "blocked elapsed=108ms（远小于 800ms 的慢调用，说明没有再发起真实请求）"
+    },
+    {
+      "name": "c2-recovers-after-window",
+      "pass": true,
+      "detail": "status=201 elapsed=107ms remaining=82"
+    },
+    {
+      "name": "c2-flow-control-blocks-burst",
+      "pass": true,
+      "detail": "statuses=[201, 201, 429, 429, 429, 429]"
+    },
+    {
+      "name": "c2-rate-limit-message-readable",
+      "pass": true,
+      "detail": "message=下单请求过于频繁（QPS 上限 2），请稍后重试"
+    }
+  ]
+}

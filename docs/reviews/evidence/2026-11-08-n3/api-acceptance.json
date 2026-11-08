@@ -1,0 +1,79 @@
+{
+  "runAt": "2026-11-08T18:32:56+0800",
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "success-first-order-created",
+      "pass": true,
+      "detail": "status=201 orderId=ORD-20261108-12E1F1CA remaining=78 elapsed=87ms"
+    },
+    {
+      "name": "success-stock-deducted-in-db",
+      "pass": true,
+      "detail": "before=80 after=78"
+    },
+    {
+      "name": "success-order-row-persisted",
+      "pass": true,
+      "detail": "db status=CREATED"
+    },
+    {
+      "name": "success-second-sku",
+      "pass": true,
+      "detail": "status=201 milk 44->43"
+    },
+    {
+      "name": "committed-undo-log-cleaned",
+      "pass": true,
+      "detail": "stock.undo_log=0 order.undo_log=0"
+    },
+    {
+      "name": "shortage-returns-409",
+      "pass": true,
+      "detail": "status=409 message=库存不足，请调整数量后重试"
+    },
+    {
+      "name": "shortage-rolls-back-order",
+      "pass": true,
+      "detail": "orders 26->26 egg 27->27"
+    },
+    {
+      "name": "rollback-returns-error",
+      "pass": true,
+      "detail": "status=500 message=演示用异常：库存已扣减，订单侧主动失败，全局事务应回滚"
+    },
+    {
+      "name": "rollback-restores-stock",
+      "pass": true,
+      "detail": "stock 78->78 (扣减 3 已还原)"
+    },
+    {
+      "name": "rollback-removes-order",
+      "pass": true,
+      "detail": "orders 26->26"
+    },
+    {
+      "name": "rollback-undo-log-cleaned",
+      "pass": true,
+      "detail": "stock.undo_log=0 order.undo_log=0"
+    },
+    {
+      "name": "uncommitted-order-invisible-outside-tx",
+      "pass": true,
+      "detail": "回滚中/结束后都查不到 PENDING：订单插入属于未提交的本地事务，随本地回滚丢弃；只有已在一阶段提交的库存分支才需要 undo_log 二阶段回滚（耗时 1296ms）"
+    },
+    {
+      "name": "branch-rollback-in-stock-log",
+      "pass": true,
+      "detail": "本次新增 branch rollback success 2 次（对应库存不足与演示回滚）"
+    },
+    {
+      "name": "global-rollback-in-seata-log",
+      "pass": true,
+      "detail": "本次新增全局回滚成功 3 次"
+    }
+  ],
+  "skipped": []
+}

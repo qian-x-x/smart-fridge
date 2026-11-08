@@ -4,7 +4,7 @@ spring:
   application:
     name: recipe-service
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    active: ${SPRING_PROFILES_ACTIVE:cloud}
   datasource:
     url: ${MYSQL_CORE_URL:jdbc:mysql://127.0.0.1:3306/recipe_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
     username: ${MYSQL_CORE_USER:smart_fridge}
@@ -19,12 +19,12 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
       config:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE

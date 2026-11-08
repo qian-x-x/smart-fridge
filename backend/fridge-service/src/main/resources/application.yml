@@ -4,7 +4,7 @@ spring:
   application:
     name: fridge-service
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    active: ${SPRING_PROFILES_ACTIVE:cloud}
   datasource:
     url: ${MYSQL_CORE_URL:jdbc:mysql://127.0.0.1:3306/fridge_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true}
     username: ${MYSQL_CORE_USER:smart_fridge}
@@ -19,18 +19,21 @@ spring:
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
       config:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
 
 smart-fridge:
   auth-service-url: ${AUTH_SERVICE_URL:http://127.0.0.1:8081}
+  fridge:
+    # 本地兜底值；Nacos 上的 fridge-service.yaml 会覆盖它，用于演示外置配置与动态刷新。
+    expiring-threshold-days: ${EXPIRING_THRESHOLD_DAYS:3}
 
 management:
   endpoints:

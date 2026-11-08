@@ -6,6 +6,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.config.GatewayProperties;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @SpringBootTest(
@@ -15,6 +16,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
         "spring.cloud.nacos.config.enabled=false"
     }
 )
+@ActiveProfiles("local")
 class GatewayCorsTest {
 
     @LocalServerPort
@@ -23,9 +25,13 @@ class GatewayCorsTest {
     @Autowired
     private GatewayProperties routes;
 
+    /**
+     * local 是降级 profile：没有注册中心时，网关仍应按固定地址把请求转发到 5 个业务服务。
+     * 默认 profile（cloud）走 lb://，由 {@link GatewayDiscoveryRouteTest} 覆盖。
+     */
     @Test
     void localProfileRoutesAllServicesWithoutNacos() {
-        org.assertj.core.api.Assertions.assertThat(routes.getRoutes()).hasSize(6)
+        org.assertj.core.api.Assertions.assertThat(routes.getRoutes()).hasSize(5)
             .allSatisfy(route -> {
                 org.assertj.core.api.Assertions.assertThat(route.getUri().getScheme()).isEqualTo("http");
                 org.assertj.core.api.Assertions.assertThat(route.getUri().getHost()).isEqualTo("127.0.0.1");

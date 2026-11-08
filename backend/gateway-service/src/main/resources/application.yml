@@ -5,16 +5,16 @@ spring:
   application:
     name: gateway-service
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:local}
+    active: ${SPRING_PROFILES_ACTIVE:cloud}
   cloud:
     nacos:
       discovery:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
       config:
-        enabled: ${NACOS_ENABLED:false}
+        enabled: ${NACOS_ENABLED:true}
         server-addr: ${NACOS_ADDR:127.0.0.1:8848}
         namespace: ${NACOS_NAMESPACE:}
         group: SMART_FRIDGE
@@ -40,18 +40,18 @@ spring:
           uri: lb://order-service
           predicates:
             - Path=/api/v1/orders/**
-        - id: notification
-          uri: lb://notification-service
-          predicates:
-            - Path=/api/v1/notifications/**,/api/v1/ws/**
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-origins:
-              - ${ADMIN_ORIGIN:http://localhost:5173}
-              - ${ADMIN_LOOPBACK_ORIGIN:http://127.0.0.1:5173}
-              - ${FLUTTER_WEB_ORIGIN:http://localhost:3000}
-              - ${FLUTTER_WEB_LOOPBACK_ORIGIN:http://127.0.0.1:3000}
+            # Patterns instead of a fixed origin list so the same build works
+            # from 127.0.0.1, localhost and any LAN address a phone or another
+            # laptop uses. Tighten this to explicit origins in production.
+            allowed-origin-patterns:
+              - ${ADMIN_ORIGIN:http://localhost:*}
+              - ${FLUTTER_WEB_ORIGIN:http://127.0.0.1:*}
+              - ${LAN_ORIGIN_PATTERN_A:http://192.168.*:*}
+              - ${LAN_ORIGIN_PATTERN_B:http://10.*:*}
+              - ${LAN_ORIGIN_PATTERN_C:http://172.*:*}
             allowed-methods: [GET, POST, PUT, PATCH, DELETE, OPTIONS]
             allowed-headers: ["*"]
             exposed-headers: [X-Request-Id]

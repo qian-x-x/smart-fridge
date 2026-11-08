@@ -1,3 +1,5 @@
+# 降级模式：不依赖注册中心，全部走固定地址。
+# 默认 profile 不使用本文件，只有显式 SPRING_PROFILES_ACTIVE=local 时才生效。
 spring:
   cloud:
     gateway:
@@ -22,7 +24,3 @@ spring:
           uri: ${ORDER_ROUTE_URI:http://127.0.0.1:8085}
           predicates:
             - Path=/api/v1/orders/**
-        - id: notification
-          uri: ${NOTIFICATION_ROUTE_URI:http://127.0.0.1:8086}
-          predicates:
-            - Path=/api/v1/notifications/**,/api/v1/ws/**

@@ -1,9 +1,0 @@
-spring:
-  config:
-    import: optional:nacos:${spring.application.name}.yaml?group=SMART_FRIDGE&refreshEnabled=true
-  cloud:
-    nacos:
-      discovery:
-        enabled: true
-      config:
-        enabled: true
