@@ -1,0 +1,76 @@
+{
+  "checkedAt": "2026-11-09T01:43:45.583003+08:00",
+  "health": {
+    "8080": "UP",
+    "8081": "UP",
+    "8082": "UP",
+    "8083": "UP"
+  },
+  "web": {
+    "url": "http://127.0.0.1:3000",
+    "status": 200,
+    "sameOriginUnauthorizedApi": 401
+  },
+  "developmentDataBefore": {
+    "users": "87",
+    "families": "45",
+    "members": "51",
+    "fridges": "37",
+    "foods": "96",
+    "operations": "177"
+  },
+  "developmentDataAfter": {
+    "users": "87",
+    "families": "45",
+    "members": "51",
+    "fridges": "37",
+    "foods": "96",
+    "operations": "177"
+  },
+  "preserved": true,
+  "isolatedAcceptanceContainers": "stopped; databases retained",
+  "legacyOrderStock": "optional; stopped",
+  "migrations": [
+    [
+      "auth",
+      "1",
+      "1"
+    ],
+    [
+      "auth",
+      "2",
+      "1"
+    ],
+    [
+      "auth",
+      "3",
+      "1"
+    ],
+    [
+      "fridge",
+      "1",
+      "1"
+    ],
+    [
+      "fridge",
+      "2",
+      "1"
+    ],
+    [
+      "fridge",
+      "3",
+      "1"
+    ],
+    [
+      "fridge",
+      "4",
+      "1"
+    ]
+  ],
+  "nacosHealthyInstances": {
+    "auth-family-service": 1,
+    "fridge-service": 1,
+    "recipe-service": 1,
+    "gateway-service": 1
+  }
+}

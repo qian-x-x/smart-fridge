@@ -24,6 +24,12 @@ spring:
     enabled: true
     locations: classpath:db/migration
   cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: ${FEIGN_CONNECT_TIMEOUT_MS:1000}
+            read-timeout: ${FEIGN_READ_TIMEOUT_MS:5000}
     nacos:
       discovery:
         enabled: ${NACOS_ENABLED:true}
@@ -37,10 +43,31 @@ spring:
         group: SMART_FRIDGE
 
 smart-fridge:
+  fridge-service-url: ${FRIDGE_SERVICE_URL:}
+  workspace:
+    qps: ${WORKSPACE_QPS:5}
+    slow-call-millis: ${WORKSPACE_SLOW_CALL_MS:1500}
+    circuit-min-requests: ${WORKSPACE_CIRCUIT_MIN_REQUESTS:5}
   jwt:
     secret: ${JWT_SECRET:dev-only-smart-fridge-secret-change-before-release-2026}
     access-token-ttl: ${ACCESS_TOKEN_TTL:30m}
     refresh-token-ttl: ${REFRESH_TOKEN_TTL:7d}
+
+seata:
+  enable-auto-data-source-proxy: false
+  enabled: ${SEATA_ENABLED:true}
+  application-id: ${spring.application.name}
+  tx-service-group: ${SEATA_TX_GROUP:smart-fridge-tx-group}
+  service:
+    vgroup-mapping:
+      smart-fridge-tx-group: default
+    grouplist:
+      default: ${SEATA_ADDR:127.0.0.1:8091}
+  registry:
+    type: file
+  config:
+    type: file
+  data-source-proxy-mode: AT
 
 management:
   endpoints:

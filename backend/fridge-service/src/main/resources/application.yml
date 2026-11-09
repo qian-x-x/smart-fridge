@@ -17,6 +17,12 @@ spring:
     enabled: true
     locations: classpath:db/migration
   cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: ${FEIGN_CONNECT_TIMEOUT_MS:1000}
+            read-timeout: ${FEIGN_READ_TIMEOUT_MS:3000}
     nacos:
       discovery:
         enabled: ${NACOS_ENABLED:true}
@@ -30,10 +36,26 @@ spring:
         group: SMART_FRIDGE
 
 smart-fridge:
-  auth-service-url: ${AUTH_SERVICE_URL:http://127.0.0.1:8081}
+  auth-service-url: ${AUTH_SERVICE_URL:}
   fridge:
     # 本地兜底值；Nacos 上的 fridge-service.yaml 会覆盖它，用于演示外置配置与动态刷新。
     expiring-threshold-days: ${EXPIRING_THRESHOLD_DAYS:3}
+
+seata:
+  enable-auto-data-source-proxy: false
+  enabled: ${SEATA_ENABLED:true}
+  application-id: ${spring.application.name}
+  tx-service-group: ${SEATA_TX_GROUP:smart-fridge-tx-group}
+  service:
+    vgroup-mapping:
+      smart-fridge-tx-group: default
+    grouplist:
+      default: ${SEATA_ADDR:127.0.0.1:8091}
+  registry:
+    type: file
+  config:
+    type: file
+  data-source-proxy-mode: AT
 
 management:
   endpoints:

@@ -1,0 +1,8 @@
+{
+  "queriedAt": "2026-11-09T01:15:36.850890+08:00",
+  "passed": true,
+  "traces": {
+    "success": "e29dc11543934bea885d2cf1cd2ce1e3.84.17941581341940371",
+    "remote-write-error": "4f4779fd445745bfbab1daae9df99db0.113.17941580861690001"
+  }
+}

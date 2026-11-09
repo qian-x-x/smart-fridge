@@ -15,7 +15,13 @@ spring:
         enabled: false
 
 smart-fridge:
+  fridge-service-url: http://127.0.0.1:1
+  workspace:
+    qps: 10000
   jwt:
     secret: test-only-smart-fridge-secret-at-least-thirty-two-bytes
     access-token-ttl: 15m
     refresh-token-ttl: 7d
+
+seata:
+  enabled: false

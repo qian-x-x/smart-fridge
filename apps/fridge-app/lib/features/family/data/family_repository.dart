@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
@@ -37,6 +39,8 @@ class ApiFamilyRepository implements FamilyDataSource {
   ApiFamilyRepository(this._api);
 
   final ApiClient _api;
+  final _random = Random.secure();
+  final Map<String, String> _pendingCreations = {};
 
   @override
   Future<List<FamilyInfo>> list(AuthSession session) async {
@@ -58,10 +62,25 @@ class ApiFamilyRepository implements FamilyDataSource {
 
   @override
   Future<FamilyInfo> create(AuthSession session, String name) async {
-    final body = await _api.post('/api/v1/families', {
-      'name': name.trim(),
+    if (session.isDemo) throw StateError('请登录真实账号后管理家庭');
+    final normalized = name.trim();
+    final key = '${session.user.id}:$normalized';
+    final requestId = _pendingCreations.putIfAbsent(
+      key,
+      () =>
+          'workspace_${List.generate(16, (_) => _random.nextInt(256).toRadixString(16).padLeft(2, '0')).join()}',
+    );
+    final body = await _api.post('/api/v1/families/workspaces', {
+      'name': normalized,
+      'requestId': requestId,
     }, accessToken: session.accessToken);
-    return FamilyInfo.fromJson(_map(body['data']));
+    final workspace = _map(body['data']);
+    if (workspace['fridgeId'] is! num || (workspace['fridgeId'] as num) <= 0) {
+      throw const ApiFailure('家庭冰箱尚未初始化，请使用原请求重试');
+    }
+    final family = FamilyInfo.fromJson(_map(workspace['family']));
+    _pendingCreations.remove(key);
+    return family;
   }
 
   @override

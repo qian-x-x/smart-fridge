@@ -30,7 +30,7 @@ void main() {
     expect(api.accessToken, 'access');
   });
 
-  test('creates a family and returns its owner role', () async {
+  test('creates a family workspace with an initialized fridge', () async {
     final api = _FamilyApiClient();
     final repository = ApiFamilyRepository(api);
 
@@ -38,8 +38,37 @@ void main() {
 
     expect(family.name, '第二家庭');
     expect(family.role, 'OWNER');
-    expect(api.postPath, '/api/v1/families');
-    expect(api.postBody, {'name': '第二家庭'});
+    expect(api.postPath, '/api/v1/families/workspaces');
+    expect(api.postBody!['name'], '第二家庭');
+    expect(api.postBody!['requestId'], matches(r'^[A-Za-z0-9_-]{8,64}$'));
+    expect(api.accessToken, 'access');
+  });
+
+  test('retries an uncertain creation with the same idempotency key', () async {
+    final api = _FamilyApiClient()..failNext = true;
+    final repository = ApiFamilyRepository(api);
+    await expectLater(
+      repository.create(session, ' 第二家庭 '),
+      throwsA(isA<ApiFailure>()),
+    );
+    final requestId = api.postBody!['requestId'];
+    await repository.create(session, '第二家庭');
+    expect(api.postBody!['requestId'], requestId);
+    await repository.create(session, '第二家庭');
+    expect(api.postBody!['requestId'], isNot(requestId));
+  });
+
+  test('retains the request key if the fridge is not confirmed', () async {
+    final api = _FamilyApiClient()..fridgeId = 0;
+    final repository = ApiFamilyRepository(api);
+    await expectLater(
+      repository.create(session, '第二家庭'),
+      throwsA(isA<ApiFailure>()),
+    );
+    final requestId = api.postBody!['requestId'];
+    api.fridgeId = 10;
+    await repository.create(session, '第二家庭');
+    expect(api.postBody!['requestId'], requestId);
   });
 }
 
@@ -50,6 +79,8 @@ class _FamilyApiClient extends ApiClient {
   String? postPath;
   String? accessToken;
   Map<String, dynamic>? postBody;
+  bool failNext = false;
+  int fridgeId = 10;
 
   @override
   Future<Map<String, dynamic>> get(
@@ -85,16 +116,23 @@ class _FamilyApiClient extends ApiClient {
     postPath = path;
     postBody = body;
     this.accessToken = accessToken;
+    if (failNext) {
+      failNext = false;
+      throw const ApiFailure('连接中断');
+    }
     return {
       'code': 'OK',
       'message': 'success',
       'data': {
-        'id': 9,
-        'name': body['name'],
-        'inviteCode': 'SECOND26',
-        'ownerUserId': 7,
-        'currentUserRole': 'OWNER',
-        'createdAt': '2026-10-28T00:00:00Z',
+        'fridgeId': fridgeId,
+        'family': {
+          'id': 9,
+          'name': body['name'],
+          'inviteCode': 'SECOND26',
+          'ownerUserId': 7,
+          'currentUserRole': 'OWNER',
+          'createdAt': '2026-10-28T00:00:00Z',
+        },
       },
       'traceId': 'test',
     };

@@ -1,13 +1,14 @@
-param(
+﻿param(
     [switch]$SkipBuild,
-    [switch]$WithoutAgent
+    [switch]$WithoutAgent,
+    [switch]$IncludeLegacyDemo
 )
 
 $ErrorActionPreference = "Stop"
 # Invoke-WebRequest 默认会往输出流写进度条，轮询健康检查时会把日志刷爆。
 $ProgressPreference = "SilentlyContinue"
 
-# 一键启动 6 个业务服务（复用 infra/compose 的 core 基础设施）。
+# 默认启动家庭冰箱的 4 个业务服务；旧交易技术验证需显式选择。
 # 每个服务都是「可执行 jar + eclipse-temurin:17-jre 容器」，与 compose 里的中间件同网络，
 # 因此容器内用 mysql-core / mysql-trade / nacos / redis / smart-fridge-seata 这些服务名。
 
@@ -38,6 +39,7 @@ if (-not $SkipBuild) {
     Write-Host "==> 打包后端（跳过测试）"
     Push-Location $backend
     mvn -q -DskipTests package
+    if ($LASTEXITCODE -ne 0) { Pop-Location; throw '后端打包失败' }
     Pop-Location
 }
 
@@ -49,6 +51,7 @@ $services = @(
             MYSQL_CORE_URL = "$coreDb/auth_db?$jdbc"
             MYSQL_CORE_USER = "smart_fridge"; MYSQL_CORE_PASSWORD = "smart_fridge_dev"
             REDIS_HOST = "redis"; REDIS_PASSWORD = "smart_fridge_dev"
+            SEATA_ADDR = "smart-fridge-seata:8091"
         }
     },
     @{
@@ -57,8 +60,7 @@ $services = @(
             NACOS_ADDR = "nacos:8848"
             MYSQL_CORE_URL = "$coreDb/fridge_db?$jdbc"
             MYSQL_CORE_USER = "smart_fridge"; MYSQL_CORE_PASSWORD = "smart_fridge_dev"
-            SMART_FRIDGE_AUTH_SERVICE_URL = "http://sf-auth:8081"
-            AUTH_SERVICE_URL = "http://sf-auth:8081"
+            SEATA_ADDR = "smart-fridge-seata:8091"
         }
     },
     @{
@@ -95,6 +97,14 @@ $services = @(
         }
     }
 )
+$services = @($services | Where-Object {
+    $IncludeLegacyDemo -or $_.Name -notin @('sf-stock', 'sf-order')
+})
+foreach ($dependency in @('smart-fridge-redis', 'smart-fridge-nacos', 'smart-fridge-seata')) {
+    if (-not (docker ps --filter "name=^/$dependency$" --format '{{.Names}}')) {
+        throw "依赖未启动：$dependency"
+    }
+}
 
 foreach ($svc in $services) {
     $jar = Join-Path $backend "$($svc.Module)\target\$($svc.Module)-0.1.0-SNAPSHOT.jar"
@@ -105,7 +115,9 @@ foreach ($svc in $services) {
     docker rm -f $svc.Name 2>$null | Out-Null
 
     $runArgs = @("run", "-d", "--name", $svc.Name, "--network", "smart-fridge",
-                 "-p", "$($svc.Port):$($svc.Port)")
+                 "-p", "$($svc.Port):$($svc.Port)",
+                 '-e', 'JAVA_TOOL_OPTIONS=-Xms32m -Xmx256m -XX:MaxDirectMemorySize=64m',
+                 '-e', 'TZ=Asia/Shanghai')
     foreach ($key in $svc.Env.Keys) {
         $runArgs += @("-e", "$key=$($svc.Env[$key])")
     }
@@ -126,13 +138,10 @@ foreach ($svc in $services) {
     $runArgs += @("eclipse-temurin:17-jre", "java") + $javaArgs
 
     & docker @runArgs | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "容器启动失败：$($svc.Name)" }
     Write-Host ("    started " + $svc.Name)
-}
-
-# --- 等待健康 ---
-Write-Host "==> 等待服务就绪"
-$failed = @()
-foreach ($svc in $services) {
+    # Each JVM must be warm before starting the next one. Parallel agent class
+    # loading previously exhausted Docker Desktop memory and swap.
     # 挂 agent 后首次启动要加载几百个插件 jar，3 分钟不够。
     $deadline = (Get-Date).AddMinutes(5)
     $ready = $false
@@ -153,8 +162,7 @@ foreach ($svc in $services) {
     if ($ready) {
         Write-Host ("    UP   " + $svc.Name + " :" + $svc.Port)
     } else {
-        $failed += $svc.Name
-        Write-Host ("    FAIL " + $svc.Name + " :" + $svc.Port)
+        throw "服务未就绪：$($svc.Name)；查看 docker logs $($svc.Name)"
     }
 }
 
@@ -162,7 +170,3 @@ Write-Host ""
 Write-Host "Gateway:    http://127.0.0.1:8080"
 Write-Host "SkyWalking: http://127.0.0.1:8088   (OAP gRPC 11800)"
 Write-Host "Seata:      http://127.0.0.1:7091"
-
-if ($failed.Count -gt 0) {
-    throw ("以下服务未就绪：" + ($failed -join ", ") + "；查看 docker logs <name>")
-}

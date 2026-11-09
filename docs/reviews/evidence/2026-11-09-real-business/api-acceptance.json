@@ -1,0 +1,256 @@
+{
+  "runId": "6ba6412335",
+  "gateway": "http://127.0.0.1:18080",
+  "schemas": [
+    "auth_business",
+    "fridge_business"
+  ],
+  "successWorkspace": {
+    "family": {
+      "id": 19,
+      "name": "实际家庭_6ba64123351",
+      "inviteCode": "855DY34H",
+      "ownerUserId": 5,
+      "currentUserRole": "OWNER",
+      "createdAt": "2026-11-08T17:14:00Z"
+    },
+    "fridgeId": 17
+  },
+  "runAt": "2026-11-09T01:15:36.299191+08:00",
+  "checks": [
+    {
+      "name": "register-owner",
+      "pass": true,
+      "detail": "http=201"
+    },
+    {
+      "name": "register-other",
+      "pass": true,
+      "detail": "http=201"
+    },
+    {
+      "name": "success-1",
+      "pass": true,
+      "detail": "http=201, ms=2125"
+    },
+    {
+      "name": "owner-member-1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "usable-fridge-1",
+      "pass": true,
+      "detail": "fridge=17, zones=4"
+    },
+    {
+      "name": "success-2",
+      "pass": true,
+      "detail": "http=201, ms=188"
+    },
+    {
+      "name": "owner-member-2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "usable-fridge-2",
+      "pass": true,
+      "detail": "fridge=18, zones=4"
+    },
+    {
+      "name": "committed-replay",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "request-scoped-per-user",
+      "pass": true,
+      "detail": "user ids 5/6 each created their own workspace"
+    },
+    {
+      "name": "changed-payload-conflict",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "backend-created-xid",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "stranger-cannot-read-fridge",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "unauthenticated-write-denied",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "invalid-request-denied",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "created-workspace-accepts-real-food",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "family-collaboration-still-works",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "viewer-cannot-write",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "fault-fixture-ready",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "failure-http-reject",
+      "pass": true,
+      "detail": "http=503, ms=266"
+    },
+    {
+      "name": "atomic-rollback-reject",
+      "pass": true,
+      "detail": "before=(17, 19, 17, 17, 68, 102); after=(17, 19, 17, 17, 68, 102)"
+    },
+    {
+      "name": "rolled-back-request-key-reject",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "failure-http-lose-response",
+      "pass": true,
+      "detail": "http=503, ms=171"
+    },
+    {
+      "name": "remote-actually-called-lose-response",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "atomic-rollback-lose-response",
+      "pass": true,
+      "detail": "before=(17, 19, 17, 17, 68, 102); after=(17, 19, 17, 17, 68, 102)"
+    },
+    {
+      "name": "rolled-back-request-key-lose-response",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "failure-http-timeout",
+      "pass": true,
+      "detail": "http=503, ms=1093"
+    },
+    {
+      "name": "remote-actually-called-timeout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "atomic-rollback-timeout",
+      "pass": true,
+      "detail": "before=(17, 19, 17, 17, 68, 102); after=(17, 19, 17, 17, 68, 102)"
+    },
+    {
+      "name": "rolled-back-request-key-timeout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "retry-after-rollback",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "slow-real-write-0",
+      "pass": true,
+      "detail": "ms=578"
+    },
+    {
+      "name": "slow-real-write-1",
+      "pass": true,
+      "detail": "ms=579"
+    },
+    {
+      "name": "circuit-opens",
+      "pass": true,
+      "detail": "ms=110"
+    },
+    {
+      "name": "circuit-skips-downstream",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "circuit-does-not-leave-family",
+      "pass": true,
+      "detail": "before=(20, 22, 20, 20, 80, 120); after=(20, 22, 20, 20, 80, 120)"
+    },
+    {
+      "name": "circuit-recovers",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "flow-control-real-entry",
+      "pass": true,
+      "detail": [
+        201,
+        429,
+        429,
+        201,
+        201,
+        429,
+        201,
+        429,
+        429,
+        429,
+        201,
+        429
+      ]
+    },
+    {
+      "name": "limited-requests-leave-no-partial-data",
+      "pass": true,
+      "detail": "successful=5; before=(21, 23, 21, 21, 84, 126); after=(26, 28, 26, 26, 104, 156)"
+    },
+    {
+      "name": "concurrent-idempotent-replay",
+      "pass": true,
+      "detail": [
+        200,
+        200,
+        201,
+        200
+      ]
+    },
+    {
+      "name": "concurrent-single-workspace",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "both-undo-logs-drained",
+      "pass": true,
+      "detail": [
+        0,
+        0
+      ]
+    }
+  ],
+  "passed": 42,
+  "total": 42,
+  "error": null
+}

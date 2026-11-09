@@ -103,11 +103,24 @@ class FamilyController extends AsyncNotifier<FamilyWorkspaceState> {
     AuthSession session,
     FamilyInfo selected,
   ) async {
-    final families = await _source.list(session);
-    await _selectionStore.write(session.user.id, selected.id);
+    if (ref.read(authControllerProvider).value?.user.id != session.user.id) {
+      return;
+    }
+    // The mutation response is authoritative. A subsequent list/storage failure
+    // must not turn a committed creation into a failed form submission.
+    final families = [
+      for (final family in state.value?.families ?? <FamilyInfo>[])
+        if (family.id != selected.id) family,
+      selected,
+    ];
     state = AsyncData(
       FamilyWorkspaceState(families: families, selectedFamilyId: selected.id),
     );
+    try {
+      await _selectionStore.write(session.user.id, selected.id);
+    } on Object {
+      // Keep the successful server result usable in this session.
+    }
   }
 
   FamilyInfo? get selectedFamily {

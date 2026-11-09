@@ -1,0 +1,43 @@
+{
+  "checkedAt": "2026-11-09T01:48:14.956159+08:00",
+  "scope": "real family initialization; code, automation, actual APIs and desktop Web",
+  "codeReview": "passed; full tracked diff and added source files reviewed",
+  "backendTests": 86,
+  "flutterTests": 92,
+  "flutterAnalysis": "passed",
+  "webBuild": "passed",
+  "androidBuild": {
+    "checkedAt": "2026-11-09T01:14:16.1291249+08:00",
+    "sourceFiles": 88,
+    "mismatches": [],
+    "apk": "apps/fridge-app/build/app/outputs/flutter-apk/app-release.apk",
+    "bytes": 62231886,
+    "sha256": "BE7AC5B3077BECAEE868DD3FA687EFFEBD6F23B0B22334824430C90A26A616FE",
+    "apiBase": "http://192.168.10.225:8080",
+    "signing": "template debug; local acceptance only",
+    "realDeviceTested": false
+  },
+  "actualApiAssertions": {
+    "newBusiness": 42,
+    "compatibility": 181,
+    "passed": 223,
+    "total": 223
+  },
+  "actualWebAssertions": {
+    "passed": 10,
+    "total": 10
+  },
+  "skywalkingTraces": {
+    "success": "e29dc11543934bea885d2cf1cd2ce1e3.84.17941581341940371",
+    "remote-write-error": "4f4779fd445745bfbab1daae9df99db0.113.17941580861690001"
+  },
+  "developmentRuntime": "restored; 4 services UP; Web 3000 HTTP 200; migrations and Nacos verified",
+  "originalDevelopmentRowCountsUnchanged": true,
+  "androidTrueDeviceAcceptance": "not performed; user chose desktop acceptance first",
+  "pending": [
+    "Android true device",
+    "formal release signing",
+    "sustained load and capacity baseline"
+  ],
+  "committedOrPushed": false
+}

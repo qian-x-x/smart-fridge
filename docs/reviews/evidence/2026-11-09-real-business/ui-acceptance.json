@@ -1,0 +1,58 @@
+{
+  "runAt": "2026-11-08T17:37:14.415Z",
+  "app": "http://127.0.0.1:18000",
+  "passed": 10,
+  "total": 10,
+  "checks": [
+    {
+      "name": "real-login",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "flutter-creates-workspace",
+      "pass": true,
+      "detail": "family=46, fridge=42"
+    },
+    {
+      "name": "no-second-manual-fridge-post",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "new-fridge-loaded-from-ui",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-scene-ready",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "created-family-survives-reload",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-scene-ready",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-viewport",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no-browser-exceptions",
+      "pass": true,
+      "detail": "exceptions=0"
+    },
+    {
+      "name": "no-failed-api-calls",
+      "pass": true,
+      "detail": "failed=0"
+    }
+  ]
+}

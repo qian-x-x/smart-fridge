@@ -23,7 +23,10 @@ public class GatewayTraceFilter implements GlobalFilter, Ordered {
             : requestedTraceId;
 
         ServerHttpRequest request = exchange.getRequest().mutate()
-            .headers(headers -> headers.set(TRACE_HEADER, traceId))
+            .headers(headers -> {
+                headers.set(TRACE_HEADER, traceId);
+                headers.remove("TX_XID");
+            })
             .build();
         exchange.getResponse().getHeaders().set(TRACE_HEADER, traceId);
         return chain.filter(exchange.mutate().request(request).build());

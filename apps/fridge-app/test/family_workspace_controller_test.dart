@@ -50,6 +50,54 @@ void main() {
     expect(selection.selectedFamilyId, 5);
   });
 
+  test(
+    'committed creation does not fail because a list refresh is unavailable',
+    () async {
+      final source = _WorkspaceFamilySource();
+      final selection = _MemorySelectionStore(selectedFamilyId: 4);
+      final container = _container(source, selection);
+      addTearDown(container.dispose);
+      await container.read(familyControllerProvider.future);
+      source.failList = true;
+      final created = await container
+          .read(familyControllerProvider.notifier)
+          .create('新家庭');
+      expect(created.id, 7);
+      expect(
+        container
+            .read(familyControllerProvider)
+            .requireValue
+            .selectedFamily
+            ?.id,
+        7,
+      );
+    },
+  );
+
+  test(
+    'committed creation remains successful if selection persistence fails',
+    () async {
+      final source = _WorkspaceFamilySource();
+      final selection = _MemorySelectionStore(selectedFamilyId: 4);
+      final container = _container(source, selection);
+      addTearDown(container.dispose);
+      await container.read(familyControllerProvider.future);
+      selection.failWrites = true;
+      final created = await container
+          .read(familyControllerProvider.notifier)
+          .create('新家庭');
+      expect(created.id, 7);
+      expect(
+        container
+            .read(familyControllerProvider)
+            .requireValue
+            .selectedFamily
+            ?.id,
+        7,
+      );
+    },
+  );
+
   test('joining a family selects and persists it', () async {
     final source = _WorkspaceFamilySource();
     final selection = _MemorySelectionStore(selectedFamilyId: 4);
@@ -85,6 +133,7 @@ ProviderContainer _container(
 }
 
 class _WorkspaceFamilySource implements FamilyDataSource {
+  bool failList = false;
   String? joinedCode;
   final List<FamilyInfo> families = [
     const FamilyInfo(
@@ -104,7 +153,10 @@ class _WorkspaceFamilySource implements FamilyDataSource {
   ];
 
   @override
-  Future<List<FamilyInfo>> list(AuthSession session) async => families;
+  Future<List<FamilyInfo>> list(AuthSession session) async {
+    if (failList) throw StateError('列表不可用');
+    return families;
+  }
 
   @override
   Future<FamilyInfo> create(AuthSession session, String name) async {
@@ -170,12 +222,14 @@ class _MemorySelectionStore implements FamilySelectionStore {
   _MemorySelectionStore({this.selectedFamilyId});
 
   int? selectedFamilyId;
+  bool failWrites = false;
 
   @override
   Future<int?> read(int userId) async => selectedFamilyId;
 
   @override
   Future<void> write(int userId, int familyId) async {
+    if (failWrites) throw StateError('本机存储不可用');
     selectedFamilyId = familyId;
   }
 

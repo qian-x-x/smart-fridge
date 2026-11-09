@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 @FeignClient(
     name = "auth-family-service",
-    url = "${smart-fridge.auth-service-url:http://127.0.0.1:8081}"
+    url = "${smart-fridge.auth-service-url:}"
 )
 public interface FamilyAccessFeignClient {
 

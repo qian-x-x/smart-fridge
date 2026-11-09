@@ -58,9 +58,20 @@ class JwtGatewayFilterTest {
         new JwtGatewayFilter(SECRET, client).filter(exchange, next -> {
             forwarded.set(next.getRequest().getHeaders().getFirst("X-User-Id"));
             assertThat(next.getRequest().getHeaders().getFirst("X-User-Role")).isEqualTo("USER");
+            assertThat(next.getRequest().getHeaders().getFirst("TX_XID")).isNull();
             return Mono.empty();
         }).block();
         assertThat(forwarded.get()).isEqualTo("7");
+    }
+
+    @Test
+    void publicRoutesCannotForwardAnExternalTransactionContext() {
+        var exchange = MockServerWebExchange.from(MockServerHttpRequest.post("/api/v1/auth/register")
+            .header("TX_XID", "forged-xid"));
+        new GatewayTraceFilter().filter(exchange, next -> {
+            assertThat(next.getRequest().getHeaders().getFirst("TX_XID")).isNull();
+            return Mono.empty();
+        }).block();
     }
 
     @Test
@@ -87,7 +98,8 @@ class JwtGatewayFilterTest {
     private MockServerWebExchange exchange(String token) {
         return MockServerWebExchange.from(MockServerHttpRequest.get("/api/v1/recipes")
             .header("Authorization", "Bearer " + token)
-            .header("X-User-Id", "999").header("X-User-Role", "ADMIN"));
+            .header("X-User-Id", "999").header("X-User-Role", "ADMIN")
+            .header("TX_XID", "forged-global-transaction"));
     }
 
     private String token() {

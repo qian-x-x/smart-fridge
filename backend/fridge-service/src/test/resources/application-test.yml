@@ -16,3 +16,6 @@ spring:
 
 smart-fridge:
   auth-service-url: http://127.0.0.1:1
+
+seata:
+  enabled: false

@@ -1,0 +1,25 @@
+{
+  "checks": [
+    "Python scripts parse and timezone available",
+    "Source preview: 708 files match Git blobs; 14 declared CRLF files normalized; old ZIP excluded",
+    "Tampered source is rejected",
+    "APK SHA256 matches actual accepted build",
+    "Word structure: 21 chapters, no title borders, 4 official hyperlinks",
+    "Word native rendering: 22 pages, 22 PNGs, no blank overflow pages"
+  ],
+  "passed": 6,
+  "total": 6,
+  "docxSha256": "7fc6b7b8b55b225e02a32ddd900a7f7f0819b963aa910a64342d38c324c6a736",
+  "pages": 22,
+  "renderFallback": "Bundled render_docx.py unavailable: no bundled Windows LibreOffice; native Word PDF export plus bundled Poppler used",
+  "fullAcceptanceRerun": false,
+  "stagedReview": {
+    "changedFiles": 80,
+    "parsedJson": 14,
+    "sourceFilesVerified": 762,
+    "gitDeclaredCrlfFiles": 15,
+    "privateKeysOrActualTokens": [],
+    "wordMatchesStagedSource": true,
+    "visualPagesInspected": 22
+  }
+}

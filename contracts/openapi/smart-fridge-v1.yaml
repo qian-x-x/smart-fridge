@@ -181,6 +181,50 @@ paths:
                     type: string
         '401':
           $ref: '#/components/responses/Unauthorized'
+  /api/v1/families/workspaces:
+    post:
+      tags: [Family]
+      summary: 创建家庭并初始化默认冰箱
+      description: |
+        用户端创建家庭入口。auth_db 的家庭/OWNER 成员与 fridge_db 的冰箱/四区/默认容器
+        在一个 Seata 全局事务内创建。requestId 按当前用户隔离，失败重试复用；
+        同一标识的名称不同或原请求仍在处理时返回 409。仅已提交的请求可作为成功重放。
+        旧 POST /families 保留独立创建语义。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, requestId]
+              properties:
+                name: {type: string, minLength: 1, maxLength: 60}
+                requestId: {type: string, pattern: '^[A-Za-z0-9_-]{8,64}$'}
+      responses:
+        '201':
+          description: 家庭与默认冰箱均创建成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '200':
+          description: 已完成请求的幂等重放
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkspaceResponse'
+        '400':
+          description: 名称或请求标识不合法
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '429':
+          description: 创建请求过于频繁
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
   /api/v1/families/{familyId}:
     get:
       tags: [Family]
@@ -1254,6 +1298,19 @@ components:
           $ref: '#/components/schemas/AuthTokens'
         traceId:
           type: string
+    WorkspaceResponse:
+      type: object
+      properties:
+        code: {type: string, example: OK}
+        message: {type: string}
+        traceId: {type: string}
+        data:
+          type: object
+          required: [family, fridgeId]
+          properties:
+            family:
+              $ref: '#/components/schemas/Family'
+            fridgeId: {type: integer, format: int64}
     Family:
       type: object
       properties:

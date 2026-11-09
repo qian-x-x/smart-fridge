@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-11-09T01:14:16.1291249+08:00",
+  "sourceFiles": 88,
+  "mismatches": [],
+  "apk": "apps/fridge-app/build/app/outputs/flutter-apk/app-release.apk",
+  "bytes": 62231886,
+  "sha256": "BE7AC5B3077BECAEE868DD3FA687EFFEBD6F23B0B22334824430C90A26A616FE",
+  "apiBase": "http://192.168.10.225:8080",
+  "signing": "template debug; local acceptance only",
+  "realDeviceTested": false
+}

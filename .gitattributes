@@ -17,3 +17,6 @@
 *.bat text eol=crlf
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
+
+# Historical source snapshot must not be nested inside a new source archive.
+docs/提交材料/小易冰箱-项目源码.zip export-ignore

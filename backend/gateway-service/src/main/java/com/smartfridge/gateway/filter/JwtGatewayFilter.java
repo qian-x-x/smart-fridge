@@ -67,6 +67,8 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
                     headers.remove("X-User-Id");
                     headers.remove("X-User-Name");
                     headers.remove("X-User-Role");
+                    // Only backend coordinators may create/propagate Seata XIDs.
+                    headers.remove("TX_XID");
                     headers.set("X-User-Id", claims.getSubject());
                     headers.set("X-User-Name", claims.get("username", String.class));
                     headers.set("X-User-Role", claims.get("role", String.class));

@@ -33,6 +33,9 @@ logs/
 tmp/
 temp/
 .cache/
+/output/real-business/
+/交付包/
+__pycache__/
 
 # Flutter and Dart
 .dart_tool/

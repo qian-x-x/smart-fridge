@@ -1,6 +1,7 @@
 package com.smartfridge.auth.family;
 
 import com.smartfridge.common.error.BusinessException;
+import com.smartfridge.auth.workspace.FamilyWorkspaceVisibility;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Locale;
@@ -15,10 +16,12 @@ public class FamilyService {
         "ABCDEFGHJKLMNPQRSTUVWXYZ23456789".toCharArray();
 
     private final FamilyRepository familyRepository;
+    private final FamilyWorkspaceVisibility workspaceVisibility;
     private final SecureRandom secureRandom = new SecureRandom();
 
-    public FamilyService(FamilyRepository familyRepository) {
+    public FamilyService(FamilyRepository familyRepository, FamilyWorkspaceVisibility workspaceVisibility) {
         this.familyRepository = familyRepository;
+        this.workspaceVisibility = workspaceVisibility;
     }
 
     @Transactional
@@ -37,12 +40,14 @@ public class FamilyService {
     }
 
     public List<FamilyView> list(long userId) {
-        return familyRepository.findAllByUserId(userId);
+        return familyRepository.findAllByUserId(userId).stream()
+            .filter(family -> workspaceVisibility.visible(family.id())).toList();
     }
 
     public FamilyView requireMember(long userId, long familyId) {
         return familyRepository.findAllByUserId(userId).stream()
             .filter(family -> family.id() == familyId)
+            .filter(family -> workspaceVisibility.visible(family.id()))
             .findFirst()
             .orElseThrow(() -> BusinessException.notFound("家庭不存在或无权访问"));
     }
@@ -59,6 +64,9 @@ public class FamilyService {
         String normalizedCode = inviteCode.trim().toUpperCase(Locale.ROOT);
         FamilyRecord family = familyRepository.findByInviteCode(normalizedCode)
             .orElseThrow(() -> BusinessException.notFound("邀请码无效"));
+        if (!workspaceVisibility.visible(family.id())) {
+            throw BusinessException.notFound("邀请码无效或家庭尚未初始化");
+        }
 
         String existingRole = familyRepository.findRole(family.id(), userId);
         if (existingRole != null) {
@@ -128,6 +136,9 @@ public class FamilyService {
     }
 
     private void requireOwner(long actorId, FamilyRecord family) {
+        if (!workspaceVisibility.visible(family.id())) {
+            throw BusinessException.notFound("家庭不存在或尚未初始化");
+        }
         if (family.ownerUserId() == actorId) {
             return;
         }

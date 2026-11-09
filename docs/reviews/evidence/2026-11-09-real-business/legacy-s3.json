@@ -1,0 +1,156 @@
+{
+  "runAt": "2026-11-09T01:20:16.1748109+08:00",
+  "gateway": "http://127.0.0.1:18080",
+  "total": 29,
+  "passed": 29,
+  "failed": 0,
+  "familyId": 39,
+  "fridgeId": 35,
+  "checks": [
+    {
+      "name": "register-owner",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "name": "register-member",
+      "pass": true,
+      "detail": "status=201"
+    },
+    {
+      "name": "create-family",
+      "pass": true,
+      "detail": "status=201 familyId=39"
+    },
+    {
+      "name": "invite-code-format",
+      "pass": true,
+      "detail": "inviteCode=EAK6SA6Y"
+    },
+    {
+      "name": "member-joins-as-viewer",
+      "pass": true,
+      "detail": "status=200 role=VIEWER"
+    },
+    {
+      "name": "create-fridge-with-zones",
+      "pass": true,
+      "detail": "status=201 zones=4"
+    },
+    {
+      "name": "add-two-foods",
+      "pass": true,
+      "detail": "milk=201 egg=201"
+    },
+    {
+      "name": "consume-food",
+      "pass": true,
+      "detail": "status=200 quantity=3"
+    },
+    {
+      "name": "timeline-lists-consume",
+      "pass": true,
+      "detail": "status=200 first=CONSUME undoable=True"
+    },
+    {
+      "name": "undo-restores-quantity",
+      "pass": true,
+      "detail": "status=200 quantity=4"
+    },
+    {
+      "name": "undo-writes-history",
+      "pass": true,
+      "detail": "action=UNDO original=10"
+    },
+    {
+      "name": "original-marked-undone",
+      "pass": true,
+      "detail": "undone=True undoable=False"
+    },
+    {
+      "name": "undo-twice-conflicts",
+      "pass": true,
+      "detail": "status=409 code=CONFLICT"
+    },
+    {
+      "name": "restore-reapplies",
+      "pass": true,
+      "detail": "status=200 quantity=3"
+    },
+    {
+      "name": "cook-created",
+      "pass": true,
+      "detail": "status=201 record=1 items=2"
+    },
+    {
+      "name": "cook-deducts-both",
+      "pass": true,
+      "detail": "milk=2 egg=4"
+    },
+    {
+      "name": "cook-replay-is-idempotent",
+      "pass": true,
+      "detail": "status=200 record=1"
+    },
+    {
+      "name": "replay-does-not-deduct",
+      "pass": true,
+      "detail": "milk=2"
+    },
+    {
+      "name": "cook-records-listed",
+      "pass": true,
+      "detail": "count=1 items=2"
+    },
+    {
+      "name": "cook-writes-operation",
+      "pass": true,
+      "detail": "cookOperations=2"
+    },
+    {
+      "name": "viewer-reads-timeline",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "viewer-cannot-undo",
+      "pass": true,
+      "detail": "status=403 code=FORBIDDEN"
+    },
+    {
+      "name": "viewer-cannot-cook",
+      "pass": true,
+      "detail": "status=403 code=FORBIDDEN"
+    },
+    {
+      "name": "undo-rejects-foreign-operation",
+      "pass": true,
+      "detail": "status=404 code=NOT_FOUND"
+    },
+    {
+      "name": "cross-family-timeline-hidden",
+      "pass": true,
+      "detail": "status=404 code=NOT_FOUND"
+    },
+    {
+      "name": "unknown-fridge-not-found",
+      "pass": true,
+      "detail": "status=404"
+    },
+    {
+      "name": "gateway-routes-recipe",
+      "pass": true,
+      "detail": "status=200 recipes=6"
+    },
+    {
+      "name": "logout-accepted",
+      "pass": true,
+      "detail": "status=200"
+    },
+    {
+      "name": "revoked-token-rejected",
+      "pass": true,
+      "detail": "status=401 code=UNAUTHORIZED"
+    }
+  ]
+}
