@@ -1,0 +1,890 @@
+diff --git "a/docs/\345\274\200\345\217\221\347\212\266\346\200\201.md" "b/docs/\345\274\200\345\217\221\347\212\266\346\200\201.md"
+index 0a83aee..c1fa4fb 100644
+--- "a/docs/\345\274\200\345\217\221\347\212\266\346\200\201.md"
++++ "b/docs/\345\274\200\345\217\221\347\212\266\346\200\201.md"
+@@ -1,13 +1,21 @@
+ # 开发状态
+ 
+-更新时间：2026-11-09
++更新时间：2026-11-10
+ 
+ 产品基线：小易冰箱，口号「查食材，看菜谱，都容易」；当前视觉与交互采用用户选定的 [V1.5 暖橙食集](superpowers/specs/2026-10-31-warm-harvest-xiaoyi.md)。V1.4 Word 文档保留几何模型和结构设计，既有业务需求与接口继续沿用工程契约。
+ 
+-当前阶段：**真实家庭初始化的电脑端验收通过，Android 真机待验收**。家庭补货是食材入库，不涉及购买或订单。本轮已将 Nacos/Feign、Sentinel、Seata 和 SkyWalking 接入 Flutter“创建家庭并初始化默认冰箱”的真实流程；完成完整 diff 审查、缺陷修复、自动化及真实接口/Web 验收。旧 order/stock 及 Vue 订单页仍为历史示例，不代表家庭冰箱的用户功能。范围纠正见 [业务复核](reviews/2026-11-08-real-business-reassessment.md)，本轮结果及边界见 [阶段审查](reviews/2026-11-09-real-family-workspace.md)。
++当前阶段：**黑白冷调厨房 UI 设计提案 D0 已交付，待用户选稿；正式 UI 尚未改造**。原真实家庭初始化的电脑端验收通过，Android 真机仍待验收。家庭补货是食材入库，不涉及购买或订单。2026-11-09 已将 Nacos/Feign、Sentinel、Seata 和 SkyWalking 接入 Flutter“创建家庭并初始化默认冰箱”的真实流程，历史结果见 [阶段审查](reviews/2026-11-09-real-family-workspace.md)。旧 order/stock 及 Vue 订单页仍为历史示例，不代表家庭冰箱的用户功能；范围纠正见 [业务复核](reviews/2026-11-08-real-business-reassessment.md)。
+ 
+ 提交基线：`1d9ba11`（N4追踪及运行材料）。用户已授权将本轮真实业务改造及交付文档本地提交；最新提交号以 `git log -1` 和交付包 `manifest.json` 为准。交付整理见 [交付审查](reviews/2026-11-09-delivery.md)。
+ 
++## 2026-11-10 黑白冷调厨房 UI 设计提案
++
++- 用户要求先提交总体设计文档和三套审查视图确认。本轮交付 [总体设计文档](design/ui-redesign-2026-11-10/总体设计文档.md)、[可点击审查入口](design/ui-redesign-2026-11-10/index.html) 与 [A 静白全景](design/ui-redesign-2026-11-10/review-a.png)、[B 冷雾工作台](design/ui-redesign-2026-11-10/review-b.png)、[C 墨线橱窗](design/ui-redesign-2026-11-10/review-c.png)；每套含 11 张逐页高清截图。
++- 黑白为界面主色，浅冷灰/雾蓝用于厨房，重新设计按钮层级、焦点/加载/失败/禁用、草稿与危险确认。三套比较导航、厨房比例与清单密度，推荐 A，尚未替代已实现的 V1.5 暖橙食集基线。
++- 本轮完整设计差异审查及样稿自动化验证通过；最终无头 Edge **206/206** 检查通过，含 126 组页面/宽度布局与资源检查。已修正手机新增遮挡门控、提交字段竞态、过期编辑预填、面板操作区位置及跨方案样式继承问题。结果见 [D0 审查](reviews/2026-11-10-monochrome-kitchen-design.md)。
++- 仅修改设计包、审查证据和本状态文档；正式 Flutter/WebGL、后端与接口没有修改，没有读写真实家庭数据。厨房照片是生成的材质/构图参考，门控只示意按钮状态。**本轮没有执行产品真实环境端到端验收，也没有重跑历史业务测试或 Android 真机。**
++- 下一步：等待用户选定 A/B/C 或组合，冻结实施稿后进入 D1–D4；阶段审查约定继续生效。本轮不提交、不推送、不部署。原 Android 真机、正式签名、压测与交付待办继续保留。
++
+ ## 2026-11-09 交付材料
+ 
+ - 新增22页、21章的 [新手技术介绍](交付/小易冰箱技术介绍.docx)，包含技术与真实功能映射、调用过程、失败恢复、代码阅读入口和演示问答；[Markdown源稿](交付/小易冰箱技术介绍.md)同步保存。
+
+diff --git "a/docs/design/ui-redesign-2026-11-10/assets/\347\264\240\346\235\220\350\257\264\346\230\216.md" "b/docs/design/ui-redesign-2026-11-10/assets/\347\264\240\346\235\220\350\257\264\346\230\216.md"
+new file mode 100644
+index 0000000..dfe540d
+--- /dev/null
++++ "b/docs/design/ui-redesign-2026-11-10/assets/\347\264\240\346\235\220\350\257\264\346\230\216.md"
+@@ -0,0 +1,31 @@
++# 设计素材说明
++
++日期：2026-11-10。范围：黑白冷调厨房设计提案。
++
++## 厨房参考
++
++- 文件：`kitchen-reference.png`，1536 × 1024，内置 image_gen / imagegen 技能生成。
++- 用途：A/B/C 三方案共用的厨房材质、光照和空间构图参考，不是产品实际 WebGL 截图。
++- 工具输出已复制到项目中；无外链、CDN 或后端请求。
++- 原始生成文件：`C:/Users/Lenovo/.codex/generated_images/01a1c107-a8ac-7382-9398-02eeff123398/exec-28d1cd6c-2918-4a06-80e8-c311bb71cd83.png`。
++- 生成后未进行图片内容编辑；审查图由浏览器渲染 HTML/CSS 控件并截图。
++
++### 最终提示词（原文）
++
++```text
++Use case: photorealistic-natural.
++Asset type: shared kitchen mood reference for a Chinese household refrigerator application UI design review. This is a scene photograph only, NOT a screen mockup.
++Primary request: a realistic, minimal lived-in contemporary home kitchen with a freestanding four-compartment French-door refrigerator as the clear visual anchor.
++Composition/framing: wide landscape 3:2 architectural interior photograph, straight-on at about counter height, refrigerator near the center taking about 35 percent of the image height? Make the refrigerator tall, taking 75 percent of image height, fully visible from top to floor. Cabinets on both sides, a pale window on the left, a short worktop and black faucet on the right, generous wall context, all within a small normal apartment kitchen. Camera perfectly level, no fisheye.
++Subject: matte white French-door refrigerator, two upper doors with slim dark handles, two lower pull-out drawers, all closed; recessed black door seams, physically convincing hinges and mass. White handleless cabinetry, pale cool gray stone countertop, very light blue-gray tiled backsplash, light cool-gray floor. A small white ceramic bowl with two green vegetables on the counter, one folded gray cloth; otherwise tidy and unstyled.
++Lighting/mood: diffused cool daylight from left, soft natural contact shadows, believable subtle reflections, quiet everyday home atmosphere.
++Color palette: predominantly white and pale cold gray, restrained powder blue in backsplash, black only for seams, slim window frames and faucet. Natural muted green in tiny food details. NO orange, NO cream, NO golden light, NO brown wood, NO saturated colors.
++Materials/textures: realistic matte metal, satin lacquer, quartz stone, ceramic tile, subtle fine material texture, avoid plastic CGI appearance.
++Text: no text, no logo, no watermark, no UI, no people, no collage, no labels. Render as one cohesive high quality architectural photograph.
++```
++
++## 既有资源
++
++- 菜谱图复用 `apps/fridge-app/assets/images/recipe-tomato-eggs.jpg`、`recipe-broccoli.jpg`、`recipe-steamed-eggs.jpg`；不新增授权结论，仍需按项目已有素材待办确认正式使用权。
++- 字体复用 `apps/fridge-app/assets/fonts/XiaoyiUI-Regular.ttf` 和 `XiaoyiUI-Semibold.ttf`；来源与许可见该目录 `provenance.json` 和 `OFL.txt`。
++- 图标是样稿内统一描边的 SVG 控件图形；未使用外部图标库或将图标冒充照片。
+
+diff --git a/docs/design/ui-redesign-2026-11-10/board.html b/docs/design/ui-redesign-2026-11-10/board.html
+new file mode 100644
+index 0000000..2c142cf
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/board.html
+@@ -0,0 +1,6 @@
++<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><title>小易冰箱 · 方案审查图</title><link rel="stylesheet" href="review.css"></head><body class="board"><main id="board"></main><script>
++const p=new URLSearchParams(location.search);const s=['a','b','c'].includes(p.get('scheme'))?p.get('scheme'):'a';
++const meta={a:{name:'静白全景',english:'QUIET WHITE',intro:'让冰箱成为厨房的主角。白色窄导航、全景厨房与右侧今日清单，保持轻盈的日常秩序。',layout:'窄导航 / 大场景 / 右侧清单',radius:'12 px 圆角，日常温和',point:'厨房体验与操作效率平衡',palette:['#fff','#f4f6f7','#eaf0f3','#171a1d']},b:{name:'冷雾工作台',english:'COOL WORKSPACE',intro:'把厨房变成顺手的工作台。顶部导航、并排场景与食材区域，让每一份食材都容易处理。',layout:'顶部导航 / 左右工作区',radius:'10 px 圆角，紧凑清楚',point:'清单操作与厨房场景并重',palette:['#fff','#edf2f5','#e5edf2','#171a1d']},c:{name:'墨线橱窗',english:'MONOCHROME FRAME',intro:'以黑色线条，收好新鲜日常。近黑侧导航、横向厨房橱窗与宽清单，空间关系更明确。',layout:'深色侧栏 / 场景横窗 / 宽清单',radius:'6 px 圆角，干净利落',point:'更强的黑白构图与框架感',palette:['#fff','#f7f8f9','#eaf0f3','#191d21']}}[s];
++const screenshot=(name,alt)=>`<img class="board-image" src="screens/${s}/${name}.png" alt="${alt}">`;
++document.getElementById('board').innerHTML=`<header class="board-head"><div><div class="eyebrow">XIAOYI FRIDGE / V2.0 DESIGN REVIEW / ${meta.english}</div><h1>${s.toUpperCase()} · ${meta.name}${s==='a'?'　<span style="font-size:16px;font-weight:400;color:#59636d">推荐方向</span>':''}</h1><p>${meta.intro}</p></div><span class="board-index">0${s==='a'?1:s==='b'?2:3}</span></header><div class="board-grid"><section class="board-cell"><h2>01　桌面 · 我的厨房 <span>1440 × 960</span></h2>${screenshot('home','桌面首页')}</section><section class="board-cell board-mobile"><h2>02　手机 · 首页 <span>390 × 844</span></h2>${screenshot('mobile','手机首页')}</section><aside class="board-side"><div class="eyebrow">DESIGN DECISIONS</div><h3 style="margin-top:13px">界面安静，厨房真实。</h3><div class="point"><p>${meta.layout}</p></div><div class="point"><p>${meta.point}</p></div><div class="point"><p>${meta.radius}</p></div><div class="swatches">${meta.palette.map(c=>`<i style="background:${c}"></i>`).join('')}</div><div class="palette-note"><span>白 / 浅冷灰 / 雾蓝 / 近黑</span></div><div class="board-rule"></div><h3>每次点击，都有回应。</h3><div class="mini-button">＋　新增食材</div><div class="mini-button secondary">查看食材清单</div><div class="mini-button loading">◌　正在保存…</div><div class="mini-button disabled">只读成员 · 不可编辑</div><div class="button-states"><span class="state-chip">默认 / 悬停</span><span class="state-chip">按下 / 焦点</span><span class="state-chip">加载 / 失败</span><span class="state-chip">禁用 / 确认</span></div><p>保存失败保留内容。<br>离开修改过的草稿先确认。<br>丢弃前说明对象与后果。</p><div class="board-rule"></div><p>请确认：布局、黑色面积、<br>厨房比例、按钮密度。<br>可点击样稿中查看完整交互。</p></aside></div><div class="board-details">${[['foods','03　清单与组合筛选'],['add','04　新增食材面板'],['recipes','05　菜谱与库存匹配'],['family','06　家庭与权限']].map(([file,label])=>`<section class="board-cell"><h2>${label}</h2><div class="detail-image-frame">${screenshot(file,label)}</div></section>`).join('')}</div><footer class="board-foot"><span>设计提案 · 演示数据 · 静态厨房图仅为材质参考 · 未接入真实家庭 / 三维 / 后端</span><span>2026.11.10　/　待用户确认后实施</span></footer>`;
++</script></body></html>
+
+diff --git a/docs/design/ui-redesign-2026-11-10/capture-review.mjs b/docs/design/ui-redesign-2026-11-10/capture-review.mjs
+new file mode 100644
+index 0000000..30a7639
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/capture-review.mjs
+@@ -0,0 +1,138 @@
++// Reproducible screenshot and browser checks for the isolated design proposal.
++// Uses Edge headless + CDP, Node built-ins only. Does not contact any business API.
++import http from 'node:http';
++import net from 'node:net';
++import fs from 'node:fs';
++import path from 'node:path';
++import os from 'node:os';
++import {fileURLToPath} from 'node:url';
++import {spawn} from 'node:child_process';
++import {randomUUID} from 'node:crypto';
++import {setTimeout as sleep} from 'node:timers/promises';
++
++const designDir=path.dirname(fileURLToPath(import.meta.url));
++const rootDir=path.resolve(designDir,'../../..');
++const relDir='docs/design/ui-redesign-2026-11-10';
++const evidenceDir=path.join(rootDir,'docs/reviews/evidence/2026-11-10-ui-proposal');
++const mime={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.ttf':'font/ttf','.md':'text/plain; charset=utf-8'};
++const resourceFailures=[];
++const server=http.createServer((req,res)=>{
++  let file;
++  try{const rel=decodeURIComponent(new URL(req.url,'http://local').pathname).replace(/^\/+/, '');file=path.resolve(rootDir,rel);const safeRel=path.relative(rootDir,file).replaceAll('\\','/');
++    if(!(safeRel.startsWith(relDir+'/')||safeRel.startsWith('apps/fridge-app/assets/'))||!file.startsWith(rootDir+path.sep))throw Error('outside review scope');
++    if(fs.statSync(file).isDirectory())file=path.join(file,'index.html');
++    res.setHeader('Content-Type',mime[path.extname(file)]||'application/octet-stream');fs.createReadStream(file).pipe(res);
++  }catch{if(req.url!=='/favicon.ico')resourceFailures.push(req.url);res.writeHead(404);res.end('Not found');}
++});
++await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
++const base=`http://127.0.0.1:${server.address().port}/${relDir}`;
++if(process.argv.includes('--serve')){console.log(`Review: ${base}/index.html`);process.on('SIGINT',()=>{server.close();process.exit(0);});await new Promise(()=>{});}
++
++const results=[];let browser;let cdp;const profile=path.join(os.tmpdir(),'xiaoyi-ui-review-'+randomUUID());
++const errors=[];
++async function freePort(){const probe=net.createServer();await new Promise(r=>probe.listen(0,'127.0.0.1',r));const port=probe.address().port;await new Promise(r=>probe.close(r));return port;}
++async function until(fn,timeout=15000){const deadline=Date.now()+timeout;while(Date.now()<deadline){try{const value=await fn();if(value)return value;}catch{}await sleep(80);}throw Error('Timed out waiting for browser state');}
++class Cdp{
++  constructor(socket){this.socket=socket;this.id=0;this.pending=new Map();socket.addEventListener('message',event=>{const m=JSON.parse(event.data);if(m.id&&this.pending.has(m.id)){const p=this.pending.get(m.id);clearTimeout(p.timeout);this.pending.delete(m.id);m.error?p.reject(Error(JSON.stringify(m.error))):p.resolve(m.result);}else if(m.method==='Runtime.exceptionThrown'){errors.push(m.params.exceptionDetails.exception?.description||m.params.exceptionDetails.text);}});}
++  send(method,params={}){const id=++this.id;return new Promise((resolve,reject)=>{const timeout=setTimeout(()=>{this.pending.delete(id);reject(Error(method+' timeout'));},20000);this.pending.set(id,{resolve,reject,timeout});this.socket.send(JSON.stringify({id,method,params}));});}
++  async eval(expression){const r=await this.send('Runtime.evaluate',{expression,awaitPromise:true,returnByValue:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result?.value;}
++}
++async function viewport(width,height){await cdp.send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:width<761});}
++async function open(url){await cdp.send('Page.navigate',{url});await until(()=>cdp.eval(`location.href===${JSON.stringify(url)}&&document.readyState==='complete'`));await cdp.eval(`Promise.all([document.fonts.ready,...Array.from(document.images).map(i=>i.decode().catch(()=>{}))]).then(()=>true)`);await sleep(65);}
++async function proto(scheme,page='home',width=1440,height=960){await viewport(width,height);await open(`${base}/prototype.html?scheme=${scheme}&page=${page}`);await until(()=>cdp.eval('Boolean(window.reviewState)'));}
++async function shot(file,full=false){let clip;if(full){const {cssContentSize}=await cdp.send('Page.getLayoutMetrics');clip={x:0,y:0,width:cssContentSize.width,height:cssContentSize.height,scale:1};}const r=await cdp.send('Page.captureScreenshot',{format:'png',captureBeyondViewport:full,...(clip?{clip}:{} )});fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,Buffer.from(r.data,'base64'));}
++async function click(selector){const point=await cdp.eval(`(()=>{const e=Array.from(document.querySelectorAll(${JSON.stringify(selector)})).find(e=>{const r=e.getBoundingClientRect();return r.width&&r.height&&getComputedStyle(e).visibility!=='hidden';});if(!e)throw Error('Missing visible control: '+${JSON.stringify(selector)});e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return{x:r.x+r.width/2,y:r.y+r.height/2};})()`);await cdp.send('Input.dispatchMouseEvent',{type:'mousePressed',x:point.x,y:point.y,button:'left',clickCount:1});await cdp.send('Input.dispatchMouseEvent',{type:'mouseReleased',x:point.x,y:point.y,button:'left',clickCount:1});await sleep(30);}
++async function setInput(selector,value,event='input'){await cdp.eval(`(()=>{const e=document.querySelector(${JSON.stringify(selector)});e.value=${JSON.stringify(value)};e.dispatchEvent(new Event(${JSON.stringify(event)},{bubbles:true}));})()`);}
++function check(name,passed,details){results.push({name,passed:Boolean(passed),...(details?{details}:{})});if(!passed)console.error('FAIL',name,details||'');}
++const verifyOnly=process.argv.includes('--verify-only');
++try{
++  const port=await freePort();const edge='C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe';
++  browser=spawn(edge,['--headless=new',`--remote-debugging-port=${port}`,`--user-data-dir=${profile}`,'--no-first-run','--no-default-browser-check','--disable-extensions','--disable-background-networking','--disable-features=msEdgeSidebarV2','about:blank'],{stdio:'ignore',windowsHide:true});
++  const targets=await until(async()=>{const r=await fetch(`http://127.0.0.1:${port}/json/list`);return r.json();});
++  const target=targets.find(t=>t.type==='page');if(!target)throw Error('No browser target');
++  const ws=new WebSocket(target.webSocketDebuggerUrl);await new Promise((resolve,reject)=>{ws.addEventListener('open',resolve,{once:true});ws.addEventListener('error',reject,{once:true});});
++  cdp=new Cdp(ws);await cdp.send('Page.enable');await cdp.send('Runtime.enable');
++  for(const scheme of ['a','b','c']){
++    console.log('Reviewing scheme',scheme.toUpperCase());
++    if(!verifyOnly){
++      const dir=path.join(designDir,'screens',scheme);
++      for(const page of ['home','foods','recipes','family','login','records','components']){await proto(scheme,page);await shot(path.join(dir,page+'.png'));}
++      await proto(scheme,'home',390,844);await shot(path.join(dir,'mobile.png'));
++      await proto(scheme,'foods',390,844);await shot(path.join(dir,'mobile-foods.png'));
++      await proto(scheme,'home',480,900);await click('[data-action="add"]');await shot(path.join(dir,'add.png'));
++      await proto(scheme,'foods',480,900);await click('[data-action="detail"][data-id="1"]');await shot(path.join(dir,'detail.png'));
++    }
++    // Check real computed layout for every proposed page at representative widths.
++    for(const width of [320,390,768,1024,1440,1920]){
++      for(const page of ['home','foods','recipes','family','login','records','components']){
++        await proto(scheme,page,width,960);
++        const layout=await cdp.eval(`({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,brokenImages:Array.from(document.images).filter(i=>!i.complete||!i.naturalWidth).map(i=>i.getAttribute('src'))})`);
++        check(`${scheme}/${page}/${width}: layout and assets`,layout.scrollWidth<=layout.width+1&&!layout.brokenImages.length,layout.scrollWidth>layout.width+1||layout.brokenImages.length?layout:undefined);
++      }
++    }
++    await proto(scheme,'home');
++    await click('[data-part="left"]');await click('[data-part="right"]');
++    check(`${scheme}: doors highlight independently`,await cdp.eval(`document.querySelector('[data-part="left"]').getAttribute('aria-pressed')==='true'&&document.querySelector('[data-part="right"]').getAttribute('aria-pressed')==='true'`));
++    await click('[data-action="close-all"]');check(`${scheme}: close all resets parts`,await cdp.eval('window.reviewState().openParts.length===0'));
++    await click('[data-action="add"]');await click('#save-food');
++    check(`${scheme}: empty name is validated`,await cdp.eval(`document.querySelector('[data-field="name"]').classList.contains('has-error')&&document.activeElement.name==='name'`));
++    await setInput('#food-form [name="name"]','审查牛奶');await click('[data-action="close-modal"]');
++    check(`${scheme}: draft close asks before discarding`,await cdp.eval(`document.querySelector('#confirm-dialog').open&&document.querySelector('#modal').open`));
++    await click('[data-action="cancel-confirm"]');check(`${scheme}: continue preserves draft`,await cdp.eval(`document.querySelector('#food-form [name="name"]').value==='审查牛奶'`));
++    await cdp.eval(`document.querySelector('#fail-next').checked=true`);await click('#save-food');
++    check(`${scheme}: save locks duplicate submission`,await cdp.eval(`window.reviewState().pending&&document.querySelector('#save-food').disabled`));
++    check(`${scheme}: pending locks form values`,await cdp.eval(`Array.from(document.querySelectorAll('#food-form input,#food-form select')).every(e=>e.disabled)`));
++    await until(()=>cdp.eval('!window.reviewState().pending'));
++    check(`${scheme}: failed save preserves input and retry`,await cdp.eval(`document.querySelector('.form-error').classList.contains('visible')&&document.querySelector('#food-form [name="name"]').value==='审查牛奶'&&!document.querySelector('#save-food').disabled&&window.reviewState().foodCount===8`));
++    await click('#save-food');await until(()=>cdp.eval('!document.querySelector("#modal").open'));
++    check(`${scheme}: retry succeeds exactly once`,await cdp.eval(`window.reviewState().foodCount===9&&!window.reviewState().pending`));
++    await proto(scheme,'foods');await setInput('#food-search','牛奶');
++    check(`${scheme}: name filter narrows results`,await cdp.eval(`document.querySelectorAll('.food-table-row').length===1&&document.querySelector('.food-table-row').textContent.includes('鲜牛奶')`));
++    await setInput('#zone-filter','冷冻','change');check(`${scheme}: combined filters show empty recovery`,await cdp.eval(`Boolean(document.querySelector('.empty-state [data-action="reset-filters"]'))`));
++    await click('[data-action="reset-filters"]');check(`${scheme}: reset restores all data`,await cdp.eval(`document.querySelectorAll('.food-table-row').length===8`));
++    await setInput('#role-picker','VIEWER','change');
++    check(`${scheme}: read-only disables writes`,await cdp.eval(`document.querySelector('[data-action="add"]').disabled&&Boolean(document.querySelector('.readonly-banner'))`));
++    await click('[data-action="detail"][data-id="1"]');
++    check(`${scheme}: read-only detail has no enabled writes`,await cdp.eval(`['use','move','edit','discard'].every(a=>document.querySelector('[data-action="'+a+'"]').disabled)`));
++    await click('[data-action="close-modal"]');await setInput('#role-picker','OWNER','change');
++    await click('[data-action="detail"][data-id="1"]');await click('[data-action="discard"]');
++    check(`${scheme}: discard shows explicit confirmation`,await cdp.eval(`document.querySelector('#confirm-dialog').open&&document.querySelector('#confirm-dialog').textContent.includes('鲜牛奶')&&document.activeElement.dataset.action==='cancel-confirm'`));
++    await click('[data-action="cancel-confirm"]');check(`${scheme}: cancel discard keeps inventory`,await cdp.eval(`window.reviewState().foodCount===8&&document.querySelector('#modal').open`));
++    await click('[data-action="close-modal"]');
++    const focus=await cdp.eval(`document.activeElement.dataset.action`);check(`${scheme}: closing detail returns focus`,focus==='detail',{action:focus});
++    await click('[data-action="detail"][data-id="5"]');await click('[data-action="edit"]');
++    check(`${scheme}: expired food remains editable with valid purchase date`,await cdp.eval(`document.querySelector('#food-form [name="purchase"]').value<=document.querySelector('#food-form [name="date"]').value`));
++    await proto(scheme,'home',390,844);await click('[data-action="add"]');
++    const modalLayout=await cdp.eval(`({width:innerWidth,scroll:document.querySelector('#modal').scrollWidth,rect:document.querySelector('#modal').getBoundingClientRect().width})`);
++    check(`${scheme}: mobile modal fits`,modalLayout.scroll<=modalLayout.width+1&&modalLayout.rect<=modalLayout.width+1,modalLayout);
++    check(`${scheme}: save action stays at modal bottom`,await cdp.eval(`Math.abs(document.querySelector('.modal-footer').getBoundingClientRect().bottom-document.querySelector('#modal').getBoundingClientRect().bottom)<=1`));
++    const expectedRadius={a:12,b:10,c:6}[scheme];
++    check(`${scheme}: dialog uses scheme button shape`,await cdp.eval(`parseFloat(getComputedStyle(document.querySelector('#save-food')).borderRadius)===${expectedRadius}`));
++    await click('[data-action="close-modal"]');
++    check(`${scheme}: mobile add shares bottom bar instead of covering door controls`,await cdp.eval(`(()=>{const b=document.querySelector('.bottom-add');const r=b.getBoundingClientRect(),nav=b.closest('.bottom-nav').getBoundingClientRect();return r.left>=nav.left&&r.right<=nav.right&&r.top>=nav.top&&r.bottom<=nav.bottom;})()`));
++    await cdp.send('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
++    check(`${scheme}: reduced motion respected`,await cdp.eval(`parseFloat(getComputedStyle(document.querySelector('.btn')).transitionDuration)<.01`));
++    await cdp.send('Emulation.setEmulatedMedia',{features:[]});
++    console.log('Completed scheme',scheme.toUpperCase());
++  }
++  if(!verifyOnly){for(const scheme of ['a','b','c']){await viewport(1800,1500);await open(`${base}/board.html?scheme=${scheme}`);await shot(path.join(designDir,`review-${scheme}.png`),true);}}
++  await viewport(1440,1100);await open(`${base}/index.html`);
++  check('Review entry: all preview images loaded',await cdp.eval('Array.from(document.images).every(i=>i.complete&&i.naturalWidth>0)'));
++  if(!verifyOnly)await shot(path.join(designDir,'review-overview.png'),true);
++  check('Browser: no runtime exceptions',errors.length===0,errors);
++  check('Local resources: no missing assets',resourceFailures.length===0,resourceFailures);
++  const contrast=(fg,bg)=>{const lum=h=>{const rgb=h.replace('#','').match(/../g).map(x=>parseInt(x,16)/255).map(x=>x<=.04045?x/12.92:((x+.055)/1.055)**2.4);return rgb[0]*.2126+rgb[1]*.7152+rgb[2]*.0722;};const a=lum(fg),b=lum(bg);return (Math.max(a,b)+.05)/(Math.min(a,b)+.05);};
++  for(const [name,fg,bg,min]of [['body','#171a1d','#ffffff',4.5],['secondary','#59636d','#ffffff',4.5],['secondary on cool','#59636d','#e5edf2',4.5],['primary','#ffffff','#171a1d',4.5],['input border','#85919b','#ffffff',3],['focus','#344f66','#ffffff',3],['danger','#963d45','#f6ecee',4.5],['warning','#735522','#f4f0e7',4.5]]){const ratio=contrast(fg,bg);check(`Contrast: ${name}`,ratio>=min,{ratio:Number(ratio.toFixed(2)),minimum:min});}
++}catch(error){check('Capture/verification completed',false,error.stack);console.error(error.stack);}
++finally{
++  const summary={date:'2026-11-10',scope:'Isolated design proposal only; not Flutter, backend or real-world end-to-end acceptance.',checks:results.length,passed:results.filter(r=>r.passed).length,failed:results.filter(r=>!r.passed).length,results};
++  fs.mkdirSync(evidenceDir,{recursive:true});fs.writeFileSync(path.join(evidenceDir,'browser-checks.json'),JSON.stringify(summary,null,2)+'\n');
++  console.log(JSON.stringify({checks:summary.checks,passed:summary.passed,failed:summary.failed,evidence:path.join(evidenceDir,'browser-checks.json')}));
++  if(cdp){try{await cdp.send('Browser.close');}catch{}cdp.socket.close();}
++  if(browser){browser.kill();await sleep(300);}
++  await new Promise(resolve=>server.close(resolve));
++  // Verify the exact, task-owned profile path before a recursive cleanup.
++  const safePrefix=path.resolve(os.tmpdir(),'xiaoyi-ui-review-');
++  if(path.resolve(profile).startsWith(safePrefix)&&path.dirname(profile)===path.resolve(os.tmpdir())){try{fs.rmSync(profile,{recursive:true,force:true});}catch{}}
++  if(summary.failed)process.exitCode=1;
++}
+
+diff --git a/docs/design/ui-redesign-2026-11-10/index.html b/docs/design/ui-redesign-2026-11-10/index.html
+new file mode 100644
+index 0000000..b6ba425
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/index.html
+@@ -0,0 +1,17 @@
++<!doctype html>
++<html lang="zh-CN">
++<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>小易冰箱 · 三套 UI 设计审查</title><link rel="stylesheet" href="review.css"></head>
++<body class="gallery">
++  <header class="review-header"><a class="wordmark" href="index.html">小易冰箱 <span>XIAOYI FRIDGE</span></a><span class="status">设计提案 / 2026.11.10 / 待选稿</span></header>
++  <main>
++    <section class="gallery-intro"><div><div class="eyebrow">A QUIETER KITCHEN, AN EASIER EVERYDAY.</div><h1>把厨房的日常，<br>留给黑与白。</h1><p>简约的黑白界面，浅冷色的真实厨房。<br>三种空间秩序，同一套可信赖的操作。</p></div><div class="intro-notes"><span>01　比较整体布局与厨房比例</span><span>02　检查手机排版与按钮状态</span><span>03　选择一套方向，或提出组合</span><a class="doc-link" href="总体设计文档.md">阅读总体设计文档 ↗</a></div></section>
++    <section class="scheme-grid" aria-label="三套设计方案">
++      <article class="scheme-card"><a class="scheme-image" href="prototype.html?scheme=a"><img src="screens/a/home.png" alt="A 静白全景桌面首页"><span>A</span></a><div class="scheme-info"><div class="scheme-title"><h2>静白全景</h2><span class="recommended">推荐方向</span></div><p>白色窄导航、全景厨房、右侧今日清单。<br>让冰箱成为日常的视觉中心。</p><div class="swatches" aria-label="配色"><i style="background:#fff"></i><i style="background:#f4f6f7"></i><i style="background:#eaf0f3"></i><i style="background:#171a1d"></i></div><div class="scheme-links"><a class="primary" href="prototype.html?scheme=a">进入交互审查 →</a><a href="review-a.png">查看审查大图 ↗</a></div></div></article>
++      <article class="scheme-card"><a class="scheme-image" href="prototype.html?scheme=b"><img src="screens/b/home.png" alt="B 冷雾工作台桌面首页"><span>B</span></a><div class="scheme-info"><div class="scheme-title"><h2>冷雾工作台</h2></div><p>顶部导航、左右工作区、清楚的食材处理。<br>在厨房与清单之间，找到效率。</p><div class="swatches" aria-label="配色"><i style="background:#fff"></i><i style="background:#edf2f5"></i><i style="background:#e5edf2"></i><i style="background:#171a1d"></i></div><div class="scheme-links"><a class="primary" href="prototype.html?scheme=b">进入交互审查 →</a><a href="review-b.png">查看审查大图 ↗</a></div></div></article>
++      <article class="scheme-card"><a class="scheme-image" href="prototype.html?scheme=c"><img src="screens/c/home.png" alt="C 墨线橱窗桌面首页"><span>C</span></a><div class="scheme-info"><div class="scheme-title"><h2>墨线橱窗</h2></div><p>近黑导航、厨房橱窗、横向清单。<br>用明确的线条，整理每一份新鲜。</p><div class="swatches" aria-label="配色"><i style="background:#fff"></i><i style="background:#f7f8f9"></i><i style="background:#eaf0f3"></i><i style="background:#191d21"></i></div><div class="scheme-links"><a class="primary" href="prototype.html?scheme=c">进入交互审查 →</a><a href="review-c.png">查看审查大图 ↗</a></div></div></article>
++    </section>
++    <section class="review-instructions"><div><h2>审查的不只是颜色。</h2><p>每套可查看冰箱、清单、菜谱、家庭、登录、记录与按钮状态。<br>试试新增食材、空表单校验、关闭草稿和丢弃确认。</p></div><div><p>右上角「审查控制」可以切换只读或模拟保存失败。<br>全部使用演示数据；厨房照片是材质参考，不会开门。</p><a href="prototype.html?scheme=a&page=components">查看完整按钮状态 ↗</a></div></section>
++    <div class="row" style="display:flex;gap:24px;flex-wrap:wrap;padding-top:28px;font-size:13px"><a href="screens.html?scheme=a">A · 逐页高清截图 ↗</a><a href="screens.html?scheme=b">B · 逐页高清截图 ↗</a><a href="screens.html?scheme=c">C · 逐页高清截图 ↗</a></div>
++    <footer>本轮仅交付设计与样稿，等待用户选稿。正式 Flutter / WebGL、后端、账号及真实库存未修改；未部署。</footer>
++  </main>
++</body></html>
+
+diff --git a/docs/design/ui-redesign-2026-11-10/prototype.css b/docs/design/ui-redesign-2026-11-10/prototype.css
+new file mode 100644
+index 0000000..bbb7f91
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/prototype.css
+@@ -0,0 +1,13 @@
++@font-face{font-family:Xiaoyi;src:url('../../../apps/fridge-app/assets/fonts/XiaoyiUI-Regular.ttf')}@font-face{font-family:Xiaoyi;src:url('../../../apps/fridge-app/assets/fonts/XiaoyiUI-Semibold.ttf');font-weight:600}
++:root{--paper:#fff;--canvas:#f4f6f7;--ink:#171a1d;--muted:#59636d;--line:#dce2e6;--control:#85919b;--cool:#eaf0f3;--danger:#963d45;--success:#345e50;--warning:#735522;--focus:#344f66;--radius:14px;--button-radius:12px;--nav-width:94px;font-family:Xiaoyi,'Microsoft YaHei','Segoe UI',sans-serif;color:var(--ink);background:var(--canvas);font-synthesis:none}
++*{box-sizing:border-box}body{margin:0;font-size:14px;line-height:1.6}button,input,select,textarea{font:inherit;color:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}a{color:inherit;text-decoration:none}button{cursor:pointer}button:disabled{cursor:not-allowed}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--focus);outline-offset:3px}input:focus,select:focus,textarea:focus{border-color:var(--focus)}h1,h2,h3,p{margin:0}h1{font-size:32px;font-weight:600;line-height:1.3;letter-spacing:-.6px}h2{font-size:20px;font-weight:600;line-height:1.4}h3{font-size:16px;font-weight:600}small{font-size:12px}svg.icon{width:20px;height:20px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}svg.large{width:28px;height:28px}.muted{color:var(--muted)}.eyebrow{font:11px/1.4 'Segoe UI',sans-serif;letter-spacing:2px;color:var(--muted);margin-bottom:10px}.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 17px;border:1px solid var(--control);border-radius:var(--button-radius);background:var(--paper);font-weight:600;white-space:nowrap;transition:background .12s,color .12s,transform .12s}.btn:hover{background:#edf1f3}.btn:active{transform:translateY(1px)}.btn.primary{background:var(--ink);color:white;border-color:var(--ink)}.btn.primary:hover{background:#30363c}.btn.primary:active{background:#080b0e}.btn.danger{color:var(--danger);border-color:var(--danger)}.btn.danger-fill{background:var(--danger);border-color:var(--danger);color:white}.btn:disabled{background:#e8ecef;color:#77818a;border-color:#e8ecef;transform:none}.text-btn{border:0;background:transparent;min-height:44px;padding:8px 4px;display:inline-flex;align-items:center;justify-content:center;gap:5px;color:var(--ink)}.text-btn:hover{text-decoration:underline}.text-btn:disabled{color:#78828b;cursor:not-allowed}.icon-btn{width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--paper);display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}.icon-btn:hover{background:var(--cool)}.row{display:flex;align-items:center;gap:12px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}.full{width:100%}.badge{display:inline-flex;align-items:center;gap:5px;border-radius:5px;padding:2px 7px;font-size:12px;background:var(--cool);white-space:nowrap}.badge.warning{color:var(--warning);background:#f4f0e7}.badge.danger{color:var(--danger);background:#f6ecee}.badge.success{color:var(--success);background:#ecf3ef}.review-bar{height:36px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eaf0f3;padding:0 22px;font-size:11px;position:relative;z-index:30;border-bottom:1px solid var(--line);color:#46535e}.review-bar a:hover{text-decoration:underline}.review-tools summary{cursor:pointer;list-style:none;min-height:32px;display:flex;align-items:center}.review-tools-panel{position:absolute;right:16px;top:38px;width:290px;padding:20px;background:white;border:1px solid var(--control);border-radius:12px;box-shadow:0 12px 30px #171a1d1a;display:grid;gap:16px;font-size:13px}.review-tools-panel label{display:grid;gap:7px}.review-tools-panel .checkbox-label{display:flex;align-items:center}.review-tools-panel input{width:18px;height:18px}.app-shell{display:grid;grid-template-columns:var(--nav-width) minmax(0,1fr);min-height:calc(100vh - 36px)}.sidebar{grid-row:1/3;border-right:1px solid var(--line);background:white;display:flex;flex-direction:column;align-items:center;padding:28px 10px;gap:32px}.brand-icon{width:42px;height:42px;border-radius:12px;background:var(--ink);color:white;display:flex;align-items:center;justify-content:center}.sidebar .brand-word{display:none}.nav-links{display:grid;gap:10px;width:100%}.nav-link{border:0;background:transparent;color:var(--muted);border-radius:12px;min-height:68px;padding:12px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:12px;width:100%}.nav-link:hover{background:var(--canvas);color:var(--ink)}.nav-link.active{background:var(--ink);color:white}.sidebar-foot{margin-top:auto;display:grid;gap:12px;text-align:center}.avatar{width:36px;height:36px;border:1px solid var(--line);background:var(--cool);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:600}.sidebar-foot small{display:none}.topbar{height:78px;margin:0 32px;display:flex;align-items:center;gap:20px;border-bottom:1px solid var(--line)}.brand-text{font-size:20px;font-weight:600;display:flex;align-items:center;gap:10px;white-space:nowrap}.brand-sub{font-size:12px;color:var(--muted);margin-left:10px}.topbar-actions{margin-left:auto;display:flex;align-items:center;gap:12px}.topbar .top-nav{display:none}.family-switch{border:1px solid var(--control);background:white;padding:8px 12px;min-height:40px;border-radius:9px;display:flex;align-items:center;gap:8px;font-size:12px}.main-content{min-width:0;padding:30px 32px 32px;max-width:1740px;width:100%;margin:auto}.page-head{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:22px}.page-head p{color:var(--muted);margin-top:9px;font-size:13px}.page-actions{display:flex;gap:10px;flex-wrap:wrap}.home-metrics{display:flex;align-items:center;gap:24px;margin-bottom:22px;padding:15px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}.metric{display:flex;align-items:baseline;gap:8px}.metric strong{font-size:26px;line-height:1;font-weight:600;font-variant-numeric:tabular-nums}.metric span{font-size:12px;color:var(--muted)}.metrics-note{margin-left:auto;display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}.home-workspace{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:22px;align-items:stretch}.scene-panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;min-width:0;display:flex;flex-direction:column}.scene-visual{position:relative;height:458px;overflow:hidden;background:#e7edf0}.scene-photo{height:100%;width:100%;object-fit:cover;object-position:center;display:block}.scene-top{position:absolute;left:18px;right:18px;top:18px;display:flex;align-items:center;justify-content:space-between;gap:8px}.scene-label{background:#fffffff0;padding:8px 12px;border-radius:8px;display:flex;align-items:center;gap:7px;font-size:12px;box-shadow:0 3px 10px #171a1d08}.scene-top .icon-btn{background:#fffffff0}.zone-hotspot{position:absolute;left:57%;top:43%;border:1px solid var(--control);border-radius:8px;background:#fffffff0;display:flex;align-items:center;gap:7px;padding:8px 11px;font-size:12px;box-shadow:0 3px 14px #171a1d0d}.zone-hotspot::before{content:'';width:7px;height:7px;background:var(--ink);border-radius:50%}.scene-caption{position:absolute;left:18px;bottom:17px;padding:7px 11px;background:#fffffff0;border-radius:7px;font-size:11px;line-height:1.6;color:#495763;max-width:calc(100% - 36px)}.scene-controls{padding:15px 16px}.scene-controls-title{display:none}.door-controls{display:flex;gap:7px;flex-wrap:wrap}.door-button{border:1px solid var(--control);border-radius:8px;background:white;padding:8px 10px;min-height:40px;font-size:12px;display:inline-flex;align-items:center;justify-content:center;gap:5px;flex:1;white-space:nowrap}.door-button[aria-pressed=true]{background:var(--ink);color:white;border-color:var(--ink)}.door-button:hover{background:var(--cool)}.door-button[aria-pressed=true]:hover{background:#30363c}.scene-controls-note{font-size:11px;color:var(--muted);margin-top:10px;display:flex;gap:6px;align-items:center}.stock-panel{padding:22px 20px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);min-width:0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.section-head .muted{font-size:12px}.stock-panel>p{font-size:12px;color:var(--muted);margin-bottom:6px}.food-preview{width:100%;display:flex;align-items:center;gap:12px;border:0;border-bottom:1px solid var(--line);background:transparent;padding:17px 0;text-align:left}.food-preview:hover .food-preview-title{text-decoration:underline}.food-symbol{width:42px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#4c5b64;border-radius:8px;background:#edf1f3}.food-preview-text{flex:1;min-width:0}.food-preview-title{font-size:14px;font-weight:600}.food-preview small{color:var(--muted);display:block;margin-top:2px}.food-expiry{color:var(--warning);font-size:12px;white-space:nowrap}.expired-hint{margin:17px 0 13px;padding:12px;background:#f6eef0;border-radius:8px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--danger)}.stock-footer{display:grid;gap:7px}.home-bottom{display:flex;align-items:center;gap:12px;margin-top:20px;padding:18px 20px;border:1px solid var(--line);border-radius:var(--radius);background:white}.home-bottom .icon{width:24px;height:24px}.home-bottom p{color:var(--muted);font-size:12px}.home-bottom .text-btn{margin-left:auto;white-space:nowrap}.bottom-nav{display:none}.readonly-banner{border:1px solid var(--control);background:var(--cool);padding:11px 14px;border-radius:9px;margin-bottom:18px;font-size:13px;display:flex;align-items:center;gap:8px}.filter-panel{background:white;border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px}.search{position:relative;flex:1;min-width:180px}.search>.icon{position:absolute;left:13px;top:14px;color:var(--muted)}input,select,textarea{width:100%;min-height:46px;padding:10px 12px;border:1px solid var(--control);border-radius:8px;background:white;min-width:0}input[type=checkbox]{width:18px;min-height:18px;accent-color:var(--ink)}.search input{padding-left:42px}.filter-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.filter-row select{width:170px}.filter-row .text-btn{margin-left:auto}.filter-advanced{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);font-size:12px}.filter-advanced summary{cursor:pointer;min-height:30px}.filter-advanced .form-grid{margin-top:12px}.result-head{margin:15px 0;font-size:13px}.food-table{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:white}.food-table-head,.food-table-row{display:grid;grid-template-columns:minmax(150px,1.6fr) 1fr .8fr 1.05fr 1fr 44px;gap:12px;align-items:center;padding:14px 20px}.food-table-head{background:#edf1f3;color:var(--muted);font-size:12px}.food-table-row{border-top:1px solid var(--line);font-size:13px;min-height:76px}.food-table-row .food-title{display:flex;align-items:center;gap:12px;font-weight:600}.food-table-row .food-symbol{width:36px;height:40px}.food-table-row .text-btn{padding:0}.food-table-row .sub-label{display:none}.empty-state{padding:60px 20px;text-align:center;display:grid;justify-items:center;gap:14px}.empty-state>.icon{width:38px;height:38px}.recipe-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}.recipe-card{background:white;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}.recipe-card>img{width:100%;height:210px;object-fit:cover;display:block}.recipe-body{padding:21px}.recipe-body>p{font-size:13px;color:var(--muted);margin:9px 0 17px}.recipe-meta{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:17px}.recipe-body .btn{width:100%}.page-lead{max-width:680px}.family-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:22px}.panel{border:1px solid var(--line);border-radius:var(--radius);background:white;padding:25px}.panel+.panel{margin-top:20px}.family-name{font-size:24px;font-weight:600;margin:18px 0 3px}.family-code{padding:17px 0;margin:16px 0;border-block:1px solid var(--line)}.family-code strong{letter-spacing:4px;font:600 20px/1.5 'Segoe UI',sans-serif}.family-code small{display:block;color:var(--muted);margin-bottom:5px}.member{display:flex;gap:12px;align-items:center;padding:17px 0;border-top:1px solid var(--line)}.member:first-of-type{margin-top:18px}.member .badge{margin-left:auto}.family-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;border-top:1px solid var(--line);padding:18px 0;font-size:13px}.setting-row small{color:var(--muted)}.timeline{display:grid;gap:0}.timeline-item{display:flex;align-items:center;gap:16px;padding:24px 0;border-bottom:1px solid var(--line)}.timeline-item>div{flex:1}.timeline-item small{display:block;color:var(--muted);margin-top:4px}.timeline-dot{width:34px;height:34px;background:var(--cool);border-radius:50%;display:flex;align-items:center;justify-content:center}.login-layout{display:grid;grid-template-columns:1.2fr 1fr;min-height:640px;background:white;border:1px solid var(--line);border-radius:16px;overflow:hidden}.login-scene{position:relative;min-height:350px}.login-scene img{width:100%;height:100%;object-fit:cover;position:absolute}.login-scene .scene-label{position:absolute;left:28px;top:28px}.login-form{padding:55px 50px;align-self:center}.login-form h1{font-size:30px}.login-form>p{color:var(--muted);margin:12px 0 28px;font-size:13px}.form-stack{display:grid;gap:18px}.login-footer{display:flex;justify-content:space-between;gap:10px;font-size:12px;margin-top:16px}.modal{margin:0 0 0 auto;width:min(480px,100%);height:100dvh;max-height:100dvh;max-width:100%;border:0;border-left:1px solid var(--line);padding:0;background:white;color:var(--ink);overflow:auto}.modal::backdrop,.confirm-dialog::backdrop{background:#10161c52}.modal-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:22px 26px;border-bottom:1px solid var(--line);background:white}.modal-header small{display:block;color:var(--muted);margin-bottom:3px}.modal-content{padding:25px 26px}.modal-footer{position:sticky;bottom:0;z-index:2;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:18px 26px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:#fffffff7}.modal-footer .primary{flex:1}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}.field{display:grid;gap:7px;font-size:13px;align-content:start}.field.span-2{grid-column:1/-1}.field .required{color:var(--danger)}.field-error{font-size:12px;color:var(--danger);display:none}.field.has-error .field-error{display:block}.field.has-error input{border-color:var(--danger)}.field-hint{color:var(--muted);font-size:12px}.form-error{display:none;padding:12px;background:#f6ecee;color:var(--danger);font-size:13px;border-radius:8px;margin-bottom:18px}.form-error.visible{display:block}.form-note{display:flex;align-items:flex-start;gap:7px;padding:14px;background:var(--cool);font-size:12px;color:var(--muted);border-radius:8px;margin-top:20px}.confirm-dialog{width:min(420px,calc(100% - 32px));border:1px solid var(--line);border-radius:16px;padding:28px;background:white;color:var(--ink)}.confirm-dialog h2{margin-bottom:12px}.confirm-dialog p{color:var(--muted);font-size:14px;margin-bottom:24px}.confirm-dialog .row{justify-content:flex-end}.toast{position:fixed;z-index:80;left:50%;bottom:30px;transform:translateX(-50%);background:var(--ink);color:white;padding:13px 20px;border-radius:10px;max-width:calc(100% - 32px);box-shadow:0 8px 30px #171a1d22;font-size:13px}.toast[hidden]{display:none}.detail-hero{display:flex;gap:15px;align-items:center;padding:8px 0 24px}.detail-hero .food-symbol{width:70px;height:76px}.detail-hero .icon{width:38px;height:38px}.detail-number{font-size:29px;font-weight:600;margin-top:5px}.detail-list{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:18px;padding:23px 0;border-block:1px solid var(--line)}.detail-list dt{color:var(--muted);font-size:12px}.detail-list dd{margin:5px 0 0;font-size:14px}.detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px 0}.detail-danger{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:18px;margin-top:25px;gap:10px}.detail-danger p{color:var(--muted);font-size:12px}.recipe-detail-photo{width:100%;height:220px;object-fit:cover;border-radius:10px;margin-bottom:20px}.ingredients{padding-left:19px;line-height:2}.steps{padding-left:22px}.steps li{padding:8px 0;color:var(--muted);font-size:14px}.component-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.component-cell{background:white;border:1px solid var(--line);border-radius:12px;padding:22px;display:grid;gap:16px;justify-items:start;align-content:start}.component-cell h3{font-size:14px}.component-cell p{font-size:12px;color:var(--muted)}.sample-hover{background:#30363c!important}.sample-pressed{background:#080b0e!important;transform:translateY(1px)}.sample-focus{outline:2px solid var(--focus);outline-offset:3px}.spinner{width:16px;height:16px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;display:inline-block;animation:spin .8s linear infinite}.demo-alert{padding:12px 14px;border-radius:8px;background:#f6ecee;color:var(--danger);font-size:13px}.demo-success{background:#ecf3ef;color:var(--success)}.components-intro{margin-bottom:20px;color:var(--muted);font-size:13px}.check-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:15px;border-bottom:1px solid var(--line)}.check-row label{display:flex;align-items:center;gap:10px;flex:1}.check-row input[type=number]{width:90px;min-height:40px}.scheme-b{--nav-width:0px;--canvas:#edf2f5;--cool:#e5edf2;--radius:12px;--button-radius:10px}.scheme-b .sidebar{display:none}.scheme-b.app-shell{grid-template-columns:minmax(0,1fr)}.scheme-b .topbar{background:white;margin:0;padding:0 40px;height:80px}.scheme-b .top-nav{display:flex;gap:8px;margin-left:50px}.scheme-b .top-nav .nav-link{min-height:42px;min-width:84px;flex-direction:row;gap:8px;padding:10px 15px;border-radius:8px}.scheme-b .brand-sub{display:none}.scheme-b .main-content{padding:30px 40px}.scheme-b .home-workspace{grid-template-columns:minmax(0,1fr) minmax(390px,1fr);gap:24px}.scheme-b .scene-visual{height:440px}.scheme-b .stock-panel .food-preview{padding:10px 0}.scheme-b .stock-panel .food-symbol{height:36px;width:36px}.scheme-b .stock-panel .food-preview:nth-of-type(n+5){display:none}.scheme-b .stock-panel{padding:24px}.scheme-b .home-bottom{margin-top:22px}.scheme-b .home-metrics{border:0;padding:0;margin-bottom:24px;gap:36px}.scheme-b .metric{background:white;border:1px solid var(--line);border-radius:9px;padding:14px 18px;min-width:160px}.scheme-b .metric strong{font-size:25px}.scheme-c{--nav-width:184px;--radius:7px;--button-radius:6px;--canvas:#f7f8f9}.scheme-c .sidebar{background:#191d21;color:#fff;border-right:0;align-items:stretch;padding:28px 17px;gap:36px}.scheme-c .sidebar-brand{display:flex;align-items:center;gap:9px}.scheme-c .brand-icon{border:1px solid #68717a;background:transparent;width:34px;height:38px;border-radius:5px}.scheme-c .sidebar .brand-word{display:block;font-size:16px;font-weight:600}.scheme-c .nav-link{flex-direction:row;justify-content:flex-start;gap:12px;min-height:46px;font-size:13px;padding:11px 13px;border-radius:5px;color:#c4cbd2}.scheme-c .nav-link.active{background:white;color:var(--ink)}.scheme-c .nav-link:hover:not(.active){background:#30363c;color:white}.scheme-c .sidebar-foot{display:flex;align-items:center;text-align:left;gap:10px;border-top:1px solid #41474d;padding-top:22px}.scheme-c .sidebar-foot .avatar{background:#30363c;color:white;border-color:#68717a}.scheme-c .sidebar-foot small{display:block;color:#c4cbd2;font-size:11px}.scheme-c .topbar{height:70px}.scheme-c .topbar .brand-text{font-size:13px;font-weight:400}.scheme-c .topbar .brand-sub{display:none}.scheme-c .home-workspace{grid-template-columns:1fr;gap:20px}.scheme-c .scene-panel{display:grid;grid-template-columns:245px minmax(0,1fr)}.scheme-c .scene-visual{grid-column:2;grid-row:1;height:300px}.scheme-c .scene-photo{object-position:50% 48%}.scheme-c .scene-controls{grid-row:1;grid-column:1;padding:24px;display:flex;flex-direction:column;justify-content:center}.scheme-c .scene-controls-title{display:block;margin-bottom:18px}.scheme-c .scene-controls-title h2{font-size:22px;margin-top:7px}.scheme-c .door-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px}.scheme-c .door-button:last-child{grid-column:1/-1}.scheme-c .scene-controls-note{font-size:11px;line-height:1.6;margin-top:17px}.scheme-c .stock-panel{padding:20px 24px}.scheme-c .stock-panel .preview-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}.scheme-c .stock-panel .food-preview{border:0;padding:4px 0}.scheme-c .stock-panel .expired-hint{display:none}.scheme-c .stock-footer{display:flex;gap:10px;border-top:1px solid var(--line);padding-top:14px;margin-top:16px;justify-content:flex-end}.scheme-c .stock-footer .btn{width:auto;min-width:180px}.scheme-c .home-bottom{display:none}.scheme-c .home-metrics{margin-bottom:20px;padding:13px 0}.scheme-c .metric strong{font-size:23px}.scheme-c .page-head{margin-bottom:18px}.scheme-c .page-head h1{font-size:30px}
++@media(min-width:1800px){.scene-visual{height:550px}.scheme-b .scene-visual{height:500px}}
++@media(max-width:1180px) and (min-width:761px){.main-content{padding:26px 22px}.topbar{margin:0 22px}.brand-sub{display:none}.home-workspace{grid-template-columns:minmax(0,1fr) 270px;gap:16px}.stock-panel{padding:18px 15px}.scene-visual{height:420px}.scheme-b .main-content{padding:26px 24px}.scheme-b .topbar{padding:0 24px}.scheme-b .home-workspace{grid-template-columns:minmax(0,1fr) 350px;gap:18px}.scheme-b .top-nav{margin-left:15px}.scheme-c{--nav-width:152px}.scheme-c .sidebar{padding:25px 12px}.scheme-c .scene-panel{grid-template-columns:205px 1fr}.scheme-c .scene-controls{padding:18px}.scheme-c .preview-list{gap:14px!important}.scheme-c .food-preview{gap:8px}.metrics-note{display:none}.recipe-card>img{height:170px}.recipe-body{padding:17px}.page-actions{gap:7px}.page-actions .btn{padding-inline:13px}}
++@media(max-width:960px) and (min-width:761px){.home-workspace,.scheme-b .home-workspace{grid-template-columns:minmax(0,1fr)}.scene-visual,.scheme-b .scene-visual{height:400px}.stock-panel .preview-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.food-preview{gap:7px}.stock-panel .expired-hint{margin:15px 0}.stock-footer{display:flex;gap:10px;justify-content:flex-end}.stock-footer .btn{width:auto}.stock-panel .food-preview:nth-of-type(n+4){display:none}.scheme-c .scene-panel{grid-template-columns:180px minmax(0,1fr)}.scheme-c .scene-controls{padding:15px}.family-grid{grid-template-columns:1fr}.recipe-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.food-table-head,.food-table-row{grid-template-columns:1.5fr .8fr .7fr .9fr 44px}.food-table-head>span:nth-child(4),.food-table-row>.food-date{display:none}.scheme-b .metric{min-width:0}.scheme-b .home-metrics{gap:15px}.scheme-b .topbar .brand-text{font-size:17px}.scheme-b .family-switch{max-width:150px}.scheme-b .top-nav .nav-link{min-width:60px;padding:10px}.component-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
++@media(max-width:760px){body{font-size:14px}.review-bar{height:34px;padding:0 12px;gap:8px;font-size:10px}.review-note{overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.review-back{white-space:nowrap}.review-tools summary{white-space:nowrap}.review-tools-panel{right:8px;width:280px;font-size:13px}.app-shell,.scheme-b.app-shell{display:block;min-height:calc(100dvh - 34px)}.sidebar{display:none!important}.topbar,.scheme-b .topbar,.scheme-c .topbar{height:66px;margin:0 18px;padding:0;gap:10px;background:transparent}.topbar .brand-text,.scheme-b .topbar .brand-text,.scheme-c .topbar .brand-text{font-size:19px;font-weight:600}.brand-sub,.topbar>.top-nav,.topbar-actions>.avatar{display:none!important}.family-switch{max-width:160px;min-height:38px;padding:6px 8px;font-size:11px;gap:5px}.family-switch>.icon{width:16px;height:16px}.main-content,.scheme-b .main-content{padding:23px 18px 100px}.page-head,.scheme-c .page-head{gap:15px;align-items:flex-start;margin-bottom:19px}.page-head h1,.scheme-c .page-head h1{font-size:27px;line-height:1.4}.page-head p{font-size:12px;line-height:1.7;margin-top:7px}.eyebrow{font-size:10px;letter-spacing:1.6px;margin-bottom:7px}.home-head .page-actions{display:none}.page-actions .btn{min-height:42px;font-size:12px;padding:9px 11px}.page-head:not(.home-head){flex-wrap:wrap}.home-metrics,.scheme-b .home-metrics,.scheme-c .home-metrics{gap:0;margin-bottom:18px;padding:13px 0;border-block:1px solid var(--line);justify-content:space-between}.metric,.scheme-b .metric{display:block;background:transparent;border:0;padding:0;min-width:0;flex:1}.metric:not(:first-child){border-left:1px solid var(--line);padding-left:22px}.metric strong,.scheme-b .metric strong,.scheme-c .metric strong{font-size:23px}.metric span{display:block;font-size:11px;margin-top:6px}.metrics-note{display:none}.home-workspace,.scheme-b .home-workspace,.scheme-c .home-workspace{display:flex;flex-direction:column;gap:18px}.scene-panel,.scheme-c .scene-panel{display:flex;flex-direction:column;border-radius:12px}.scene-visual,.scheme-b .scene-visual,.scheme-c .scene-visual{height:310px}.scene-photo{object-position:50% 50%;object-fit:cover}.scene-top{left:12px;right:12px;top:12px}.scene-label{padding:6px 8px;font-size:10px;gap:5px}.scene-top .icon-btn{width:36px;height:36px;border-radius:8px}.zone-hotspot{left:53%;top:45%;font-size:10px;padding:7px 8px;gap:5px;min-height:40px}.scene-caption{left:12px;bottom:12px;font-size:10px;padding:6px 8px;max-width:calc(100% - 24px)}.scene-controls,.scheme-c .scene-controls{padding:12px;display:block}.scene-controls-title{display:none!important}.door-controls,.scheme-c .door-controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.door-button,.scheme-c .door-button{min-height:44px;padding:7px 4px;font-size:12px}.door-button:last-child,.scheme-c .door-button:last-child{grid-column:1/-1;min-height:40px}.scene-controls-note,.scheme-c .scene-controls-note{font-size:10px;margin-top:9px;line-height:1.6}.stock-panel,.scheme-b .stock-panel,.scheme-c .stock-panel{padding:18px}.stock-panel .preview-list,.scheme-c .stock-panel .preview-list{display:block}.food-preview,.scheme-b .stock-panel .food-preview,.scheme-c .stock-panel .food-preview{padding:13px 0;border-bottom:1px solid var(--line);gap:12px}.stock-panel .expired-hint,.scheme-c .stock-panel .expired-hint{display:flex;margin:14px 0}.stock-footer,.scheme-c .stock-footer{display:grid;border:0;padding:0;margin:0;gap:8px}.stock-footer .btn,.scheme-c .stock-footer .btn{width:100%;min-height:46px}.home-bottom{padding:15px;margin-top:18px;align-items:flex-start}.home-bottom .text-btn{font-size:12px;white-space:normal;min-width:50px}.home-bottom p{font-size:11px}.home-bottom strong{font-size:12px}.home-bottom>.icon{width:22px;height:22px}.bottom-nav{position:fixed;z-index:20;bottom:0;left:0;right:0;display:flex;background:#fffffff7;border-top:1px solid var(--line);padding:7px 16px calc(7px + env(safe-area-inset-bottom));gap:15px}.bottom-nav .nav-link{min-height:53px;gap:3px;font-size:11px;border-radius:9px;padding:5px 8px;color:var(--muted)}.bottom-nav .nav-link .icon{width:21px;height:21px}.bottom-nav .nav-link.active{background:var(--cool);color:var(--ink)}.mobile-add{position:fixed;right:19px;bottom:87px;z-index:19;box-shadow:0 4px 15px #171a1d1a;min-height:48px;padding:11px 16px;border-radius:12px}.toast{bottom:86px;font-size:12px;width:max-content}.filter-panel{padding:14px;margin-bottom:18px}.filter-row{gap:9px}.filter-row .search{flex-basis:100%;min-width:0}.filter-row select{flex:1;width:0;min-width:110px;font-size:12px}.filter-row .text-btn{font-size:12px}.filter-advanced{font-size:12px}.food-table{overflow:visible}.food-table-head{display:none}.food-table-row{display:grid;grid-template-columns:minmax(0,1fr) auto 32px;gap:8px;padding:14px 12px;font-size:12px}.food-table-row:first-of-type{border-top:0}.food-table-row .food-title{grid-row:1/3;gap:9px;font-size:13px}.food-table-row .food-zone,.food-table-row .food-date{display:none}.food-table-row .food-quantity{grid-column:2;grid-row:1;text-align:right}.food-table-row .food-status{grid-column:2;grid-row:2}.food-table-row .food-open{grid-column:3;grid-row:1/3}.food-table-row .food-open .icon{width:18px}.food-table-row .sub-label{display:block;font-size:11px;font-weight:400;color:var(--muted);margin-top:2px}.food-table-row .badge{font-size:10px;padding:2px 5px}.recipe-grid{grid-template-columns:1fr;gap:18px}.recipe-card>img{height:205px}.recipe-body{padding:19px}.family-grid{grid-template-columns:1fr;gap:18px}.panel{padding:20px}.panel h2{font-size:18px}.family-name{font-size:23px}.family-actions .btn{flex:1;padding-inline:10px;font-size:12px}.setting-row{gap:10px}.setting-row small{font-size:11px}.login-layout{grid-template-columns:1fr;min-height:0}.login-scene{min-height:230px}.login-scene .scene-label{top:15px;left:15px}.login-form{padding:28px 22px}.login-form h1{font-size:25px}.component-grid{grid-template-columns:1fr}.component-cell{padding:20px}.timeline-item{gap:12px;flex-wrap:wrap}.timeline-item strong{font-size:13px}.timeline-item .btn{font-size:12px;min-height:40px;padding:8px 13px}.timeline-item small{font-size:11px}.modal{width:100%;height:100dvh;max-height:100dvh;border:0}.modal-header{padding:18px 20px}.modal-content{padding:22px 20px}.modal-footer{padding:15px 20px calc(15px + env(safe-area-inset-bottom))}.modal-footer .btn{min-height:48px}.form-grid{gap:17px 12px}.form-note{font-size:12px}.field{font-size:13px}input,select,textarea{font-size:16px}.review-tools-panel select{font-size:14px}.confirm-dialog{padding:24px}.confirm-dialog .row{flex-wrap:wrap}.detail-danger{align-items:flex-start}.detail-danger .btn{font-size:12px;padding-inline:12px}}
++@media(max-width:360px){.review-note{max-width:140px}.review-bar{gap:6px;padding:0 9px}.review-back{font-size:10px}.topbar,.scheme-b .topbar,.scheme-c .topbar{margin:0 14px}.main-content,.scheme-b .main-content{padding-inline:14px}.topbar .brand-text,.scheme-b .topbar .brand-text,.scheme-c .topbar .brand-text{font-size:17px}.family-switch{max-width:140px;font-size:10px}.scene-visual,.scheme-b .scene-visual,.scheme-c .scene-visual{height:280px}.scene-photo{object-fit:cover}.metric:not(:first-child){padding-left:16px}.home-bottom{gap:9px}.form-grid{gap:16px 10px}.field.span-2{grid-column:1/-1}}
++.avatar{flex-shrink:0}.sidebar-foot>div{min-width:0}
++body{background:var(--canvas)}
++.modal[open]{display:flex;flex-direction:column;overflow:hidden}.modal-header,.modal-footer{flex-shrink:0}.modal>form{display:flex;flex-direction:column;flex:1;min-height:0}.modal>.modal-content,.modal>form>.modal-content{flex:1;overflow:auto;min-height:0}
++@media(max-width:760px){.bottom-nav{gap:6px}.bottom-nav .nav-link{flex:1;min-width:0}.bottom-add{min-height:53px;min-width:56px;flex-direction:column;padding:5px 7px;gap:3px;font-size:11px;border-radius:9px}.bottom-add .icon{width:21px;height:21px}}
++@keyframes spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.btn:active{transform:none}}
+
+diff --git a/docs/design/ui-redesign-2026-11-10/prototype.html b/docs/design/ui-redesign-2026-11-10/prototype.html
+new file mode 100644
+index 0000000..373bf77
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/prototype.html
+@@ -0,0 +1,29 @@
++<!doctype html>
++<html lang="zh-CN">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
++  <title>小易冰箱 · 黑白厨房设计审查</title>
++  <link rel="stylesheet" href="prototype.css">
++  <script src="prototype.js" defer></script>
++</head>
++<body>
++  <div class="review-bar">
++    <a href="index.html" class="review-back">← 审查入口</a>
++    <span class="review-note">设计样稿 · 演示数据 · 未连接真实家庭</span>
++    <details class="review-tools">
++      <summary>审查控制</summary>
++      <div class="review-tools-panel">
++        <label>方案<select id="scheme-picker"><option value="a">A · 静白全景</option><option value="b">B · 冷雾工作台</option><option value="c">C · 墨线橱窗</option></select></label>
++        <label>演示角色<select id="role-picker"><option value="OWNER">家庭主人 / 可编辑</option><option value="VIEWER">只读成员</option></select></label>
++        <label class="checkbox-label"><input type="checkbox" id="fail-next"> 模拟下一次保存失败</label>
++        <a href="prototype.html?page=components">查看按钮状态</a>
++      </div>
++    </details>
++  </div>
++  <div id="app" class="app-shell"></div>
++  <dialog id="modal" class="modal"></dialog>
++  <dialog id="confirm-dialog" class="confirm-dialog"></dialog>
++  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
++</body>
++</html>
+
+diff --git a/docs/design/ui-redesign-2026-11-10/prototype.js b/docs/design/ui-redesign-2026-11-10/prototype.js
+new file mode 100644
+index 0000000..44d1df0
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/prototype.js
+@@ -0,0 +1,271 @@
++/* Design review only. No API, storage, account or production state is used. */
++(() => {
++  'use strict';
++  const $ = (selector, root = document) => root.querySelector(selector);
++  const esc = (value) => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
++  const paths = {
++    fridge:'<rect x="5" y="2.5" width="14" height="19" rx="2"/><path d="M5 12h14M12 3v9M9 7v2M15 7v2M8 17h8"/>',
++    recipe:'<path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18M18 3c-3 3-4 7 0 9v9M18 3v9"/>',
++    home:'<path d="m3 11 9-8 9 8M5 10v11h14V10M9 21v-7h6v7"/>',
++    people:'<circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M21 21v-3a6 6 0 0 0-4-5"/>',
++    plus:'<path d="M12 5v14M5 12h14"/>', list:'<path d="M9 5h12M9 12h12M9 19h12M3 5h1M3 12h1M3 19h1"/>',
++    arrow:'<path d="M5 12h14m-6-6 6 6-6 6"/>',chevron:'<path d="m9 5 7 7-7 7"/>',down:'<path d="m6 9 6 6 6-6"/>',
++    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',check:'<path d="m5 12 4 4L19 6"/>',
++    close:'<path d="m6 6 12 12M18 6 6 18"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',
++    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',lock:'<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 15v2"/>',
++    rotate:'<path d="M3 10a9 9 0 1 1 2 8M3 3v7h7"/>',door:'<path d="M5 21V3h14v18M9 21V5l7-2v18M12 12h.01"/>',
++    drawer:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M9 14h6M6 19v2M18 19v2"/>',
++    milk:'<path d="M8 3h8v4l3 4v10H5V11l3-4V3ZM8 7h8M5 11h14M9 15h6M9 18h4"/>',
++    leaf:'<path d="M20 3C10 2 3 7 4 14s14 8 16-11Z M4 21 15 10M8 17l1-6M12 13l5 1"/>',
++    egg:'<path d="M19 14c0 5-3 8-7 8s-7-3-7-8S9 2 12 2s7 7 7 12Z"/>',
++    tomato:'<path d="M12 7C2 2-1 20 9 21h6C25 20 22 2 12 7ZM12 7V2M8 4l4 3 4-3"/>',
++    fish:'<path d="M18 12c-6-11-15-2-15-2l-2 2 2 2s9 9 15-2Zm0 0 4-5v10l-4-5ZM7 11h.01"/>',
++    meat:'<path d="M15 3c5-1 9 7 3 12l-6 5c-3 2-7 0-8-3s0-6 3-8l8-6Z"/><circle cx="15" cy="9" r="3"/>',
++    butter:'<path d="M3 9h18v11H3V9Zm2 0 2-5h10l2 5M3 14h18M8 17h8"/>',
++    pantry:'<path d="M6 3h12l-1 4 2 14H5L7 7 6 3ZM7 7h10M8 12h8M9 16h6"/>',
++    trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M9 10v7M15 10v7"/>',
++    eye:'<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
++    copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V3H3v13h5"/>',
++    sliders:'<path d="M4 3v7M4 14v7M12 3v12M12 19v2M20 3v3M20 10v11M1 10h6M9 15h6M17 6h6"/>',
++    bowl:'<path d="M3 11a9 9 0 0 0 18 0H3ZM8 20h8M7 7l1-3M12 7V2M17 7l-1-3"/>',
++  };
++  const icon = (name, extra = '') => `<svg class="icon ${extra}" viewBox="0 0 24 24" aria-hidden="true">${paths[name] || paths.info}</svg>`;
++  const schemes = {
++    a:{name:'静白全景',title:'让新鲜，各就其位。',tag:'MY KITCHEN',description:'厨房里的一切，简单一点，刚刚好。'},
++    b:{name:'冷雾工作台',title:'打开厨房，开始今天。',tag:'KITCHEN WORKSPACE',description:'从一份清单开始，把每一餐安排得更从容。'},
++    c:{name:'墨线橱窗',title:'新鲜日常，有迹可循。',tag:'THE EVERYDAY KITCHEN',description:'收好每一份食材，也照顾好每一天。'},
++  };
++  const params = new URLSearchParams(location.search);
++  const scheme = Object.hasOwn(schemes, params.get('scheme')) ? params.get('scheme') : 'a';
++  const validPages = ['home','foods','recipes','family','records','login','components'];
++  const state = {
++    scheme,page:validPages.includes(params.get('page')) ? params.get('page') : 'home',role:'OWNER',
++    query:'',zone:'all',expiry:'all',sort:'expiry',openParts:new Set(),pending:false,modalType:null,dirty:false,
++    register:false,undone:false,familyName:'林间小家',nextId:9,
++    foods:[
++      {id:1,name:'鲜牛奶',category:'奶制品',zone:'冷藏',quantity:1,unit:'盒',days:2,symbol:'milk',date:'2026-11-12'},
++      {id:2,name:'西兰花',category:'蔬菜',zone:'冷藏',quantity:1,unit:'棵',days:1,symbol:'leaf',date:'2026-11-11'},
++      {id:3,name:'鸡蛋',category:'蛋类',zone:'冷藏',quantity:6,unit:'个',days:6,symbol:'egg',date:'2026-11-16'},
++      {id:4,name:'番茄',category:'蔬菜',zone:'冷藏',quantity:3,unit:'个',days:2,symbol:'tomato',date:'2026-11-12'},
++      {id:5,name:'三文鱼',category:'水产',zone:'变温',quantity:1,unit:'份',days:-1,symbol:'fish',date:'2026-11-09'},
++      {id:6,name:'鸡胸肉',category:'肉类',zone:'冷冻',quantity:2,unit:'份',days:15,symbol:'meat',date:'2026-11-25'},
++      {id:7,name:'黄油',category:'奶制品',zone:'冷藏',quantity:1,unit:'盒',days:30,symbol:'butter',date:'2026-12-10'},
++      {id:8,name:'意大利面',category:'主食',zone:'常温',quantity:1,unit:'袋',days:90,symbol:'pantry',date:'2027-02-08'},
++    ],
++  };
++  const app = $('#app'), modal = $('#modal'), confirmDialog = $('#confirm-dialog');
++  document.body.classList.add(`scheme-${scheme}`);
++  let opener = null, toastTimer = null;
++  document.title = `小易冰箱 · ${scheme.toUpperCase()} ${schemes[scheme].name} · 设计审查`;
++  $('#scheme-picker').value = scheme;
++  $('.review-tools-panel a').href = `prototype.html?scheme=${scheme}&page=components`;
++  const writable = () => state.role !== 'VIEWER';
++  const disabledWrite = () => writable() ? '' : 'disabled';
++  const button = (label, action, cls = '', attrs = '') => `<button type="button" class="btn ${cls}" data-action="${action}" ${attrs}>${label}</button>`;
++  const readonly = () => writable() ? '' : `<div class="readonly-banner">${icon('lock')}<span>你是只读成员，可以查看食材和菜谱；编辑需要家庭主人调整权限。</span></div>`;
++  const pageHead = (title, subtitle, actions = '', cls = '') => `<div class="page-head ${cls}"><div><div class="eyebrow">${schemes[scheme].tag}</div><h1>${title}</h1><p>${subtitle}</p></div><div class="page-actions">${actions}</div></div>`;
++  function nav(locationName) {
++    const selected = ['foods','records'].includes(state.page) ? 'home' : state.page;
++    return [['home','fridge','冰箱'],['recipes','recipe','菜谱'],['family','people','家庭']].map(([page,symbol,label]) => `<button class="nav-link ${selected===page?'active':''}" type="button" data-page="${page}" ${selected===page?'aria-current="page"':''} aria-label="${label}${locationName}">${icon(symbol)}<span>${label}</span></button>`).join('');
++  }
++  function render() {
++    const renderer = {home:homeView,foods:foodsView,recipes:recipesView,family:familyView,records:recordsView,login:loginView,components:componentsView}[state.page];
++    app.className = `app-shell scheme-${scheme}`;
++    app.innerHTML = `<aside class="sidebar"><div class="sidebar-brand"><div class="brand-icon">${icon('fridge','large')}</div><span class="brand-word">小易冰箱</span></div><nav class="nav-links" aria-label="主导航">${nav('')}</nav><div class="sidebar-foot"><span class="avatar">林</span><div><small>林间小家</small><small>演示家庭</small></div></div></aside>
++      <header class="topbar"><div class="brand-text">小易冰箱<span class="brand-sub">查食材，看菜谱，都容易</span></div><nav class="top-nav" aria-label="顶部导航">${nav('')}</nav><div class="topbar-actions"><button class="family-switch" type="button" data-page="family">${icon('home')}<span>${esc(state.familyName)}</span>${icon('down')}</button><span class="avatar">林</span></div></header>
++      <main class="main-content">${readonly()}${renderer()}</main><nav class="bottom-nav" aria-label="底部导航">${nav('')}${state.page==='home'||state.page==='foods'?button(`${icon('plus')}<span>新增</span>`,'add','primary bottom-add',disabledWrite()):''}</nav>`;
++    if (state.page === 'foods') updateFoodResults();
++  }
++  function homeView() {
++    const urgent = state.foods.filter(f => f.days >= 0 && f.days <= 3).sort((a,b) => a.days-b.days);
++    const expired = state.foods.filter(f => f.days < 0);
++    const preview = scheme==='b' ? [...urgent,...state.foods.filter(f=>f.days>3)].slice(0,4) : urgent.slice(0,3);
++    return `${pageHead(schemes[scheme].title,schemes[scheme].description,button(`${icon('list')}食材清单`,'foods')+button(`${icon('plus')}新增食材`,'add','primary',disabledWrite()),'home-head')}
++      <div class="home-metrics"><div class="metric"><strong>${state.foods.length.toString().padStart(2,'0')}</strong><span>份在库食材</span></div><div class="metric"><strong>${urgent.length.toString().padStart(2,'0')}</strong><span>份即将到期</span></div><div class="metric"><strong>${expired.length.toString().padStart(2,'0')}</strong><span>份已过期 · 待检查</span></div><div class="metrics-note">${icon('clock')}演示快照 · 2026.11.10</div></div>
++      <div class="home-workspace"><section class="scene-panel" aria-label="厨房场景参考"><div class="scene-visual"><img class="scene-photo" src="assets/kitchen-reference.png" alt="冷白自然光下的白色双门双抽屉冰箱，浅冷灰柜体、雾蓝瓷砖和石材台面"><div class="scene-top"><span class="scene-label">${icon('fridge')}我的厨房 · 默认冰箱</span><button class="icon-btn" type="button" data-action="reset-scene" aria-label="复位视角（样稿示意）">${icon('rotate')}</button></div><button type="button" class="zone-hotspot" data-action="cold">冷藏 · ${state.foods.filter(f=>f.zone==='冷藏').length} 份</button><div class="scene-caption">厨房材质 / 构图参考 · 非实时三维<br>门控按钮仅演示状态，图片不会开门</div></div><div class="scene-controls"><div class="scene-controls-title"><div class="eyebrow">SCENE CONTROLS</div><h2>把厨房<br>握在手边。</h2></div><div class="door-controls">${[['left','door','左门'],['right','door','右门'],['variable','drawer','变温抽屉'],['freezer','drawer','冷冻抽屉']].map(([part,symbol,name])=>`<button type="button" class="door-button" data-part="${part}" aria-pressed="${state.openParts.has(part)}">${icon(symbol)}${name}</button>`).join('')}<button type="button" class="door-button" data-action="close-all">全部关闭</button></div><div class="scene-controls-note">${icon('info')}冷藏 4°C / 冷冻 −18°C · 仅储存参考</div></div></section>
++      <section class="stock-panel"><div class="section-head"><h2>${scheme==='b'?'食材工作台':'今天先用这些'}</h2><span class="muted">${scheme==='b'?'到期优先':urgent.length+' 份临期'}</span></div><p>${scheme==='b'?'先照顾临期，再安排下一餐。':'新鲜不等待，下一餐刚刚好。'}</p><div class="preview-list">${preview.length?preview.map(previewFood).join(''):'<div class="empty-state">暂时没有临期食材</div>'}</div>${expired.length?`<div class="expired-hint">${icon('info')}另有 ${expired.length} 份已过期，请先检查</div>`:''}<div class="stock-footer">${button(`查看全部 ${state.foods.length} 份 ${icon('arrow')}`,'foods','full')}${button(`${icon('clock')}操作记录`,'records','full')}</div></section></div>
++      <section class="home-bottom">${icon('bowl')}<div><strong>今晚，做点冰箱里现有的。</strong><p>按已有食材找菜谱，也看看还缺什么。</p></div><button class="text-btn" type="button" data-page="recipes">去看菜谱 ${icon('arrow')}</button></section>`;
++  }
++  function previewFood(food) {
++    return `<button type="button" class="food-preview" data-action="detail" data-id="${food.id}"><span class="food-symbol">${icon(food.symbol,'large')}</span><span class="food-preview-text"><span class="food-preview-title">${esc(food.name)}</span><small>${esc(food.zone)} · ${food.quantity} ${esc(food.unit)}</small></span><span class="food-expiry">${food.days===0?'今天到期':food.days+' 天后到期'}</span></button>`;
++  }
++  function foodsView() {
++    return `${pageHead('每一份食材，都有位置。','搜索、筛选，再决定今天先用什么。',button(`${icon('clock')}记录`,'records')+button(`${icon('plus')}新增食材`,'add','primary',disabledWrite()))}<section class="filter-panel" aria-label="食材筛选"><div class="filter-row"><label class="search">${icon('search')}<input id="food-search" aria-label="搜索食材名称" placeholder="搜索食材名称" value="${esc(state.query)}"></label><select id="zone-filter" aria-label="储存分区">${['all','冷藏','变温','冷冻','常温'].map(z=>`<option value="${z}" ${state.zone===z?'selected':''}>${z==='all'?'全部分区':z}</option>`).join('')}</select><select id="expiry-filter" aria-label="到期状态">${[['all','全部到期状态'],['urgent','即将到期'],['expired','已过期'],['fresh','非临期']].map(([v,label])=>`<option value="${v}" ${state.expiry===v?'selected':''}>${label}</option>`).join('')}</select><button class="text-btn" data-action="reset-filters" type="button">重置</button></div><details class="filter-advanced"><summary>分类、标签与日期 · 完整筛选结构参考</summary><div class="form-grid"><label class="field">分类<select disabled><option>全部分类（结构示意）</option></select></label><label class="field">标签<input placeholder="如：早餐" disabled></label><label class="field">到期起始<input type="date" disabled></label><label class="field">到期截止<input type="date" disabled></label></div><p class="field-hint">本样稿可操作名称、分区、到期与排序；其余字段在正式实现保留现有能力。</p></details></section><div class="row between result-head"><span id="result-count" aria-live="polite"></span><label class="row">排序<select id="sort-picker" aria-label="食材排序" style="width:145px;min-height:40px;font-size:12px"><option value="expiry" ${state.sort==='expiry'?'selected':''}>到期日从近到远</option><option value="name" ${state.sort==='name'?'selected':''}>名称排序</option></select></label></div><section id="food-results" aria-label="食材清单"></section>`;
++  }
++  function updateFoodResults() {
++    const foods = state.foods.filter(f => (!state.query || f.name.includes(state.query)) && (state.zone==='all'||f.zone===state.zone) && (state.expiry==='all'||state.expiry==='urgent'&&f.days>=0&&f.days<=3||state.expiry==='expired'&&f.days<0||state.expiry==='fresh'&&f.days>3)).sort((a,b)=>state.sort==='name'?a.name.localeCompare(b.name,'zh-CN'):a.days-b.days||a.id-b.id);
++    $('#result-count').textContent = `共 ${foods.length} 份食材 · 全部库存 ${state.foods.length} 份`;
++    $('#food-results').innerHTML = foods.length ? `<div class="food-table"><div class="food-table-head"><span>食材</span><span>储存分区</span><span>剩余数量</span><span>到期日期</span><span>保鲜状态</span><span></span></div>${foods.map(f=>`<div class="food-table-row"><div class="food-title"><span class="food-symbol">${icon(f.symbol)}</span><div>${esc(f.name)}<span class="sub-label">${esc(f.zone)} · ${esc(f.category)}</span></div></div><span class="food-zone">${esc(f.zone)}</span><span class="food-quantity">${f.quantity} ${esc(f.unit)}</span><span class="food-date">${f.date}</span><span class="food-status">${statusBadge(f)}</span><button type="button" class="text-btn food-open" data-action="detail" data-id="${f.id}" aria-label="查看${esc(f.name)}详情">${icon('chevron')}</button></div>`).join('')}</div>` : `<div class="food-table"><div class="empty-state">${icon('search')}<h2>没有找到这份食材</h2><p class="muted">换个名称，或清空当前筛选。</p>${button('清空筛选','reset-filters')}</div></div>`;
++  }
++  function statusBadge(food) {return `<span class="badge ${food.days<0?'danger':food.days<=3?'warning':'success'}">${food.days<0?'已过期 '+Math.abs(food.days)+' 天':food.days===0?'今天到期':food.days<=3?food.days+' 天后到期':'保鲜中'}</span>`;}
++  const recipes = [
++    {id:0,name:'番茄炒蛋',image:'recipe-tomato-eggs.jpg',time:'15 分钟',coverage:'已备 2 / 3 项',note:'番茄正临期，给今晚加一道家常菜。',missing:'示例缺料：小葱'},
++    {id:1,name:'清炒西兰花',image:'recipe-broccoli.jpg',time:'10 分钟',coverage:'已备 1 / 2 项',note:'用一份清爽，把冰箱里的新鲜留住。',missing:'示例缺料：蒜'},
++    {id:2,name:'嫩滑蒸蛋',image:'recipe-steamed-eggs.jpg',time:'20 分钟',coverage:'已备 1 / 2 项',note:'简单的食材，也能做一顿舒服的饭。',missing:'示例缺料：小葱'},
++  ];
++  const recipeImage = name => `../../../apps/fridge-app/assets/images/${name}`;
++  function recipesView() {
++    return `${pageHead('下一餐，就从冰箱开始。','先用临期食材，少一点浪费，多一点家常。')}<div class="row wrap" style="margin-bottom:22px"><span class="badge">按当前演示库存推荐</span><span class="muted" style="font-size:12px">匹配为选稿示例，正式版由真实库存计算</span></div><div class="recipe-grid">${recipes.map(r=>`<article class="recipe-card"><img src="${recipeImage(r.image)}" alt="${r.name}" loading="eager"><div class="recipe-body"><div class="row between"><h2>${r.name}</h2><span class="badge">${r.time}</span></div><p>${r.note}</p><div class="recipe-meta"><span>${r.coverage}</span><span class="muted">${r.missing}</span></div>${button(`查看做法 ${icon('arrow')}`,'recipe','',`data-id="${r.id}"`)}</div></article>`).join('')}</div>`;
++  }
++  function familyView() {
++    return `${pageHead('一起，把日常照顾好。','切换家庭、邀请家人，每一次编辑都有清楚的边界。')}<div class="family-grid"><div><section class="panel"><div class="row between"><h2>当前家庭</h2><span class="badge">${writable()?'家庭主人':'只读成员'}</span></div><div class="family-name">${esc(state.familyName)}</div><p class="muted" style="font-size:13px">演示家庭 · 默认冰箱 · 2 位成员</p><div class="row between family-code"><div><small>家庭邀请码 · 仅演示</small><strong>XY8K2M6P</strong></div>${button(`${icon('copy')}复制`,'copy')}</div><div class="family-actions">${button(`${icon('plus')}创建家庭`,'create-family')}${button(`${icon('people')}加入家庭`,'join-family')}</div></section><section class="panel"><h2>偏好与说明</h2><div class="setting-row"><span>临期判定</span><small>跟随家庭服务配置</small></div><div class="setting-row"><span>冰箱布局</span><small>当前布局只读</small></div><div class="setting-row"><span>温度显示</span><small>储存参考，不控制设备</small></div><button class="text-btn" type="button" data-page="login">查看登录页面 ${icon('arrow')}</button></section></div><section class="panel"><div class="row between"><h2>家庭成员</h2><span class="muted" style="font-size:12px">2 人</span></div><div class="member"><span class="avatar">林</span><div><strong>小林</strong><p class="muted" style="font-size:12px">当前演示用户</p></div><span class="badge">${writable()?'OWNER':'VIEWER'}</span></div><div class="member"><span class="avatar">陈</span><div><strong>小陈</strong><p class="muted" style="font-size:12px">可查看食材和菜谱</p></div><span class="badge">VIEWER</span></div><div class="form-note">${icon('lock')}成员管理只对家庭主人开放。正式版保留调整角色、移除与转交的确认流程。</div>${button('查看成员操作示意','member','full',writable()?'style="margin-top:20px"':'disabled style="margin-top:20px"')}</section></div>`;
++  }
++  function recordsView() {
++    return `${pageHead('厨房里的每一步，都记得。','时间线按最近操作排列，撤销能力以真实记录为准。',button('返回冰箱','home'))}<section class="panel timeline"><div class="timeline-item"><span class="timeline-dot">${icon('bowl')}</span><div><strong>${state.undone?'已撤销使用鲜牛奶':'使用鲜牛奶 0.5 盒'}</strong><small>今天 08:35 · 小林 · ${state.undone?'已恢复至扣减前数量':'早餐'} · 演示操作</small></div>${button(state.undone?'恢复操作':'撤销','undo','',disabledWrite())}</div><div class="timeline-item"><span class="timeline-dot">${icon('plus')}</span><div><strong>新增西兰花 1 棵</strong><small>昨天 18:20 · 小陈 · 冷藏</small></div><span class="muted" style="font-size:12px">新增不支持撤销</span></div><div class="timeline-item"><span class="timeline-dot">${icon('sliders')}</span><div><strong>修改鸡蛋信息</strong><small>昨天 18:15 · 小林 · 分类调整为蛋类</small></div><span class="muted" style="font-size:12px">编辑不支持撤销</span></div></section>`;
++  }
++  function loginView() {
++    return `<div class="login-layout"><div class="login-scene"><img src="assets/kitchen-reference.png" alt="浅冷色现代家庭厨房"><span class="scene-label">${icon('fridge')}查食材，看菜谱，都容易</span></div><section class="login-form"><div class="eyebrow">XIAOYI FRIDGE</div><h1>${state.register?'给日常，一个新开始。':'欢迎回到，你的厨房。'}</h1><p>小易冰箱 · 家里的新鲜，一起照顾。</p><form id="login-form" class="form-stack"><label class="field">账号<input name="username" autocomplete="username" required placeholder="输入账号"></label><label class="field">密码<div class="row" style="gap:8px"><input id="login-password" name="password" type="password" minlength="6" autocomplete="${state.register?'new-password':'current-password'}" required placeholder="至少 6 位字符"><button class="icon-btn" type="button" data-action="password" aria-label="显示密码">${icon('eye')}</button></div></label>${state.register?'<label class="field">昵称<input name="displayName" required placeholder="家人怎么称呼你"></label>':''}<button class="btn primary full" type="submit">${state.register?'创建演示账号':'登录演示厨房'}</button></form><div class="login-footer"><button type="button" class="text-btn" data-action="register">${state.register?'已有账号，返回登录':'还没有账号？注册'}</button><button type="button" class="text-btn" data-page="home">直接体验 ${icon('arrow')}</button></div><p class="field-hint" style="margin-top:18px">仅为登录界面样稿，请使用示例输入，不会验证或保存账号。</p></section></div>`;
++  }
++  function componentsView() {
++    const cells = [
++      ['主要动作',button(`${icon('plus')}新增食材`,'add','primary'),'近黑底白字 · 单个任务一个主动作'],
++      ['次要动作',button(`${icon('list')}食材清单`,'foods'),'白底细边 · 边界与文字可辨识'],
++      ['悬停状态',button('保存食材','sample','primary sample-hover'),'120 ms 颜色过渡'],
++      ['按下状态',button('保存食材','sample','primary sample-pressed'),'更深底色 · 1 px 下移'],
++      ['键盘焦点',button('保存食材','sample','primary sample-focus'),'2 px 灰蓝外环 + 2 px 间距'],
++      ['提交中','<button class="btn primary" type="button" disabled><span class="spinner"></span>正在保存…</button>','锁定相关写操作 · 保持按钮宽度'],
++      ['只读 / 禁用',button('新增食材','sample','', 'disabled'),'你是只读成员，编辑需要家庭主人授权'],
++      ['成功反馈',`<div class="demo-alert demo-success">${icon('check')} 已保存食材（演示）</div>`,'服务端确认后才更新正式库存'],
++      ['失败恢复','<div class="demo-alert">保存失败，已保留填写内容。</div>','在“审查控制”模拟失败后可重试'],
++      ['危险操作',button(`${icon('trash')}丢弃食材`,'sample-discard','danger'),'先确认对象和后果，再执行'],
++      ['分区 / 开合','<button class="door-button" type="button" aria-pressed="true" data-part="left">左门 · 已开启</button>','多扇门独立高亮，概览不冒充开门'],
++      ['关闭 / 返回','<button class="icon-btn" type="button" data-page="home" aria-label="返回冰箱">'+icon('close')+'</button>','44 px 命中区 · 关闭后恢复焦点'],
++    ];
++    return `${pageHead('每一次点击，都有回应。','按钮层级、状态与错误反馈，三套方案遵循同一套规则。')}<p class="components-intro">悬停、按下与焦点为固定审查状态。真实表单反馈可在新增食材中操作。</p><div class="component-grid">${cells.map(([title,content,note])=>`<section class="component-cell"><h3>${title}</h3>${content}<p>${note}</p></section>`).join('')}</div>`;
++  }
++  function toast(message) {
++    clearTimeout(toastTimer);$('#toast').textContent=message;$('#toast').hidden=false;
++    toastTimer=setTimeout(()=>{$('#toast').hidden=true;},4500);
++  }
++  function navigate(page) {
++    if(!validPages.includes(page))return;
++    state.page=page;render();window.scrollTo(0,0);
++  }
++  function openModal(type,title,body,footer='') {
++    if(!modal.open)opener=document.activeElement;state.modalType=type;state.dirty=false;
++    modal.innerHTML=`<header class="modal-header"><div><small>小易冰箱 · 设计样稿</small><h2>${title}</h2></div><button class="icon-btn" type="button" data-action="close-modal" aria-label="关闭面板">${icon('close')}</button></header>${body}${footer}`;
++    if(!modal.open)modal.showModal();
++    modal.scrollTop=0;
++  }
++  function closeModal() {
++    modal.close();state.modalType=null;state.dirty=false;state.pending=false;
++    if(opener?.isConnected)opener.focus();
++  }
++  function requestClose() {
++    if(state.pending){toast('演示保存正在进行，请稍候。');return;}
++    if(state.dirty){confirm('放弃这次修改？','填写的内容还没有保存。可以继续填写，或放弃这次修改。','放弃修改',()=>closeModal(),'继续填写');return;}
++    closeModal();
++  }
++  function confirm(title,message,label,onConfirm,cancelLabel='取消') {
++    confirmDialog.innerHTML=`<h2>${title}</h2><p>${message}</p><div class="row">${button(cancelLabel,'cancel-confirm')}${button(label,'accept-confirm','danger-fill')}</div>`;
++    confirmDialog.showModal();
++    $('[data-action="cancel-confirm"]',confirmDialog).focus();
++    $('[data-action="accept-confirm"]',confirmDialog).onclick=()=>{confirmDialog.close();onConfirm();};
++  }
++  function addForm(food=null) {
++    if(!writable()){toast('只读成员不能修改食材。');return;}
++    state.editId=food?.id||null;
++    const options=(values,current)=>values.map(v=>`<option ${v===current?'selected':''}>${v}</option>`).join('');
++    const field=(label,name,control,extra='')=>`<label class="field ${extra}" data-field="${name}"><span>${label}</span>${control}<span class="field-error" role="alert"></span></label>`;
++    openModal('add',food?'编辑食材':'新增一份新鲜',`<form id="food-form" novalidate><div class="modal-content"><div class="form-error" role="alert"></div><div class="form-grid">${field('食材名称 <span class="required">*</span>','name',`<input name="name" placeholder="例如：鲜牛奶" maxlength="30" value="${esc(food?.name||'')}" required>`,'span-2')}${field('分类','category',`<select name="category">${options(['蔬菜','水果','肉类','水产','蛋类','奶制品','主食','豆制品','调味品','饮品','熟食','其他'],food?.category||'蔬菜')}</select>`)}${field('储存分区','zone',`<select name="zone">${options(['冷藏','变温','冷冻','常温'],food?.zone||'冷藏')}</select>`)}${field('数量 <span class="required">*</span>','quantity',`<input name="quantity" type="number" inputmode="decimal" step="0.001" min="0.001" max="999999" value="${food?.quantity||1}" required>`)}${field('单位','unit',`<select name="unit">${options(['份','个','盒','袋','棵','克','毫升'],food?.unit||'份')}</select>`)}${field('购买日期','purchase','<input name="purchase" type="date" value="2026-11-10">')}${field('到期日期 <span class="required">*</span>','date',`<input name="date" type="date" value="${food?.date||'2026-11-13'}" required>`)}</div><div class="form-note">${icon('info')}保存到「${esc(state.familyName)} / 默认冰箱」。本次为界面演示，刷新后重置。</div></div><footer class="modal-footer">${button('取消','close-modal')}<button class="btn primary" type="submit" id="save-food">保存食材</button></footer></form>`);
++    if(food)$('[name="purchase"]',modal).value=food.purchase||'2026-11-01';
++    state.initialForm = new URLSearchParams(new FormData($('#food-form'))).toString();
++  }
++  function detail(id) {
++    const f=state.foods.find(f=>f.id===Number(id));if(!f)return;
++    state.selectedId=f.id;
++    openModal('detail','食材详情',`<div class="modal-content"><div class="detail-hero"><span class="food-symbol">${icon(f.symbol,'large')}</span><div><h2>${esc(f.name)}</h2><div class="detail-number">${f.quantity} <small>${esc(f.unit)}</small></div></div><div style="margin-left:auto">${statusBadge(f)}</div></div><dl class="detail-list"><div><dt>储存分区</dt><dd>${esc(f.zone)}</dd></div><div><dt>食材分类</dt><dd>${esc(f.category)}</dd></div><div><dt>到期日期</dt><dd>${f.date}</dd></div><div><dt>当前家庭</dt><dd>${esc(state.familyName)}</dd></div></dl>${f.days<0?'<div class="demo-alert" style="margin-top:20px">这份食材已过期，请检查后再处理，不纳入临期做饭推荐。</div>':''}<div class="detail-actions">${button('使用食材','use','primary',disabledWrite())}${button('移动分区','move','',disabledWrite())}</div>${button('编辑食材信息','edit','full',disabledWrite())}<div class="detail-danger"><div><strong>不再保留这份食材</strong><p>丢弃前再次确认，操作会写入记录。</p></div>${button('丢弃','discard','danger',disabledWrite())}</div>${!writable()?'<p class="field-hint" style="margin-top:20px">只读成员不能使用、移动或修改食材。</p>':''}</div>`);
++  }
++  function useOrMove(type) {
++    if(!writable())return;
++    const f=state.foods.find(f=>f.id===state.selectedId);if(!f)return;
++    if(type==='use'&&f.days<0){toast('这份食材已过期，请先检查处理。');return;}
++    openModal(type,type==='use'?'使用多少食材？':'移到哪个分区？',`<form id="operation-form"><div class="modal-content"><div class="detail-hero"><span class="food-symbol">${icon(f.symbol)}</span><div><h2>${esc(f.name)}</h2><p class="muted">当前 ${f.quantity} ${esc(f.unit)} · ${esc(f.zone)}</p></div></div>${type==='use'?`<label class="field">本次使用量（${esc(f.unit)}）<input name="amount" type="number" min="0.001" step="0.001" max="${f.quantity}" value="${Math.min(1,f.quantity)}" required></label><p class="field-hint" style="margin-top:12px">最多使用 ${f.quantity} ${esc(f.unit)}，数量最多三位小数。</p>`:`<label class="field">目标分区<select name="zone">${['冷藏','变温','冷冻','常温'].map(z=>`<option ${z===f.zone?'selected':''}>${z}</option>`).join('')}</select></label>`}</div><footer class="modal-footer">${button('取消','close-modal')}<button class="btn primary" type="submit">${type==='use'?'确认使用':'确认移动'}</button></footer></form>`);
++  }
++  function recipeDetail(id) {
++    const r=recipes[Number(id)]||recipes[0];state.recipeId=r.id;
++    openModal('recipe',r.name,`<div class="modal-content"><img class="recipe-detail-photo" src="${recipeImage(r.image)}" alt="${r.name}"><div class="row between"><span class="badge">${r.time}</span><span class="muted">${r.coverage}</span></div><h3 style="margin-top:22px">准备食材</h3><ul class="ingredients"><li>${r.id===0?'番茄 2 个、鸡蛋 2 个':r.id===1?'西兰花 1 棵':'鸡蛋 2 个'}</li><li>${r.missing} · 按实际需要准备</li></ul><h3 style="margin-top:20px">家常做法 · 示例</h3><ol class="steps"><li>清洗并处理食材，提前准备好所需用具。</li><li>按食材顺序烹饪，注意火候与用量。</li><li>完成后调味装盘，确认本次实际使用量。</li></ol><p class="field-hint">此处为版式示例，正式版继续读取现有菜谱详情和步骤。</p></div>`,`<footer class="modal-footer">${button('关闭','close-modal')}${button('用现有食材做这道菜','cook','primary',disabledWrite())}</footer>`);
++  }
++  function cookForm() {
++    if(!writable())return;
++    const available=state.foods.filter(f=>f.days>=0&&[2,3,4].includes(f.id));
++    openModal('cook','确认这次做饭用量',`<form id="cook-form"><div class="modal-content"><p class="muted" style="font-size:13px;margin-bottom:18px">逐项选择实际使用的食材。样稿只演示确认，不改变真实库存。</p>${available.map(f=>`<div class="check-row"><label><input type="checkbox" name="food-${f.id}" checked>${esc(f.name)}</label><input type="number" aria-label="${esc(f.name)}使用量" min="0.001" max="${f.quantity}" step="0.001" value="1"><small>${f.unit}</small></div>`).join('')}<div class="form-note">${icon('info')}正式实现继续使用既有幂等请求和版本校验，不能重复扣减。</div></div><footer class="modal-footer">${button('返回','close-modal')}<button class="btn primary" type="submit">确认做饭（演示）</button></footer></form>`);
++  }
++  function familyForm(join) {
++    state.joinFamily=join;
++    openModal('family',join?'加入一个家庭':'创建你的家庭',`<form id="family-form"><div class="modal-content"><label class="field">${join?'家庭邀请码':'家庭名称'}<input name="family" required ${join?'pattern="[A-Za-z0-9]{8}" maxlength="8" placeholder="输入 8 位演示邀请码"':'maxlength="30" placeholder="例如：林间小家"'}></label><div class="form-note">${icon('home')}${join?'加入后默认只读成员。':'创建家庭时同时初始化默认冰箱。'}本面板仅演示交互。</div></div><footer class="modal-footer">${button('取消','close-modal')}<button class="btn primary" type="submit">${join?'加入演示家庭':'创建演示家庭'}</button></footer></form>`);
++  }
++  document.addEventListener('click',event=>{
++    const navButton=event.target.closest('[data-page]');if(navButton){navigate(navButton.dataset.page);return;}
++    const part=event.target.closest('[data-part]');if(part){const key=part.dataset.part;state.openParts.has(key)?state.openParts.delete(key):state.openParts.add(key);document.querySelectorAll(`[data-part="${key}"]`).forEach(b=>b.setAttribute('aria-pressed',String(state.openParts.has(key))));return;}
++    const control=event.target.closest('[data-action]');if(!control||control.disabled)return;
++    const action=control.dataset.action;
++    if(action==='accept-confirm')return;
++    const actions={home:()=>navigate('home'),foods:()=>navigate('foods'),records:()=>navigate('records'),add:()=>addForm(),detail:()=>detail(control.dataset.id),recipe:()=>recipeDetail(control.dataset.id),'close-modal':requestClose,'cancel-confirm':()=>confirmDialog.close(),
++      'close-all':()=>{state.openParts.clear();document.querySelectorAll('[data-part]').forEach(b=>b.setAttribute('aria-pressed','false'));},
++      'reset-scene':()=>toast('已回到默认视角（样稿示意，参考图保持静态）。'),
++      cold:()=>{state.zone='冷藏';navigate('foods');},
++      'reset-filters':()=>{state.query='';state.zone='all';state.expiry='all';state.sort='expiry';render();},
++      edit:()=>addForm(state.foods.find(f=>f.id===state.selectedId)),use:()=>useOrMove('use'),move:()=>useOrMove('move'),
++      discard:()=>{if(!writable())return;const f=state.foods.find(f=>f.id===state.selectedId);if(!f)return;confirm('丢弃这份食材？',`将丢弃「${esc(f.name)}」${f.quantity} ${esc(f.unit)}。正式版会记录操作，并按真实记录提供撤销。`,'确认丢弃',()=>{state.foods=state.foods.filter(item=>item.id!==f.id);closeModal();render();toast('已丢弃食材（演示）· 可在正式版记录中查找。');});},
++      'sample-discard':()=>confirm('丢弃这份食材？','将丢弃鲜牛奶 1 盒。此处只演示危险操作的确认层。','确认丢弃',()=>toast('已确认丢弃（按钮样稿）。')),
++      undo:()=>{if(!writable())return;state.undone=!state.undone;render();toast(state.undone?'已撤销这条操作（演示）。':'已恢复这条操作（演示）。');},
++      password:()=>{const input=$('#login-password');input.type=input.type==='password'?'text':'password';control.setAttribute('aria-label',input.type==='password'?'显示密码':'隐藏密码');},
++      register:()=>{state.register=!state.register;render();},
++      copy:async()=>{try{await navigator.clipboard.writeText('XY8K2M6P');toast('已复制演示邀请码。');}catch{toast('复制不可用，请手动复制：XY8K2M6P');}},
++      'create-family':()=>familyForm(false),'join-family':()=>familyForm(true),
++      member:()=>openModal('member','成员操作示意',`<div class="modal-content"><h3>小陈 · 当前 VIEWER</h3><p class="muted" style="margin:12px 0 22px">可查看食材与菜谱，不能修改库存。</p>${button('调整为可编辑成员','sample-role','full')}${button('移除成员','sample-remove','danger full','style="margin-top:12px"')}<p class="field-hint" style="margin-top:18px">正式版仅家庭主人可操作，服务端仍会校验权限。</p></div>`),
++      'sample-role':()=>confirm('调整成员权限？','把小陈从只读成员调整为可编辑成员后，对方可以修改家庭食材。','确认调整',()=>toast('已确认权限调整（演示，未修改真实成员）。')),
++      'sample-remove':()=>confirm('移除这位成员？','小陈将失去访问此家庭库存的权限。此处仅演示确认界面。','确认移除',()=>toast('已确认移除（演示）。')),
++      cook:cookForm,sample:()=>toast('这是固定按钮状态示例。'),
++    };actions[action]?.();
++  });
++  document.addEventListener('input',event=>{
++    if(event.target.id==='food-search'){state.query=event.target.value;updateFoodResults();}
++    const form=event.target.closest('#food-form');if(form)state.dirty=new URLSearchParams(new FormData(form)).toString()!==state.initialForm;
++  });
++  document.addEventListener('change',event=>{
++    if(event.target.id==='scheme-picker'){location.href=`prototype.html?scheme=${event.target.value}&page=${state.page}`;return;}
++    if(event.target.id==='role-picker'){state.role=event.target.value;render();return;}
++    if(event.target.id==='zone-filter')state.zone=event.target.value;
++    if(event.target.id==='expiry-filter')state.expiry=event.target.value;
++    if(event.target.id==='sort-picker')state.sort=event.target.value;
++    if(['zone-filter','expiry-filter','sort-picker'].includes(event.target.id))updateFoodResults();
++    const form=event.target.closest('#food-form');if(form)state.dirty=new URLSearchParams(new FormData(form)).toString()!==state.initialForm;
++  });
++  document.addEventListener('submit',async event=>{
++    const form=event.target;event.preventDefault();
++    if(form.id==='food-form'){
++      if(!writable()||state.pending)return;
++      const data=Object.fromEntries(new FormData(form));
++      form.querySelectorAll('.has-error').forEach(el=>el.classList.remove('has-error'));
++      const errors={};
++      if(!data.name.trim())errors.name='请填写食材名称。';
++      if(!/^\d+(\.\d{1,3})?$/.test(data.quantity)||Number(data.quantity)<=0||Number(data.quantity)>999999)errors.quantity='数量须大于 0，最多三位小数且不超过 999999。';
++      if(!data.date)errors.date='请选择到期日期。';
++      if(data.purchase&&data.date&&data.date<data.purchase)errors.date='到期日期不能早于购买日期。';
++      for(const [key,message]of Object.entries(errors)){const field=$(`[data-field="${key}"]`,form);field.classList.add('has-error');$('.field-error',field).textContent=message;}
++      if(Object.keys(errors).length){$('input,select',$(`[data-field="${Object.keys(errors)[0]}"]`,form)).focus();return;}
++      const save=$('#save-food');const shouldFail=$('#fail-next').checked;$('#fail-next').checked=false;
++      state.pending=true;save.disabled=true;save.innerHTML='<span class="spinner"></span>正在保存…';$('.form-error',form).classList.remove('visible');
++      form.querySelectorAll('input,select,textarea').forEach(e=>e.disabled=true);
++      modal.querySelectorAll('[data-action="close-modal"]').forEach(b=>b.disabled=true);
++      await new Promise(resolve=>setTimeout(resolve,750));
++      if(shouldFail){state.pending=false;form.querySelectorAll('input,select,textarea').forEach(e=>e.disabled=false);save.disabled=false;save.textContent='重新保存';modal.querySelectorAll('[data-action="close-modal"]').forEach(b=>b.disabled=false);$('.form-error',form).textContent='保存失败（模拟）。填写内容已保留，请重试。';$('.form-error',form).classList.add('visible');return;}
++      const id=state.editId||state.nextId++;
++      const existing=state.foods.find(f=>f.id===id);
++      const food={id,name:data.name.trim(),quantity:Number(data.quantity),unit:data.unit,zone:data.zone,category:data.category,purchase:data.purchase,date:data.date,days:Math.round((Date.parse(data.date+'T00:00:00Z')-Date.parse('2026-11-10T00:00:00Z'))/86400000),symbol:existing?.symbol||'pantry'};
++      state.foods=existing?state.foods.map(f=>f.id===id?food:f):[...state.foods,food];state.dirty=false;closeModal();render();$('[data-action="add"]')?.focus();toast('已保存食材（演示）· 刷新后重置。');
++    }else if(form.id==='operation-form'){
++      if(!writable())return;const data=Object.fromEntries(new FormData(form));const food=state.foods.find(f=>f.id===state.selectedId);if(!food)return;
++      if(state.modalType==='use'){const amount=Number(data.amount);if(!/^\d+(\.\d{1,3})?$/.test(data.amount)||amount<=0||amount>food.quantity){toast('请填写有效数量，最多三位小数且不能超过库存。');return;}food.quantity=Number((food.quantity-amount).toFixed(3));}else food.zone=data.zone;
++      closeModal();render();toast('已更新食材（演示）。');
++    }else if(form.id==='login-form'){navigate('home');toast('已进入演示厨房，未登录真实账号。');
++    }else if(form.id==='family-form'){const value=new FormData(form).get('family');state.familyName=state.joinFamily?'加入的演示家庭':value;closeModal();navigate('family');toast('已更新演示家庭名称；当前食材仍为选稿示例。');
++    }else if(form.id==='cook-form'){if(!writable())return;if(!form.querySelector('input[type=checkbox]:checked')){toast('请至少选择一份食材。');return;}closeModal();toast('已确认做饭用量（样稿演示，未扣减库存）。');}
++  });
++  modal.addEventListener('cancel',event=>{event.preventDefault();requestClose();});
++  modal.addEventListener('click',event=>{if(event.target===modal){const r=modal.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)requestClose();}});
++  render();
++  window.reviewState=()=>({scheme:state.scheme,page:state.page,role:state.role,foodCount:state.foods.length,pending:state.pending,dirty:state.dirty,openParts:[...state.openParts]});
++})();
+
+diff --git a/docs/design/ui-redesign-2026-11-10/review.css b/docs/design/ui-redesign-2026-11-10/review.css
+new file mode 100644
+index 0000000..c4cd14f
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/review.css
+@@ -0,0 +1,5 @@
++@font-face{font-family:Xiaoyi;src:url('../../../apps/fridge-app/assets/fonts/XiaoyiUI-Regular.ttf')}@font-face{font-family:Xiaoyi;src:url('../../../apps/fridge-app/assets/fonts/XiaoyiUI-Semibold.ttf');font-weight:600}
++*{box-sizing:border-box}body{margin:0;background:#f4f6f7;color:#171a1d;font:14px/1.7 Xiaoyi,'Microsoft YaHei',sans-serif}a{color:inherit;text-decoration:none}a:hover{text-decoration:underline}a:focus-visible{outline:2px solid #344f66;outline-offset:4px}h1,h2,h3,p{margin:0}.eyebrow{font:11px/1.5 'Segoe UI',sans-serif;letter-spacing:2.5px;color:#59636d}.review-header{height:90px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #dce2e6;margin:0 5vw}.wordmark{font-size:22px;font-weight:600}.wordmark span{font:10px/1 'Segoe UI',sans-serif;letter-spacing:2px;color:#59636d;margin-left:17px}.status{font-size:12px;color:#59636d}.gallery main{max-width:1700px;padding:0 5vw;margin:auto}.gallery-intro{display:flex;justify-content:space-between;gap:40px;align-items:center;padding:58px 0 50px}.gallery-intro h1{font-size:46px;line-height:1.3;letter-spacing:-1px;font-weight:600;margin:16px 0 20px}.gallery-intro p{color:#59636d;font-size:15px;line-height:1.9}.intro-notes{display:grid;gap:13px;font-size:13px;color:#59636d;min-width:280px}.doc-link{color:#171a1d;margin-top:12px;font-weight:600}.scheme-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}.scheme-card{border:1px solid #dce2e6;background:white;border-radius:14px;overflow:hidden;min-width:0}.scheme-image{display:block;position:relative;aspect-ratio:1.5;background:#e7edf0;padding:10px}.scheme-image img{width:100%;height:100%;object-fit:cover;object-position:top;border:1px solid #dce2e6;border-radius:5px}.scheme-image>span{position:absolute;top:20px;left:20px;display:flex;align-items:center;justify-content:center;background:#171a1d;color:white;width:34px;height:34px;border-radius:7px;font:18px/1 'Segoe UI',sans-serif}.scheme-info{padding:24px}.scheme-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.scheme-title h2{font-size:23px;font-weight:600}.recommended{padding:3px 7px;background:#eaf0f3;color:#435766;font-size:11px;border-radius:4px}.scheme-info p{font-size:13px;color:#59636d;line-height:1.9}.swatches{display:flex;gap:7px;margin:21px 0}.swatches i{width:24px;height:24px;border-radius:50%;border:1px solid #c8d0d6}.scheme-links{display:flex;flex-direction:column;align-items:flex-start;gap:14px;font-size:12px}.scheme-links .primary{display:flex;align-items:center;justify-content:center;width:100%;min-height:45px;background:#171a1d;color:white;border-radius:8px}.scheme-links .primary:hover{background:#30363c;text-decoration:none}.review-instructions{padding:38px 0;margin-top:38px;border-block:1px solid #dce2e6;display:flex;justify-content:space-between;gap:30px;align-items:center}.review-instructions h2{font-size:22px;margin-bottom:12px}.review-instructions p{font-size:13px;line-height:1.9;color:#59636d}.review-instructions a{font-size:13px;display:inline-block;margin-top:10px}.gallery footer{padding:25px 0 40px;color:#59636d;font-size:11px}
++/* Fixed-size contact sheets are for exported review images, not app layout. */
++body.board{width:1800px;background:#edf1f3;padding:40px 48px 32px}.board-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}.board-head h1{font-size:37px;line-height:1.4;margin-top:7px;font-weight:600}.board-head p{font-size:14px;color:#59636d;margin-top:7px}.board-index{font:64px/1 'Segoe UI',sans-serif;font-weight:300;color:#85919b}.board-grid{display:grid;grid-template-columns:1130px 300px 230px;gap:22px}.board-cell h2{font-size:14px;font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}.board-cell h2 span{font:10px/1 'Segoe UI',sans-serif;color:#59636d;letter-spacing:1px}.board-image{display:block;width:100%;height:auto;border:1px solid #cfd7dd;border-radius:7px;background:white}.board-mobile .board-image{width:300px}.board-side{padding-top:3px}.board-side h3{font-size:15px;margin-bottom:8px}.board-side p{font-size:12px;line-height:1.9;color:#59636d}.board-side .swatches{margin-top:17px}.board-rule{border-top:1px solid #cbd4db;margin:20px 0}.board-side .mini-button{display:flex;align-items:center;justify-content:center;min-height:42px;background:#171a1d;border:1px solid #171a1d;color:white;border-radius:10px;font-size:12px;margin:9px 0}.board-side .mini-button.secondary{background:white;border-color:#85919b;color:#171a1d}.board-side .mini-button.disabled{background:#e1e7eb;color:#737f8a;border-color:#e1e7eb}.board-side .mini-button.loading{background:#171a1d;color:white}.board-details{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin-top:23px}.detail-image-frame{height:236px;overflow:hidden;border:1px solid #cfd7dd;border-radius:7px;background:white}.detail-image-frame img{display:block;width:100%;height:auto}.board-cell .detail-image-frame h3{font-size:13px}.board-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#59636d;border-top:1px solid #cbd4db;padding-top:17px;margin-top:23px}.board-summary{font-size:12px;color:#59636d;margin-top:12px}.palette-note{display:flex;justify-content:space-between;font-size:11px;color:#59636d;margin-bottom:13px}.board-side .point{margin-bottom:10px;padding-left:11px;border-left:2px solid #85919b}.button-states{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.state-chip{font-size:10px;padding:3px 5px;background:#e4eaee;border-radius:3px;color:#46535e}
++@media(max-width:950px){.gallery-intro{padding-block:35px}.gallery-intro h1{font-size:37px}.scheme-grid{grid-template-columns:1fr}.scheme-card{display:grid;grid-template-columns:1fr 1fr}.scheme-image{height:100%;aspect-ratio:auto}.scheme-info{padding:25px}.review-instructions{display:block}.review-instructions>div+div{margin-top:20px}}@media(max-width:600px){.review-header{height:auto;min-height:80px;flex-wrap:wrap;padding-block:15px;gap:7px}.wordmark{font-size:19px}.wordmark span{font-size:9px;margin-left:10px}.status{font-size:10px}.gallery-intro{display:block}.gallery-intro h1{font-size:34px}.gallery-intro p{font-size:13px}.intro-notes{margin-top:25px;min-width:0;font-size:12px;gap:8px}.scheme-card{display:block}.scheme-image{aspect-ratio:1.5}.scheme-info{padding:23px}.gallery-intro .eyebrow{font-size:9px}.review-instructions{margin-top:28px;padding:28px 0}}
+
+diff --git a/docs/design/ui-redesign-2026-11-10/screens.html b/docs/design/ui-redesign-2026-11-10/screens.html
+new file mode 100644
+index 0000000..625293b
+--- /dev/null
++++ b/docs/design/ui-redesign-2026-11-10/screens.html
+@@ -0,0 +1 @@
++<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>小易冰箱 · 逐页审查</title><link rel="stylesheet" href="review.css"><style>.shots{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;padding:30px 0}.shot{min-width:0}.shot h2{font-size:16px;margin-bottom:10px}.shot img{max-width:100%;height:auto;border:1px solid #cbd4db;background:white;border-radius:8px}.shot.phone img{max-width:390px;display:block;margin:auto}.shot p{font-size:12px;color:#59636d;margin-top:8px}@media(max-width:760px){.shots{grid-template-columns:1fr}}</style></head><body class="gallery"><header class="review-header"><a class="wordmark" href="index.html">← 三套方案</a><span class="status" id="title"></span></header><main><div class="shots" id="shots"></div></main><script>const q=new URLSearchParams(location.search);const s=['a','b','c'].includes(q.get('scheme'))?q.get('scheme'):'a';document.getElementById('title').textContent=s.toUpperCase()+' · 逐页高清审查 · 演示数据';document.getElementById('shots').innerHTML=[['home','桌面首页'],['mobile','手机首页','phone'],['foods','食材清单与筛选'],['mobile-foods','手机清单','phone'],['add','新增食材','phone'],['detail','食材详情','phone'],['recipes','菜谱灵感'],['family','家庭与权限'],['login','登录'],['records','操作时间线'],['components','按钮状态']].map(([file,title,cls])=>`<section class="shot ${cls||''}"><h2>${title}</h2><a href="screens/${s}/${file}.png"><img src="screens/${s}/${file}.png" alt="${title}" loading="lazy"></a><p><a href="prototype.html?scheme=${s}&page=${file==='mobile'||file==='add'||file==='detail'?'home':file==='mobile-foods'?'foods':file}">进入可点击样稿 →</a></p></section>`).join('');</script></body></html>
+
+diff --git "a/docs/design/ui-redesign-2026-11-10/\346\200\273\344\275\223\350\256\276\350\256\241\346\226\207\346\241\243.md" "b/docs/design/ui-redesign-2026-11-10/\346\200\273\344\275\223\350\256\276\350\256\241\346\226\207\346\241\243.md"
+new file mode 100644
+index 0000000..f54393f
+--- /dev/null
++++ "b/docs/design/ui-redesign-2026-11-10/\346\200\273\344\275\223\350\256\276\350\256\241\346\226\207\346\241\243.md"
+@@ -0,0 +1,189 @@
++# 小易冰箱 V2.0 · 黑白冷调厨房 UI 总体设计
++
++日期：2026-11-10　｜　阶段：设计提案，待用户选稿　｜　适用：Flutter Web / Android 用户端
++
++本轮交付总体设计、A/B/C 三套审查视图及离线交互样稿。用户确认方案后，再分阶段修改正式前端。现行暖橙食集仍是已实现基线；本提案尚未替换产品界面。
++
++## 1. 设计目标
++
++让用户感觉自己正在整理家里的冰箱。黑与白建立界面秩序，浅冷灰和低饱和灰蓝构成厨房环境，食材保留自然颜色。操作从“看厨房 → 找食材 → 使用或补充 → 安排一餐”自然展开。
++
++核心原则：
++
++1. 厨房真实可信：冰箱有实际体积、门缝、拉手和接地阴影；台面、柜体、窗光有一致的尺度与光照。
++2. 界面安静：白底、近黑文字、黑色主按钮；去除大面积奶油色、橙色、暖木和装饰渐变。
++3. 操作清楚：每个区域一个主要动作，按钮直接写“新增食材”“保存食材”“确认使用”，避免只有图标或含糊口号。
++4. 状态可信：正在保存、保存失败、只读、冲突、无结果有明确反馈；不能用动效或颜色暗示数据已成功。
++5. 手机可单手操作：主要动作和分区切换可触达，长表单能滚动，软键盘不遮住输入与错误。
++
++## 2. 现状与改版范围
++
++阅读依据：`docs/开发状态.md`、当前主题、主导航、冰箱首页、按钮组件和 Three.js 场景源码。现有用户端已实现家庭隔离、角色权限、真实库存、筛选、时间线、撤销/恢复、做饭扣减及编辑/清理。
++
++| 当前界面 | 新设计处理 | 业务约束 |
++| --- | --- | --- |
++| 陶土橙、可可文字、奶油底色、暖木场景 | 改为黑白界面与浅冷色厨房 | 品牌名称及口号保留 |
++| 胶囊按钮、大圆角卡片、较多色块 | 统一 10–12 px 按钮、12–16 px 面板；用留白和细分隔线组织 | 不减少必需操作 |
++| 98 px 导航轨，冰箱/菜谱/家庭三项 | 三套方案比较导航密度与布局；三项主业务始终一致 | 清单与记录仍属于冰箱功能，不新增独立业务 |
++| 三维厨房与库存侧栏 | 重排场景、临期提示和清单，保留真实 WebGL 能力 | 照片仅供选稿，不能充当已完成的三维交互 |
++| 新增、查询、详情等根弹层 | 统一侧抽屉/底部面板、底部操作区和焦点处理 | 保留版本、校验、草稿、权限与失败恢复 |
++| Vue 运营端 | 确认后可同步基础颜色与组件 | 继续标注历史示例，不扩展商城、订单或管理接口 |
++
++本次不增加设备温控、远程控制、购物支付、AI 识别、菜谱收藏、实时协作或布局编辑。温度仅为储存参考；不显示虚构的设备在线状态、节约金额或健康评分。
++
++## 3. 三套选稿方向
++
++三套使用同一份示例库存和厨房参考图，方便比较布局本身。差异体现在空间分配、导航位置、信息密度和按钮形态，不依赖换一张背景图。
++
++| 方案 | A · 静白全景（推荐） | B · 冷雾工作台 | C · 墨线橱窗 |
++| --- | --- | --- | --- |
++| 第一印象 | 明亮、安静，冰箱是主角 | 紧凑、有序，处理食材更快 | 黑白对比明确，建筑感更强 |
++| 桌面结构 | 白色窄导航轨 + 大厨房场景 + 右侧今日清单 | 顶部导航 + 左场景/右工作台，摘要嵌入工作区 | 深色侧导航 + 横向厨房橱窗 + 宽清单 |
++| 场景位置 | 中央最大视觉区 | 左侧约半屏，与食材清单平衡 | 顶部全宽横向场景，下方管理区域 |
++| 按钮 | 12 px 圆角，黑实心主按钮 | 10 px 圆角，分段控件与紧凑操作栏 | 6 px 圆角，线性结构与近黑主按钮 |
++| 环境色 | 冷白、淡石灰、少量雾蓝 | 灰蓝面积稍大，表面依旧白色 | 白色为主，深色仅用于导航与重点 |
++| 适合偏好 | 真实厨房体验与日常易用性平衡 | 经常筛选、补录和调整食材 | 喜欢清晰框架、较高信息密度 |
++| 需要确认 | 是否接受场景占用更多首屏 | 是否希望清单比场景更突出 | 是否接受整条深色导航 |
++
++推荐 A：最接近“真实厨房 + 简约黑白”的要求，同时保留现有三维冰箱作为作品特色。B 更偏实际库存操作；C 提供更鲜明的黑白构图。
++
++每套审查视图包含桌面首页、手机首页、清单与筛选、新增面板、食材详情、菜谱、家庭、登录及按钮状态。离线样稿可切换页面，并演示新增校验、只读、失败重试、危险确认和门控按钮状态。
++
++## 4. 颜色与材质
++
++### 4.1 共用语义色板
++
++| Token | 色值 | 用途 |
++| --- | --- | --- |
++| `surface` | `#FFFFFF` | 表单、内容面板、主工作区 |
++| `canvas` | `#F4F6F7` | 页面浅冷灰背景 |
++| `ink` | `#171A1D` | 主文字、主按钮、已选按钮 |
++| `ink-hover` | `#30363C` | 主按钮悬停 |
++| `ink-pressed` | `#080B0E` | 主按钮按压 |
++| `secondary-text` | `#59636D` | 次要文字 |
++| `line` | `#DCE2E6` | 面板分隔与非交互边界 |
++| `control-line` | `#85919B` | 输入框、次按钮等必需控件边界 |
++| `cool-surface` | `#EAF0F3` | 浅冷场景底、次级选区背景 |
++| `focus` | `#344F66` | 键盘焦点环，非品牌装饰色 |
++| `danger` | `#963D45` | 破坏操作、过期与输入错误，配文字/图标 |
++| `success` | `#345E50` | 成功反馈，配勾号与文字 |
++| `warning` | `#735522` | 临期文字与提示图标，避免大面积黄色 |
++
++界面视觉面积以白与浅冷灰为主，近黑用于文字、导航和主动作；灰蓝集中在厨房材质及少量次级表面。颜色比例是构图指导，不是运行时统计指标。食材与菜谱图片可以保留自然色，但不将其颜色扩展到整页。
++
++### 4.2 厨房建模方向
++
++- 柜门：哑光白或极浅冷灰；石英石台面使用浅灰细颗粒，避免夸张大理石花纹。
++- 墙面：雾蓝灰小砖或浅冷灰板材，接缝低对比；地面为浅冷灰，不做棋盘装饰。
++- 冰箱：白色哑光金属外壳、深色细门缝与拉手；可有轻微反射，避免镜面强高光。
++- 光照：侧窗冷白自然光 + 柔和环境光；保留柜体和地面接触阴影，去除暖黄光。
++- 道具：少量瓷碗、灰色布巾、水槽；保持台面整洁，避免植物/瓶罐堆积遮挡冰箱。
++- 相机：默认正面轻透视，手机首屏完整显示冰箱；拖动后提供“复位视角”，不自动旋转。
++- 生产实现仍使用已有 Three.js 几何、拾取与 Flutter 消息桥；本轮 `assets/kitchen-reference.png` 是生成的构图/材质参考，未实现开门动画或库存同步。
++
++## 5. 信息架构与页面规则
++
++主导航固定为「冰箱 / 菜谱 / 家庭」。桌面三种布局允许位置不同，手机统一三项底导航，冰箱/清单页在底栏并列放置独立「新增」动作，避免悬浮按钮遮挡门控；食材清单、操作记录通过冰箱页进入。切页保留已确认的筛选、滚动位置和三维实例，隐藏场景停止渲染与输入。
++
++| 页面/状态 | 首要内容 | 主要动作与交互 |
++| --- | --- | --- |
++| 启动/登录/注册 | 小易冰箱、厨房参考、清晰表单 | 登录/注册一个主动作；密码可见性、错误定位、提交锁定 |
++| 冰箱首页 | 当前家庭与冰箱、待处理食材、三维厨房、分区清单 | 新增食材；查看清单；开门/抽屉；复位视角 |
++| 清单与筛选 | 名称搜索、分区、分类、标签、到期范围、排序 | 显示筛选结果数，清空筛选；筛选不改变场景的完整库存 |
++| 新增/编辑 | 名称、分类、数量/单位、分区、购买/到期日期 | 保存；失败保留内容，关闭有修改草稿时确认 |
++| 食材详情 | 数量、分区、分类、日期、到期文字 | 使用、移动、编辑；丢弃放在低优先级危险区 |
++| 使用/移动 | 可见原数量/原分区与变更后结果 | 提交带版本；数量最多三位小数，边界沿用服务端 |
++| 过期清理 | 只列确实已过期条目，今天到期不进入清理 | 二次确认；展示成功/跳过/失败，不承诺整批撤销 |
++| 操作记录 | 时间、操作者、食材、增减、撤销状态 | 按接口能力显示单条撤销/恢复；ADD/UPDATE 不伪装为可撤销 |
++| 菜谱列表/详情 | 真实菜名、已有原料/缺料、步骤、匹配口径 | 查看做法 → 选择扣减食材与份数 → 确认做饭 |
++| 家庭与设置 | 当前家庭、角色、切换、成员、创建/加入 | OWNER 管成员；EDITOR 可写食材；VIEWER 只读 |
++| 无家庭/无冰箱 | 简明说明与对应引导 | 创建家庭并初始化冰箱；已有家庭无冰箱时仅 OWNER 创建 |
++| 失败/空结果/只读 | 原因、当前上下文、可执行的恢复动作 | 重试/清空筛选/返回；禁用旁写明原因 |
++
++临期定义跟随后端配置，不在 UI 写死“三天”。原系统 `expiring` 可包含过期，首页呈现时明确区分“即将到期”和“已过期”，合计按同一快照计算，避免把过期食材纳入“今天推荐食用”。样稿日期固定为 2026-11-10，8 条库存中即将到期 3 条、已过期 1 条，仅为设计演示。
++
++## 6. 按钮、表单与反馈规范
++
++### 6.1 按钮等级
++
++| 等级 | 样式 | 例子 | 规则 |
++| --- | --- | --- | --- |
++| 主要 | 近黑底、白字、可带线性图标 | 新增食材、保存食材、确认使用 | 每个局部任务一个主要按钮，不整页重复黑块 |
++| 次要 | 白底、可辨识灰边、近黑字 | 食材清单、查看记录、取消 | 同主按钮等高，依次排布 |
++| 文字 | 无底、近黑文字 + 明确语义 | 查看全部、重置筛选 | 小型辅助动作，不承载关键提交 |
++| 危险 | 深红文字/边框，确认层可深红实心 | 丢弃、清理过期、移除成员 | 带对象与后果说明，默认焦点不落在确认危险按钮 |
++| 切换 | 未选白底，已选近黑底白字 | 分区、三维门控 | 多门可同时开启，各自独立高亮；概览不冒充开启 |
++| 图标 | 至少 44 × 44 px 命中区 | 关闭、刷新、复位 | 有可访问名称和桌面提示，不靠悬停才能操作 |
++
++桌面按钮常规高度 44 px，手机主要动作 48 px；输入框 48 px。按钮间距至少 8 px，危险操作与普通操作间距至少 16 px。标签不因加载消失：转为“正在保存…”并显示转圈，占位宽度不跳动。
++
++### 6.2 必须展示的状态
++
++| 状态 | 视觉 | 行为 |
++| --- | --- | --- |
++| 默认 | 黑/白等级明确 | 可点击、可键盘触达 |
++| 悬停 | 主按钮略提亮，次按钮浅灰底 | 120 ms 颜色过渡，无漂浮大阴影 |
++| 按下 | 主按钮更深，最多 1 px 下移 | 命中范围不缩小，禁用时无按压反馈 |
++| 焦点 | 2 px 深灰蓝外环 + 2 px 间隙 | 不去掉浏览器/Flutter 焦点可见性 |
++| 提交中 | 转圈 + 正在保存，禁用相关写入口 | 防重复提交；关闭/切家庭遵循任务中规则 |
++| 成功 | 勾号 + 明确结果 | 服务端确认后更新；“新增”不提供伪撤销，丢弃按实际时间线撤销 |
++| 失败 | 表单内错误 + 重试入口 | 草稿与滚动保留，重新提交同一幂等请求按既有契约 |
++| 禁用 | 浅灰底、灰字；旁附原因 | 不能触发写请求；只读说明始终可见 |
++
++### 6.3 关键操作流程
++
++- 新增：打开空表单 → 名称/数量/日期校验 → 点击保存 → 提交锁定 → 成功关闭并刷新；失败留在面板。关闭修改过的草稿时提供“继续填写 / 放弃修改”。
++- 使用：显示当前数量与单位 → 步进或手填 → 显示使用后剩余 → 确认。不能负数、超量、超过三位小数；冲突提示“库存已更新，请刷新后重试”，不回写旧库存。
++- 分区：切换分区后同步清单；门/抽屉按钮独立控制模型开合。显示储存参考温度，不能被理解为可控制设备温度。
++- 丢弃/清理：先列对象和数量，再确认；成功提示条提供“查看记录”，只有真实可撤销记录才展示撤销。
++- 做饭：详情进入扣减确认，用户逐项选择数量；使用既有 `requestId` 幂等机制；失败不会把已提交任务当作未提交重复扣减。
++- 家庭切换：先处理未保存草稿，再切换；立即撤下旧家庭库存并显示加载。成功/失败都检查请求家庭和当前家庭一致，禁止旧请求覆盖。
++
++## 7. 布局、字体与动效
++
++桌面基准 1440 × 960，手机 390 × 844；同时检查 320、768、1024、1440、1920 宽度。最大正文宽度约 1600 px，大屏用留白承接，不无限拉宽文字。小于 1100 px 收起复杂并排区域，小于 760 px 变为纵向布局与底导航。
++
++- 间距以 4/8 px 为基本单位，常用 16/24/32 px。正文 14–16 px，页标题 28–36 px，辅助文字至少 12 px；长中文按钮允许合理换行，数值与单位不拆开。
++- 字体沿用本地 Xiaoyi UI 并使用系统中文回退，包含常规和半粗字重，不依赖外网字体。
++- 线性图标统一 1.5–1.8 px，20–24 px；避免混用彩色表情和不同粗细图标。
++- 桌面表单为约 440–480 px 侧抽屉；手机为可滚动全宽面板，底部保存区考虑安全区与软键盘。弹层打开后暂停场景输入，关闭恢复焦点到触发按钮。
++- 按钮 120 ms；页面/面板 180–220 ms；门/抽屉沿用自然开合约 320–450 ms。支持系统减少动态效果，取消位移与自动动效。
++- 正文对比度目标至少 4.5:1，必要控件边界与焦点至少 3:1；错误、临期、已选均配文字/图标，不只靠颜色。
++- 键盘顺序与阅读顺序一致；弹层锁定焦点，Esc 进入关闭/草稿确认流程，焦点回到触发入口；提交错误定位到第一处字段。
++
++## 8. 审查包如何使用
++
++打开 `index.html` 进入审查入口，也可直接打开 `prototype.html?scheme=a`（b/c 同理）。全部本地资源，无后端请求，输入内容仅保存在当前样稿内存中，刷新即重置。
++
++建议顺序：
++
++1. 先看 `review-a.png / review-b.png / review-c.png`，比较桌面/手机和页面细节。
++2. 进入任意方案，切换「冰箱 / 菜谱 / 家庭」，再看清单、详情、记录和登录页。
++3. 点击新增：空提交看字段错误；正常提交看加载与反馈；“审查控制”可切换只读或模拟一次失败，查看重试与草稿保留。
++4. 在清单尝试名称、分区与到期筛选；在详情尝试丢弃确认；在首页尝试门控按钮独立高亮。
++
++样稿中的门控仅示意控制状态，厨房参考图不会开门；没有实际接入业务、WebGL、鉴权、持久化或网络失败。只读切换属于审查工具，不是正式用户设置。截图、自动检查和产品端到端验收分别记录。
++
++用户确认项：A/B/C 整体布局；黑色导航面积；场景与清单比例；按钮圆角与密度；手机新增入口及面板形式。允许选择“A 的布局 + B 的清单密度”等组合，再收敛一套实施稿。
++
++## 9. 确认后的实施与阶段审查
++
++本轮停在选稿，不自动进入正式 UI 实现。这是用户“先给总体设计文档和三套审查视图让我确认”的明确顺序要求。原有常规阶段自动推进约定继续适用于确认后的开发。
++
++| 阶段 | 范围 | 阶段通过条件 |
++| --- | --- | --- |
++| D0（本轮） | 设计文档、三套样稿、截图与交互审查 | 链接/资源/响应式/样稿交互检查通过；用户选稿尚待完成 |
++| D1 | 选定方案、颜色/组件/导航、登录注册 | 完整 diff 审查；Flutter 分析、相关组件回归、Web 构建；不改接口 |
++| D2 | 首页/清单/新增详情、记录和做饭界面 | 权限、家庭隔离、异步切换、草稿/失败恢复、版本与幂等审查；有针对性自动化及真实接口验证 |
++| D3 | Three.js 材质/厨房/光照与跨端适配 | 三维状态测试、真实库存同步、全部门控组合、降级清单、减少动态效果及实际浏览器检查 |
++| D4 | 菜谱/家庭/全局状态、交付整理 | 桌面与手机浏览器全路径；Android 真机单列；记录本轮执行证据及未执行项 |
++
++每次切阶段前审查上一阶段代码与完整 diff，先修复正确性问题并回归。审查记录写入 `docs/reviews/`，再更新开发状态。设计选稿、自动化通过、真实 Web 验收、Android 真机验收是四种不同结论；不能互相替代。
++
++## 10. 素材来源和交付边界
++
++- 新厨房参考：通过内置 imagegen 生成，提示词与来源见 `assets/素材说明.md`，供设计选稿使用。
++- 菜谱图片：复用仓库既有图片；素材授权状态沿用现有项目，生产交付前仍需核实，不新增已获授权的断言。
++- 界面：可编辑 HTML/CSS/JavaScript 样稿，独立于正式 Flutter；所有示例家庭、食材与操作均明确标注演示。
++- 文件：本设计文档、审查入口、三套审查图、各页高清截图、按钮状态页、可复验的浏览器检查脚本及审查记录。
++- 本轮不提交、不推送、不部署，不以样稿替换现有业务前端。
+
+diff --git a/docs/reviews/2026-11-10-monochrome-kitchen-design.md b/docs/reviews/2026-11-10-monochrome-kitchen-design.md
+new file mode 100644
+index 0000000..83010ac
+--- /dev/null
++++ b/docs/reviews/2026-11-10-monochrome-kitchen-design.md
+@@ -0,0 +1,85 @@
++# 小易冰箱 · 黑白冷调厨房设计阶段审查
++
++日期：2026-11-10。基线：`60a0077`，本轮开始时工作区干净。阶段：D0 设计提案，用户选稿待完成。
++
++## 1. 结论与范围
++
++本轮设计样稿代码审查及自动化验证通过；交付总体设计文档、三套审查大图、33 张逐页截图和离线交互入口。A「静白全景」、B「冷雾工作台」、C「墨线橱窗」均采用黑白主色及浅冷色厨房。
++
++本结论仅覆盖独立设计包。**用户尚未确认方向，未开始正式 Flutter / Three.js UI 替换；不属于真实家庭业务端到端验收通过。** 没有提交、推送、部署或修改真实家庭数据。
++
++审查依据：根 `AGENTS.md`、`docs/开发状态.md`、现行 V1.5 视觉说明、当前 Flutter 主题/导航/按钮/冰箱首页/家庭页和 Three.js 场景代码。没有把旧设计包中的订单、商城和温控想象重新纳入本轮业务。
++
++完整本轮工作区差异覆盖：
++
++- `docs/design/ui-redesign-2026-11-10/` 全部新增文档、素材说明、样稿页面、样式、交互逻辑、截图生成/验证脚本及生成图片；未跟踪文本文件也纳入审查，不能只依赖 `git diff` 的已跟踪输出。
++- 本审查记录、`docs/reviews/evidence/2026-11-10-ui-proposal/` 的验证结果和交付清单。
++- 审查完成后更新的 `docs/开发状态.md`。
++- 没有 `apps/`、`backend/`、`contracts/` 或 `infra/` 的变更。复用现有菜谱图片和本地字体，没有覆盖这些源文件。
++
++## 2. 重点审查
++
++| 维度 | 检查与结果 |
++| --- | --- |
++| 权限 | 样稿 OWNER/VIEWER 是审查工具。只读入口禁用，详情写操作也禁用；写处理再次检查角色。它不代表真实鉴权，正式实现仍须依赖服务端角色校验。 |
++| 数据隔离 | 样稿不读取会话、令牌、真实家庭或网络 API，不使用浏览器持久化；每次重载回到示例库存。家庭名称改变只改变示例文案，已明确不是实际家庭切换。 |
++| 异步竞态 | 模拟保存期间锁定提交、输入及关闭，防止提交快照和界面字段分离；失败解锁并保留草稿。不存在把样稿写入正式业务的路径。 |
++| 失败恢复 | 空名称/数量/日期有字段错误；模拟失败保留输入与重试；草稿放弃、丢弃及成员操作先确认；取消不改变库存；关闭详情返回触发入口焦点。 |
++| 接口兼容 | 本轮没有修改接口。设计文档保留版本冲突、做饭幂等、动态临期阈值、撤销/恢复边界以及只读权限；不能把样稿的固定日期/三天示例复制为生产逻辑。 |
++| 呈现真实性 | 三套使用同一厨房生成图以比较布局；页面、审查图及文档均注明静态参考，门控只改变按钮状态。菜谱匹配、操作记录、成员与库存均明确示例。 |
++| 输入与脚本 | URL 中方案/页面用允许列表；用户填写名称在插入 HTML 时转义；样稿无 fetch/XHR/WebSocket、外链字体或存储调用。 |
++| 验证工具 | 临时 HTTP 服务只绑定 127.0.0.1，限制设计目录与既有素材路径；Edge 无头运行并隐藏窗口；只清理已核对绝对路径/父目录/前缀的专用临时浏览器目录。 |
++
++## 3. 发现及修复
++
++首轮自动化 191/191 通过，但人工看图发现问题；不能用自动计数替代视觉审查。修正后补充回归，最终重新生成所有图片。
++
++| 发现 | 修复 | 本轮验证 |
++| --- | --- | --- |
++| 手机悬浮新增遮挡冷冻抽屉按钮 | 新增作为独立动作并入底部导航操作区，三项主导航保留 | 三套手机截图复看；新增按钮边界位于底栏内 |
++| 提交期间仍可编辑字段，成功保存的快照可能与当前显示不同 | 锁定全部表单输入、提交及关闭；失败恢复 | 三套保存中锁定、失败保留、重试只增加一条 |
++| 编辑已过期示例时购买日期预填为今天，导致原到期日期无效 | 现有样例使用较早购买日，新增条目保存并复用原购买日 | 三套过期详情 → 编辑日期顺序检查 |
++| 短表单保存栏停在面板中部，底部空白影响手机触达 | 面板与表单使用可伸缩内容区，操作区贴面板底部 | 三套手机操作栏底边与面板底边一致 |
++| 弹层在方案容器之外，按钮没有继承各套圆角 | 方案变量同步到页面根部 | A/B/C 弹层按钮分别为 12/10/6 px |
++| C 侧栏页脚文字使头像挤出边界 | 简化页脚说明，头像禁止收缩、文字可合理布局 | C 桌面最终大图复看 |
++| 从 B/C 审查控制进入按钮页会回到 A | 按钮状态页链接携带当前方案 | 代码核对；三套按钮截图分别生成 |
++
++未发现阻塞本轮设计包交付的问题。样稿尚未实现的能力列在后文，不当作已修复或已验收。
++
++## 4. 本轮实际验证
++
++在仓库根目录执行：
++
++```powershell
++node --check docs/design/ui-redesign-2026-11-10/prototype.js
++node --check docs/design/ui-redesign-2026-11-10/capture-review.mjs
++node docs/design/ui-redesign-2026-11-10/capture-review.mjs
++git diff --check
++```
++
++- 两个 JavaScript 语法检查通过。
++- 最终浏览器检查 **206/206** 通过，0 个运行时异常，0 个缺失本地资源；完整结果见 [browser-checks.json](evidence/2026-11-10-ui-proposal/browser-checks.json)。中间 191/191、200/200 为修正前后的过程运行，不替代最终 206 项。
++- 响应式：三套 × 7 页面 × 6 宽度（320/390/768/1024/1440/1920）= 126 组布局/图片检查，未发现页面横向溢出或破图。
++- 交互：真实无头 Edge 鼠标点击和 DOM 状态检查，覆盖门控独立高亮、全部关闭、新增校验、草稿确认、保存锁定、失败重试、组合筛选/空结果/重置、只读详情、丢弃取消、焦点恢复、过期编辑日期、手机面板/底栏和减少动态效果。
++- 对比度：8 组语义色检查通过。正文/主按钮 17.47:1、次文字白底 6.12:1、次文字冷底 5.17:1、控件边界白底 3.22:1、焦点白底 8.55:1；不声称这是完整无障碍认证。
++- 截图：每套 11 张，共 33 张；另有 A/B/C 各 1 张 1800 × 1500 审查图和总览图。最终 A/B/C 大图、手机首页、表单与侧栏已人工查看。大图下方是页面缩略预览，完整内容通过逐页高清截图及样稿审查。
++- 新增文本的空白、相对资源路径及交付文件清单单独核对；交付清单见同证据目录 `delivery-manifest.json`。`git diff --check` 仅覆盖当时已跟踪差异，因此不能替代新增文件核对。
++
++查看方式：直接打开 [设计审查入口](../design/ui-redesign-2026-11-10/index.html)。如需要同源 HTTP 预览，可运行：
++
++```powershell
++node docs/design/ui-redesign-2026-11-10/capture-review.mjs --serve
++```
++
++命令会打印临时本机入口；Ctrl+C 停止。它不会启动正式产品服务或对外发布。
++
++## 5. 未执行与待验收
++
++- 用户选稿未完成。本轮按照用户“先给文档与三套视图确认”的要求停在 D0，不自动进入正式 UI 改造。
++- 未运行本轮 Flutter 分析/测试、Maven 测试、Web/APK 构建、真实 Gateway/MySQL 业务或真实家庭浏览器验收，因为正式代码没有修改；历史 92/86 等结果不能写成这次的验证。
++- 未执行 Android 真机、软键盘、安全区硬件、触控、实际 GPU、不同浏览器和长时间使用验收。
++- 样稿厨房为静态参考，未接入 WebGL 开合、模型库存同步、实际家庭切换、网络故障、版本冲突或做饭扣减。这些必须在选稿后的正式实现阶段重新审查与验收。
++- 扩展筛选中的分类/标签/日期是明确禁用的结构参考；样稿仅实现名称、分区、到期状态、排序及清空。注册/家庭/菜谱步骤/时间线也以选稿交互示例为边界。
++- 尚未执行完整屏幕阅读器审查或 WCAG 全量验收。既有菜谱图片的正式授权状态仍沿用项目待办。
++
++下一步由用户选择 A/B/C 或提出组合后，冻结一套实施稿；再按设计文档 D1–D4 开发，各阶段继续完整差异审查和定向回归。原有 Android 真机及交付收尾待办继续保留。

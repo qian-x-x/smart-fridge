@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-10",
+  "scope": "Remove family license entry only; existing UI changes retained.",
+  "files": [
+    {
+      "path": "apps/fridge-app/lib/features/profile/presentation/profile_page.dart",
+      "bytes": 12906,
+      "sha256": "8e40893cc9ec7270a15c8b01c9b9b2ef882d0c404ba2616143df7f3a7ec5beb5"
+    },
+    {
+      "path": "docs\\reviews\\evidence\\2026-11-10-family-license-entry\\profile_page.before.dart",
+      "bytes": 13096,
+      "sha256": "9debdf6ca5e551038314f244cfe1ca9bbbebe0dae4bc5295b054a9998338e610"
+    },
+    {
+      "path": "apps/fridge-app/build/web/main.dart.js",
+      "bytes": 3216958,
+      "sha256": "fd615ab9fcad442e8f14b54d5d5ed6512c84bfa92b37b47757642b7824af9662"
+    },
+    {
+      "path": "docs\\reviews\\evidence\\2026-11-10-family-license-entry\\family-desktop.png",
+      "bytes": 88579,
+      "sha256": "ceca556ec9d311985aee7580151952fa6e9cb31d30aa25fe5a97b7e93ad70a72"
+    },
+    {
+      "path": "docs\\reviews\\evidence\\2026-11-10-family-license-entry\\family-mobile.png",
+      "bytes": 56270,
+      "sha256": "c3be69e3fc86c32ad62cc27efe01beb9cec3fecf9580777fd4b45cb7bebafdd6"
+    }
+  ],
+  "validation": {
+    "dartAnalyze": "passed",
+    "familyPageExistingTests": "6/6",
+    "webReleaseBuild": "passed",
+    "browser": "7/7",
+    "backend": "not rerun",
+    "realAccountEndToEnd": "not rerun",
+    "androidBuild": "not rerun; prior APK excludes this change",
+    "androidDevice": "not executed"
+  }
+}

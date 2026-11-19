@@ -1,0 +1,31 @@
+diff --git a/apps/fridge-app/lib/features/profile/presentation/profile_page.dart b/apps/fridge-app/lib/features/profile/presentation/profile_page.dart
+index 9e49baf..4bf3716 100644
+--- a/apps/fridge-app/lib/features/profile/presentation/profile_page.dart
++++ b/apps/fridge-app/lib/features/profile/presentation/profile_page.dart
+@@ -202,12 +202,12 @@ class ProfilePage extends ConsumerWidget {
+         _SettingTile(
+           icon: Icons.palette_outlined,
+           title: '外观与可访问性',
+-          subtitle: '暖橙食集 · 跟随系统字号与动态效果偏好',
++          subtitle: '静白全景 · 跟随系统字号与动态效果偏好',
+           onTap: () => _showSetting(
+             context,
+             '外观与可访问性',
+             const Text(
+-              '当前采用暖橙食集主题。文字跟随系统字号，三维动画遵循浏览器减少动态效果偏好。可在系统或浏览器的可访问性设置中调整；当前版本暂不提供其他主题。',
++              '当前采用静白全景主题。文字跟随系统字号，三维动画遵循浏览器减少动态效果偏好。可在系统或浏览器的可访问性设置中调整；当前版本暂不提供其他主题。',
+             ),
+           ),
+         ),
+@@ -231,11 +231,6 @@ class ProfilePage extends ConsumerWidget {
+             ),
+           ),
+         ),
+-        TextButton(
+-          onPressed: () =>
+-              showLicensePage(context: context, applicationName: '小易冰箱'),
+-          child: const Text('开源许可'),
+-        ),
+       ],
+     ),
+   );

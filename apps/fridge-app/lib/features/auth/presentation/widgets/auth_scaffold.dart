@@ -23,7 +23,7 @@ class AuthScaffold extends StatelessWidget {
             decoration: wide
                 ? BoxDecoration(
                     color: AppColors.paper,
-                    borderRadius: BorderRadius.circular(28),
+                    borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppColors.border),
                   )
                 : null,
@@ -51,12 +51,12 @@ class AuthScaffold extends StatelessWidget {
             ),
           );
           final art = ClipRRect(
-            borderRadius: BorderRadius.circular(wide ? 28 : 0),
+            borderRadius: BorderRadius.circular(wide ? 16 : 0),
             child: Image.asset(
               AppBrand.kitchenImage,
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              semanticLabel: '暖橙厨房外观概念图',
+              semanticLabel: '灰白冰箱、石墨灰柜体与深灰台面的厨房外观参考图',
             ),
           );
           return SingleChildScrollView(
@@ -70,12 +70,12 @@ class AuthScaffold extends StatelessWidget {
                           padding: const EdgeInsets.all(40),
                           child: Row(
                             children: [
-                              Expanded(flex: 5, child: form),
-                              const SizedBox(width: 26),
                               Expanded(
                                 flex: 6,
                                 child: SizedBox(height: 720, child: art),
                               ),
+                              const SizedBox(width: 26),
+                              Expanded(flex: 5, child: form),
                             ],
                           ),
                         )

@@ -1,0 +1,161 @@
+{
+  "date": "2026-11-10",
+  "scope": "defense documentation only",
+  "passed": true,
+  "checks": [
+    {
+      "name": "question-sequence",
+      "passed": true,
+      "detail": "Q1 through Q50 each once"
+    },
+    {
+      "name": "rubric-scores",
+      "passed": true,
+      "detail": {
+        "F1": 12,
+        "F2": 8,
+        "F3": 7,
+        "F4": 5,
+        "F5": 6,
+        "F6": 8,
+        "F7": 8,
+        "F8": 6,
+        "F9": 8,
+        "F10": 7
+      }
+    },
+    {
+      "name": "rubric-subtotals",
+      "passed": true,
+      "detail": "75 combined; technical criteria F3-F8 total 40"
+    },
+    {
+      "name": "docx-zip-crc",
+      "passed": true,
+      "detail": "all OOXML members CRC checked"
+    },
+    {
+      "name": "markdown-word-content",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "table-structure",
+      "passed": true,
+      "detail": "10 tables have explicit borders and repeating headers"
+    },
+    {
+      "name": "title-borders",
+      "passed": true,
+      "detail": "no paragraph borders under titles"
+    },
+    {
+      "name": "reference-paths",
+      "passed": true,
+      "detail": {
+        "checked": 22,
+        "missing": []
+      }
+    },
+    {
+      "name": "page-count",
+      "passed": true,
+      "detail": 20
+    },
+    {
+      "name": "no-empty-pages",
+      "passed": true,
+      "detail": {
+        "min_text_characters": 833
+      }
+    },
+    {
+      "name": "rendered-questions",
+      "passed": true,
+      "detail": "all 50 question labels appear in rendered PDF"
+    },
+    {
+      "name": "png-pages",
+      "passed": true,
+      "detail": "20 bundled-Poppler PNG pages exist; all inspected visually"
+    },
+    {
+      "name": "trailing-whitespace",
+      "passed": true,
+      "detail": "Markdown lines have no trailing whitespace"
+    },
+    {
+      "name": "historical-business-evidence",
+      "passed": true,
+      "detail": "Read existing 2026-11-09 evidence only; no product acceptance rerun"
+    },
+    {
+      "name": "trace-coverage-claims",
+      "passed": true,
+      "detail": {
+        "success": [
+          "sf-business-auth",
+          "sf-business-fridge",
+          "sf-business-gateway"
+        ],
+        "failure": [
+          "sf-business-auth",
+          "sf-business-auth-fault",
+          "sf-business-fridge"
+        ]
+      }
+    }
+  ],
+  "visual_review": {
+    "pages": 20,
+    "reviewed_pages": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      20
+    ],
+    "result": "no clipping, overlap, missing glyphs, split rows, or blank overflow pages"
+  },
+  "rendering": {
+    "packaged_renderer": "attempted; failed because Windows runtime lacks LibreOffice",
+    "fallback": "hidden dedicated Microsoft Word instance exported PDF, bundled Poppler rendered PNGs",
+    "user_installed_libreoffice_used": false
+  },
+  "product_tests_run": false,
+  "deployment_or_commit": false,
+  "artifacts": [
+    {
+      "path": "docs\\答辩\\小易冰箱技术使用说明与答辩问答.md",
+      "bytes": 46513,
+      "sha256": "393827403e6fee659131b4b6e90a0266915f2020ed7f1ac16de0ee724d2a9c41"
+    },
+    {
+      "path": "docs\\答辩\\小易冰箱技术使用说明与答辩问答.docx",
+      "bytes": 68323,
+      "sha256": "8e28d239f34b167c41261c181d0da31d56df8f9dd6ddffe5bc5a86d927c04704"
+    },
+    {
+      "path": "微服务技术与项目开发实践_个人项目评分标准.xlsx",
+      "bytes": 37668,
+      "sha256": "01424aaed132cdc734a9270d6f300e8b8e17a6b4c9148c5e3702bce69bfa3689"
+    }
+  ]
+}

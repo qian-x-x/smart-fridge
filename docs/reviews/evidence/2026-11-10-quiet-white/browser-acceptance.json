@@ -1,0 +1,248 @@
+{
+  "date": "2026-11-10",
+  "scope": "Actual Flutter release + isolated MySQL recipe/gateway + existing local auth/fridge; new acceptance account only. Software WebGL, not device/GPU acceptance.",
+  "checks": [
+    {
+      "name": "real-gateway-catalog-has-18-recipes",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real-cross-family-access-is-rejected",
+      "pass": true,
+      "detail": "404 hides inaccessible family existence"
+    },
+    {
+      "name": "real-viewer-write-is-rejected",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real-mysql-catalog-matches-demo-names-and-steps",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real-ui-inventory-synced-to-scene",
+      "pass": true,
+      "detail": "{\"open\":[],\"count\":8,\"version\":\"quiet-white-v2.0.0\",\"noOverlap\":true,\"buttons\":true}"
+    },
+    {
+      "name": "new-scene-controls-do-not-cover-canvas",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-6",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-7",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-5",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-12",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-13",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-15",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-14",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-10",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-11",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-9",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-door-combination-8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-scene-control-layout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-0",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-1",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-3",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-2",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-6",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-7",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-5",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-4",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-12",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-13",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-15",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-14",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-10",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-11",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-9",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-door-combination-8",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-scene-control-layout",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "recipes-page-loaded-through-real-api",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "new-recipe-details-rendered",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "optional-ingredients-have-explicit-neutral-state",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "all-eighteen-new-photos-load-in-real-grid",
+      "pass": true,
+      "detail": "images=18"
+    },
+    {
+      "name": "new-ui-cook-recorded-once",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "real-viewer-ui-disables-add-food",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no-browser-runtime-exceptions",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no-failed-assets",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "passed": 48,
+  "failed": 0
+}

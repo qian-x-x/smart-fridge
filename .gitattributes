@@ -18,5 +18,9 @@
 *.cmd text eol=crlf
 *.ps1 text eol=crlf
 
+# Archived unified diffs preserve the single space on blank context lines.
+docs/reviews/evidence/**/*.diff whitespace=-blank-at-eol
+docs/reviews/evidence/**/*.patch whitespace=-blank-at-eol
+
 # Historical source snapshot must not be nested inside a new source archive.
 docs/提交材料/小易冰箱-项目源码.zip export-ignore

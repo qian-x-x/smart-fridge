@@ -1,0 +1,11 @@
+{
+  "before-home-desktop": {
+    "meanLuma0to255": 230.38,
+    "pixelsAbove235Percent": 43.45
+  },
+  "home-desktop-closed": {
+    "meanLuma0to255": 152.91,
+    "pixelsAbove235Percent": 0.02
+  },
+  "scope": "Fixed desktop canvas rectangle, encoded grayscale statistics; not display luminance or hardware calibration."
+}

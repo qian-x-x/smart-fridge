@@ -34,6 +34,8 @@ tmp/
 temp/
 .cache/
 /output/real-business/
+/output/scope-cleanup-2026-11-10/
+/output/defense-2026-11-10/
 /交付包/
 __pycache__/
 

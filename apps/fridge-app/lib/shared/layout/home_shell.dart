@@ -37,7 +37,58 @@ class HomeShell extends ConsumerWidget {
         builder: (context, constraints) {
           if (constraints.maxWidth < 1000) {
             return Scaffold(
-              body: SafeArea(bottom: false, child: child),
+              body: SafeArea(
+                bottom: false,
+                child: Column(
+                  children: [
+                    Container(
+                      height: 64,
+                      margin: const EdgeInsets.symmetric(horizontal: 18),
+                      decoration: const BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.border),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Text(
+                            AppBrand.name,
+                            style: TextStyle(
+                              fontSize: 19,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          const Spacer(),
+                          if (isDemo)
+                            const Padding(
+                              padding: EdgeInsets.only(right: 8),
+                              child: Text(
+                                '演示',
+                                style: TextStyle(
+                                  color: AppColors.muted,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 156),
+                            child: AppOutlinedButton.icon(
+                              onPressed: () => go(2),
+                              icon: const Icon(Icons.home_outlined, size: 17),
+                              label: Text(
+                                family?.name ?? '选择家庭',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Expanded(child: child),
+                  ],
+                ),
+              ),
               bottomNavigationBar: DecoratedBox(
                 decoration: const BoxDecoration(
                   border: Border(top: BorderSide(color: AppColors.border)),
@@ -47,7 +98,7 @@ class HomeShell extends ConsumerWidget {
                   onDestinationSelected: go,
                   animationDuration: MediaQuery.disableAnimationsOf(context)
                       ? Duration.zero
-                      : const Duration(milliseconds: 240),
+                      : const Duration(milliseconds: 180),
                   destinations: const [
                     NavigationDestination(
                       icon: Icon(Icons.kitchen_outlined),
@@ -73,7 +124,7 @@ class HomeShell extends ConsumerWidget {
             body: Row(
               children: [
                 Container(
-                  width: 98,
+                  width: 94,
                   decoration: const BoxDecoration(
                     color: AppColors.paper,
                     border: Border(right: BorderSide(color: AppColors.border)),
@@ -102,12 +153,12 @@ class HomeShell extends ConsumerWidget {
                                 selected: index == entry.$1,
                                 child: Material(
                                   color: index == entry.$1
-                                      ? AppColors.mint
+                                      ? AppColors.ink
                                       : Colors.transparent,
-                                  borderRadius: BorderRadius.circular(18),
+                                  borderRadius: BorderRadius.circular(12),
                                   child: InkWell(
                                     onTap: () => go(entry.$1),
-                                    borderRadius: BorderRadius.circular(18),
+                                    borderRadius: BorderRadius.circular(12),
                                     child: SizedBox(
                                       width: 74,
                                       child: Padding(
@@ -121,7 +172,7 @@ class HomeShell extends ConsumerWidget {
                                               entry.$2.$1,
                                               size: 22,
                                               color: index == entry.$1
-                                                  ? AppColors.terracotta
+                                                  ? Colors.white
                                                   : AppColors.muted,
                                             ),
                                             const SizedBox(height: 8),
@@ -129,9 +180,9 @@ class HomeShell extends ConsumerWidget {
                                               entry.$2.$2,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                fontSize: 11,
+                                                fontSize: 12,
                                                 color: index == entry.$1
-                                                    ? AppColors.terracotta
+                                                    ? Colors.white
                                                     : AppColors.muted,
                                                 fontWeight: index == entry.$1
                                                     ? FontWeight.w600
@@ -172,7 +223,7 @@ class HomeShell extends ConsumerWidget {
                     child: Column(
                       children: [
                         Container(
-                          height: 82,
+                          height: 78,
                           margin: const EdgeInsets.symmetric(horizontal: 32),
                           decoration: const BoxDecoration(
                             border: Border(
@@ -208,10 +259,22 @@ class HomeShell extends ConsumerWidget {
                                     ),
                                   ),
                                 ),
-                              AppOutlinedButton.icon(
-                                onPressed: () => go(2),
-                                icon: const Icon(Icons.home_outlined, size: 18),
-                                label: Text(family?.name ?? '选择家庭'),
+                              ConstrainedBox(
+                                constraints: const BoxConstraints(
+                                  maxWidth: 240,
+                                ),
+                                child: AppOutlinedButton.icon(
+                                  onPressed: () => go(2),
+                                  icon: const Icon(
+                                    Icons.home_outlined,
+                                    size: 18,
+                                  ),
+                                  label: Text(
+                                    family?.name ?? '选择家庭',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                               ),
                             ],
                           ),

@@ -66,12 +66,15 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   assets:
+    - assets/data/home-recipes-v2.json
+    - assets/images/kitchen-gray-white-v2.0.1.png
     - assets/images/fridge-kitchen-v1.png
     - assets/images/kitchen-harvest.jpg
     - assets/images/recipe-tomato-eggs.jpg
     - assets/images/recipe-broccoli.jpg
     - assets/images/recipe-pumpkin.jpg
     - assets/images/recipe-steamed-eggs.jpg
+    - assets/images/quiet-white-v2/
     - assets/fonts/OFL.txt
   fonts:
     - family: XiaoyiUI

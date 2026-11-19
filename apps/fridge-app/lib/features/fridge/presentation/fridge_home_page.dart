@@ -77,7 +77,9 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     final selected = workspace.zones.any((zone) => zone.id == _selectedZone)
         ? _selectedZone
         : workspace.zones.firstOrNull?.id ?? FridgeZoneId.fresh;
-    final expiring = workspace.foods.where((food) => food.isExpiring).length;
+    final expiring = workspace.foods
+        .where((food) => food.isExpiring && food.expiresInDays >= 0)
+        .length;
     final expired = workspace.foods
         .where((food) => food.expiresInDays < 0)
         .length;
@@ -88,7 +90,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
         final add = AppFilledButton.icon(
           onPressed: writable ? () => _openAddFood(context, workspace) : null,
           icon: const Icon(Icons.add, size: 19),
-          label: const Text('放进一份新食材'),
+          label: const Text('新增食材'),
         );
         final stock = _StockPanel(
           workspace: workspace,
@@ -107,60 +109,12 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
             if (mounted) setState(() => _selectedZone = zone);
           },
         );
-        final priority = Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-          decoration: BoxDecoration(
-            color: AppColors.terracotta,
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.restaurant_menu, color: Colors.white, size: 22),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      expiring > 0 ? '$expiring 份食材，今天先安排。' : '好食材，值得好好做。',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    if (desktop) ...[
-                      const SizedBox(height: 4),
-                      Text(
-                        expired > 0
-                            ? '含 $expired 份已过期食材，请先检查库存。'
-                            : '用冰箱里已有的食材，找到下一餐的灵感。',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () => context.go('/recipes'),
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(44, 44),
-                ),
-                child: Text(desktop ? '看看菜谱 →' : '找菜谱'),
-              ),
-            ],
-          ),
-        );
         final content = SingleChildScrollView(
           key: PageStorageKey('fridge-home-${workspace.familyId}'),
           padding: EdgeInsets.fromLTRB(
-            desktop ? 32 : 20,
-            desktop ? 26 : 20,
-            desktop ? 32 : 20,
+            desktop ? 32 : 18,
+            desktop ? 28 : 22,
+            desktop ? 32 : 18,
             24,
           ),
           child: Center(
@@ -177,19 +131,27 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'EVERYDAY HARVEST',
+                              'MY KITCHEN',
                               style: TextStyle(
-                                fontSize: 10,
+                                fontSize: 11,
                                 letterSpacing: 2.4,
                                 color: AppColors.muted,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 9),
                             Text(
-                              workspace.fridgeName,
+                              '让新鲜，各就其位。',
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
-                            const SizedBox(height: 7),
+                            const SizedBox(height: 9),
+                            Text(
+                              workspace.fridgeName,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 13,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
                             Text(
                               '${workspace.familyName} · ${_role(workspace.role)}${workspace.isDemo ? ' · 演示数据' : ''}',
                               style: const TextStyle(
@@ -203,7 +165,10 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                       if (desktop) ...[
                         AppOutlinedButton.icon(
                           onPressed: () => _openTable(context, workspace),
-                          icon: const Icon(Icons.tune, size: 18),
+                          icon: const Icon(
+                            Icons.format_list_bulleted,
+                            size: 18,
+                          ),
                           label: const Text('食材清单'),
                         ),
                         const SizedBox(width: 12),
@@ -225,8 +190,12 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 24),
-                  priority,
+                  const SizedBox(height: 22),
+                  _InventoryStats(
+                    count: workspace.foods.length,
+                    expiring: expiring,
+                    expired: expired,
+                  ),
                   const SizedBox(height: 22),
                   if (desktop)
                     Row(
@@ -234,76 +203,61 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                       children: [
                         Expanded(child: scene),
                         const SizedBox(width: 24),
-                        SizedBox(
-                          width: 310,
+                        SizedBox(width: 310, child: stock),
+                      ],
+                    )
+                  else ...[
+                    scene,
+                    const SizedBox(height: 18),
+                    stock,
+                  ],
+                  const SizedBox(height: 22),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.paper,
+                      border: Border.all(color: AppColors.border),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.restaurant_menu_outlined, size: 24),
+                        const SizedBox(width: 12),
+                        Expanded(
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              stock,
-                              const SizedBox(height: 16),
-                              _InventoryStats(
-                                count: workspace.foods.length,
-                                expiring: expiring,
-                                zones: workspace.zones.length,
+                              const Text(
+                                '今晚，做点冰箱里现有的。',
+                                style: TextStyle(fontWeight: FontWeight.w600),
                               ),
-                              const SizedBox(height: 16),
-                              Container(
-                                padding: const EdgeInsets.all(22),
-                                decoration: BoxDecoration(
-                                  color: AppColors.linen,
-                                  borderRadius: BorderRadius.circular(24),
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Icon(
-                                      Icons.restaurant_menu,
-                                      color: AppColors.terracotta,
-                                    ),
-                                    const SizedBox(height: 12),
-                                    const Text(
-                                      '查完食材，下一餐也容易。',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 10),
-                                    const Text(
-                                      '按现有食材和临期情况，寻找刚刚好的菜谱。',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: AppColors.muted,
-                                        height: 1.7,
-                                      ),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => context.go('/recipes'),
-                                      child: const Text('去看看菜谱 →'),
-                                    ),
-                                  ],
+                              const SizedBox(height: 4),
+                              Text(
+                                expiring > 0
+                                    ? '$expiring 份即将到期，先安排新鲜食材。'
+                                    : '按已有食材找菜谱，也看看还缺什么。',
+                                style: const TextStyle(
+                                  color: AppColors.muted,
+                                  fontSize: 12,
                                 ),
                               ),
                             ],
                           ),
                         ),
+                        TextButton(
+                          onPressed: () => context.go('/recipes'),
+                          child: Text(desktop ? '去看菜谱 →' : '看菜谱'),
+                        ),
                       ],
-                    )
-                  else ...[
-                    scene,
-                    const SizedBox(height: 20),
-                    _InventoryStats(
-                      count: workspace.foods.length,
-                      expiring: expiring,
-                      zones: workspace.zones.length,
                     ),
-                    const SizedBox(height: 18),
-                    stock,
-                  ],
-                  const SizedBox(height: 16),
+                  ),
+                  const SizedBox(height: 12),
                   const Text(
                     '温度为储存参考，非传感器实测',
-                    style: TextStyle(fontSize: 11, color: AppColors.muted),
+                    style: TextStyle(fontSize: 12, color: AppColors.muted),
                   ),
                 ],
               ),
@@ -311,14 +265,16 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           ),
         );
         if (desktop) return content;
+        // A dedicated footer reserves layout space; it cannot cover the 3D
+        // controls or inventory rows, unlike a floating action button.
         return Column(
           children: [
             Expanded(child: content),
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+              padding: const EdgeInsets.fromLTRB(18, 10, 18, 10),
               decoration: const BoxDecoration(
-                color: AppColors.cream,
+                color: AppColors.paper,
                 border: Border(top: BorderSide(color: AppColors.border)),
               ),
               child: Column(
@@ -333,7 +289,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                         color: AppColors.muted,
-                        fontSize: 11,
+                        fontSize: 12,
                       ),
                     ),
                   ],
@@ -387,10 +343,9 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     BuildContext context,
     FridgeWorkspaceData workspace,
   ) async {
-    final expired = workspace.foods
-        .where((food) => food.expiresInDays < 0)
-        .toList()
-      ..sort((a, b) => a.expiresInDays.compareTo(b.expiresInDays));
+    final expired =
+        workspace.foods.where((food) => food.expiresInDays < 0).toList()
+          ..sort((a, b) => a.expiresInDays.compareTo(b.expiresInDays));
     if (expired.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -420,9 +375,7 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           .discardExpired();
       messenger.showSnackBar(
         SnackBar(
-          content: Text(
-            removed > 0 ? '已清理 $removed 份过期食材' : '没有可清理的过期食材',
-          ),
+          content: Text(removed > 0 ? '已清理 $removed 份过期食材' : '没有可清理的过期食材'),
           behavior: SnackBarBehavior.floating,
         ),
       );
@@ -492,39 +445,40 @@ class _InventoryStats extends StatelessWidget {
   const _InventoryStats({
     required this.count,
     required this.expiring,
-    required this.zones,
+    required this.expired,
   });
-  final int count, expiring, zones;
+  final int count, expiring, expired;
   @override
   Widget build(BuildContext context) => Container(
-    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-    decoration: BoxDecoration(
-      color: AppColors.paper,
-      border: Border.all(color: AppColors.border),
-      borderRadius: BorderRadius.circular(24),
+    padding: const EdgeInsets.symmetric(vertical: 17),
+    decoration: const BoxDecoration(
+      border: Border(
+        top: BorderSide(color: AppColors.border),
+        bottom: BorderSide(color: AppColors.border),
+      ),
     ),
     child: Row(
       children: [
         for (final item in [
-          ('$count', '份食材'),
-          ('$expiring', '临期含过期'),
-          ('$zones', '储存分区'),
+          (count, '份在库食材'),
+          (expiring, '份即将到期'),
+          (expired, '份已过期 · 待检查'),
         ])
           Expanded(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.$1,
-                  style: TextStyle(
-                    fontSize: 25,
-                    fontWeight: FontWeight.w500,
-                    color: item.$2 == '临期含过期' ? AppColors.rose : AppColors.ink,
+                  item.$1.toString().padLeft(2, '0'),
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   item.$2,
-                  style: const TextStyle(fontSize: 10, color: AppColors.muted),
+                  style: const TextStyle(fontSize: 12, color: AppColors.muted),
                 ),
               ],
             ),
@@ -565,7 +519,7 @@ class _StockPanel extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.paper,
         border: Border.all(color: AppColors.border),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -645,9 +599,11 @@ class _StockPanel extends StatelessWidget {
                           food.expiresInDays < 0
                               ? Icons.warning_amber_rounded
                               : Icons.inventory_2_outlined,
-                          color: food.isExpiring
+                          color: food.expiresInDays < 0
                               ? AppColors.rose
-                              : AppColors.sage,
+                              : food.isExpiring
+                              ? AppColors.warning
+                              : AppColors.muted,
                           size: 21,
                         ),
                         const SizedBox(width: 10),
@@ -684,8 +640,10 @@ class _StockPanel extends StatelessWidget {
                               : '${food.expiresInDays} 天',
                           style: TextStyle(
                             fontSize: 11,
-                            color: food.isExpiring
+                            color: food.expiresInDays < 0
                                 ? AppColors.rose
+                                : food.isExpiring
+                                ? AppColors.warning
                                 : AppColors.muted,
                           ),
                         ),
@@ -699,7 +657,9 @@ class _StockPanel extends StatelessWidget {
           if (expiredCount > 0) ...[
             AppOutlinedButton.icon(
               key: const ValueKey('clean-expired-button'),
-              onPressed: onCleanExpired,
+              onPressed: workspace.canEdit && !workspace.isDemo
+                  ? onCleanExpired
+                  : null,
               icon: const Icon(Icons.cleaning_services_outlined, size: 16),
               label: Text('清理 $expiredCount 份过期食材'),
             ),

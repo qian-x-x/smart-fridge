@@ -32,16 +32,18 @@ export function box(parent, name, size, position, material, radius = 0) {
 
 export function createMaterials(textures = {}) {
   return {
-    steel: new THREE.MeshStandardMaterial({ color: 0xf5eee2, metalness: 0.35, roughness: 0.42, map: textures.steel ?? null, envMapIntensity: 1.1 }),
-    side: new THREE.MeshStandardMaterial({ color: 0xc7bda9, metalness: 0.25, roughness: 0.45 }),
-    white: new THREE.MeshStandardMaterial({ color: 0xfffcf7, roughness: 0.32 }),
-    gasket: new THREE.MeshStandardMaterial({ color: 0x747c7a, roughness: 0.85 }),
-    dark: new THREE.MeshStandardMaterial({ color: 0x272e2c, roughness: 0.65 }),
-    glass: new THREE.MeshPhysicalMaterial({ color: 0xb2d0c4, transparent: true, opacity: 0.38, roughness: 0.1, metalness: 0, depthWrite: false, side: THREE.DoubleSide }),
-    led: new THREE.MeshBasicMaterial({ color: 0xfff5e5 }),
-    wood: new THREE.MeshStandardMaterial({ color: 0xffffff, map: textures.wood ?? null, roughness: 0.7 }),
-    stone: new THREE.MeshStandardMaterial({ color: 0xf1e2c8, map: textures.stone ?? null, roughness: 0.46 }),
-    wall: new THREE.MeshStandardMaterial({ color: 0xd9aa89, roughness: 0.9 }),
+    steel: new THREE.MeshStandardMaterial({ color: 0xd1d5d8, metalness: 0.18, roughness: 0.55, map: textures.steel ?? null, envMapIntensity: 0.35 }),
+    side: new THREE.MeshStandardMaterial({ color: 0x929da6, metalness: 0.2, roughness: 0.6, envMapIntensity: 0.3 }),
+    white: new THREE.MeshStandardMaterial({ color: 0xdfe3e6, roughness: 0.65, envMapIntensity: 0.3 }),
+    gasket: new THREE.MeshStandardMaterial({ color: 0x56616a, roughness: 0.85 }),
+    dark: new THREE.MeshStandardMaterial({ color: 0x191e23, roughness: 0.8, envMapIntensity: 0.2 }),
+    glass: new THREE.MeshPhysicalMaterial({ color: 0xb7cbd6, transparent: true, opacity: 0.38, roughness: 0.1, metalness: 0, depthWrite: false, side: THREE.DoubleSide }),
+    led: new THREE.MeshBasicMaterial({ color: 0xd4e0e9 }),
+    wood: new THREE.MeshStandardMaterial({ color: 0xffffff, map: textures.wood ?? null, roughness: 0.85, envMapIntensity: 0.2 }),
+    stone: new THREE.MeshStandardMaterial({ color: 0x3d4750, map: textures.stone ?? null, roughness: 0.78, envMapIntensity: 0.2 }),
+    floor: new THREE.MeshStandardMaterial({ color: 0x7e8992, map: textures.stone ?? null, roughness: 0.9, envMapIntensity: 0.2 }),
+    upperCabinet: new THREE.MeshStandardMaterial({ color: 0x929da6, roughness: 0.8, envMapIntensity: 0.2 }),
+    wall: new THREE.MeshStandardMaterial({ color: 0x9ea8b0, roughness: 0.95, envMapIntensity: 0.2 }),
   };
 }
 

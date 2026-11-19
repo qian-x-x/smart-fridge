@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-10",
+  "mode": "built-in image_gen",
+  "intent": "edit",
+  "reference": "apps/fridge-app/assets/images/kitchen-quiet-white-v2.png",
+  "source": "C:/Users/Lenovo/.codex/generated_images/01a1c107-a8ac-7382-9398-02eeff123398/exec-31d30d1a-ed84-417a-b925-b5acdb318531.png",
+  "asset": "apps/fridge-app/assets/images/kitchen-gray-white-v2.0.1.png",
+  "prompt": "Edit this kitchen reference image for the same refrigerator app. Preserve the exact frontal composition, refrigerator geometry, four-door design, window position, cabinet layout, countertop, sink, bowl and cloth. Change only materials and lighting to a balanced gray-white-black kitchen: bottom cabinets and tall cabinet around fridge in matte graphite charcoal gray, upper cabinets in medium-light cool gray, countertop in dark slate gray, floor in medium cool stone gray, wall tiles in muted light gray. The refrigerator should be soft matte silver-gray white with visible edges and restrained highlights, not brilliant white. Black handles and black window frame. Lower daylight brightness and reflections, retain natural soft side light, clear tonal separation and realistic shadows, comfortable subdued exposure without dimming to a dark room. Photorealistic, tidy everyday home kitchen. No text, no logos, no new props or layout changes.",
+  "scope": "Login and Android reference image only; Web remains real Three.js geometry"
+}

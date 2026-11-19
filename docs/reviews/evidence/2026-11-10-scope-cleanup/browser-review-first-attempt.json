@@ -1,0 +1,28 @@
+{
+  "date": "2026-11-10",
+  "scope": "Actual current release, demo session, Edge software rendering; no real-account E2E or physical-device acceptance.",
+  "checks": [
+    {
+      "name": "desktop-family-heading",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-no-placeholder-settings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-family-actions-retained",
+      "pass": false,
+      "detail": ""
+    },
+    {
+      "name": "completed",
+      "pass": false,
+      "detail": "Error: desktop-family-actions-retained"
+    }
+  ],
+  "passed": 2,
+  "failed": 2
+}

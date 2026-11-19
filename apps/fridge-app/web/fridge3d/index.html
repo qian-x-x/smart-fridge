@@ -3,29 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#fcf5e9">
-  <title>小易冰箱 · 暖橙厨房</title>
+  <meta name="theme-color" content="#c9cfd3">
+  <title>小易冰箱 · 灰白厨房</title>
   <style>
     * { box-sizing: border-box; }
-    html, body, #scene { width:100%; height:100%; margin:0; overflow:hidden; background:#fcf5e9; }
-    body { font:12px "Microsoft YaHei UI", "PingFang SC", sans-serif; color:#442b22; }
-    #fridge-canvas { display:block; width:100%; height:100%; cursor:grab; touch-action:none; outline:none; }
-    #fridge-canvas:focus-visible { outline:2px solid #bc4d30; outline-offset:-3px; }
-    .controls { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); display:flex; gap:4px; padding:4px; max-width:calc(100% - 20px); background:rgba(255,255,255,.94); border:1px solid #ecdfcf; border-radius:22px; box-shadow:0 4px 20px #172f1b14; }
-    button { appearance:none; border:0; border-radius:18px; background:transparent; color:#442b22; font:inherit; min-height:36px; padding:6px 10px; cursor:pointer; white-space:nowrap; }
-    button { transition:background 160ms,transform 120ms; } button:active { transform:scale(.96); } button:hover { background:#f6e6d5; } button:focus-visible { outline:2px solid #bc4d30; }
-    button[aria-pressed="true"] { background:#bc4d30; color:#fff; }
-    .loading { position:absolute; inset:0; display:grid; place-content:center; background:#fcf5e9; color:#806a5c; }
+    html, body, #scene { width:100%; height:100%; margin:0; overflow:hidden; background:#f4f6f7; }
+    body { font:12px "Microsoft YaHei UI", "PingFang SC", sans-serif; color:#171a1d; }
+    #scene { position:relative; display:grid; grid-template-rows:minmax(0,1fr) auto; }
+    #fridge-canvas { display:block; width:100%; height:100%; min-height:0; cursor:grab; touch-action:none; }
+    #fridge-canvas:focus-visible { outline:2px solid #344f66; outline-offset:-3px; }
+    .controls { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; padding:6px; margin:0 10px 10px; background:#fff; border:1px solid #dce2e6; border-radius:12px; }
+    button { appearance:none; border:1px solid #85919b; border-radius:8px; background:#fff; color:#171a1d; font:inherit; min-height:44px; padding:6px; cursor:pointer; white-space:nowrap; }
+    button { transition:background 120ms,transform 120ms; } button:active { transform:translateY(1px); } button:hover { background:#eaf0f3; } button:focus-visible { outline:2px solid #344f66; outline-offset:2px; }
+    button[aria-pressed="true"] { background:#171a1d; border-color:#171a1d; color:#fff; }
+    .loading { position:absolute; inset:0; display:grid; place-content:center; background:#f4f6f7; color:#59636d; }
     .is-hidden { display:none; }
-    .fallback { position:absolute; inset:0; display:none; place-content:center; padding:24px; background:#fcf5e9; text-align:center; z-index:2; }
+    .fallback { position:absolute; inset:0; display:none; place-content:center; padding:24px; background:#f4f6f7; text-align:center; z-index:2; }
     .fallback.is-visible { display:grid; } .fallback strong { font-size:18px; margin-bottom:10px; } .fallback span { max-width:300px; line-height:1.7; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
-    @media(max-width:480px) { .controls { gap:1px; bottom:8px; } button { padding:7px 7px; min-height:40px; font-size:11px; } }
-  @media(prefers-reduced-motion:reduce) { button { transition:none; } }
+    @media(max-width:480px) { .controls { grid-template-columns:repeat(3,minmax(0,1fr)); } button { font-size:12px; } }
+    @media(prefers-reduced-motion:reduce) { button { transition:none; } button:active { transform:none; } }
   </style>
 </head>
 <body>
-  <main id="scene" aria-label="写实厨房中的不锈钢冰箱三维场景">
+  <main id="scene" aria-label="灰白黑厨房中的哑光灰白冰箱三维场景">
     <canvas id="fridge-canvas" tabindex="0" aria-label="可交互冰箱。拖动查看；数字1到4选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
     <div class="controls" role="group" aria-label="冰箱结构控制">
       <button id="overview" type="button">展开概览</button>
@@ -45,6 +46,6 @@
     window.addEventListener('unhandledrejection', showLoadError);
   </script>
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./fridge3d.js?rev=warm-harvest-v1.5.1"></script>
+  <script type="module" src="./fridge3d.js?rev=quiet-white-v2.0.1"></script>
 </body>
 </html>

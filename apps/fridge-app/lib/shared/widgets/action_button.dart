@@ -27,14 +27,17 @@ class _PressFeedbackState extends State<PressFeedback> {
     onPointerUp: (_) => setState(() => _pressed = false),
     onPointerCancel: (_) => setState(() => _pressed = false),
     child: TweenAnimationBuilder<double>(
-      tween: Tween(end: _pressed ? 0.97 : 1),
+      tween: Tween(end: _pressed ? 1 : 0),
       duration: MediaQuery.disableAnimationsOf(context)
           ? Duration.zero
           : const Duration(milliseconds: 120),
       curve: Curves.easeOut,
       child: widget.child,
-      builder: (context, value, child) =>
-          Transform.scale(scale: value, transformHitTests: false, child: child),
+      builder: (context, value, child) => Transform.translate(
+        offset: Offset(0, value),
+        transformHitTests: false,
+        child: child,
+      ),
     ),
   );
 }

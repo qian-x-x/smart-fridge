@@ -26,7 +26,7 @@ flutter build web --release
 flutter build apk --release
 ```
 
-Windows 中文路径可能触发 Gradle 或 Dart AOT 的路径限制。仓库根目录的 `scripts/Build-Flutter.ps1` 会自动使用纯 ASCII Junction 执行完整检查与构建。
+Windows 中文路径可能触发 Gradle 或 Dart AOT 的路径限制。仓库根目录的 `scripts/Build-Flutter.ps1` 会在原工程执行检查与 Web 构建，再使用纯 ASCII 源码副本构建 Android。
 
 当前 Android release 包使用模板 debug 签名，只用于开发验收；正式签名在交付阶段注入。
 
@@ -36,5 +36,11 @@ Windows 中文路径可能触发 Gradle 或 Dart AOT 的路径限制。仓库根
 - `lib/features/auth`：真实登录、注册与本地会话。
 - `lib/features/fridge`：Flutter 响应式首页、Three.js WebGL 真 3D 冰箱和食材详情。
 - `lib/features/recipe`：菜谱推荐页面。
-- `lib/features/profile`：家庭、设置和退出。
+- `lib/features/profile`：家庭协作与账号退出。
 - `lib/shared`：主导航布局。
+
+## 当前功能范围
+
+保留登录注册、家庭与成员管理、食材管理及临期查看、操作记录撤销/恢复、18 道菜谱与做饭扣减。Web 提供 Three.js 实时三维厨房，Android 使用厨房参考图及相同业务表单。家庭数据通过重新加载同步，冰箱使用默认四区与六个容器，临期阈值由服务端统一配置。
+
+家庭页只提供已接入的家庭与账号操作。完整目录和范围见 [项目目录](../../docs/项目目录.md)。

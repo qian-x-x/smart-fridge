@@ -1,0 +1,11 @@
+[
+  "apps/fridge-app/lib/core/config/app_brand.dart",
+  "apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart",
+  "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart",
+  "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+  "apps/fridge-app/pubspec.yaml",
+  "apps/fridge-app/web/fridge3d/fridge-model.js",
+  "apps/fridge-app/web/fridge3d/fridge3d.js",
+  "apps/fridge-app/web/fridge3d/index.html",
+  "apps/fridge-app/web/fridge3d/kitchen-scene.js"
+]

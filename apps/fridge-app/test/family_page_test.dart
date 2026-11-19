@@ -49,38 +49,6 @@ void main() {
     reject = false;
   });
 
-  testWidgets('all settings rows open an honest capability dialog', (
-    tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(1366, 1100));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.pumpWidget(
-      ProviderScope(
-        overrides: [
-          sessionStoreProvider.overrideWithValue(_FamilySessionStore()),
-          familyDataSourceProvider.overrideWithValue(_EmptyFamilySource()),
-          familySelectionStoreProvider.overrideWithValue(
-            _MemoryFamilySelectionStore(),
-          ),
-        ],
-        child: MaterialApp(
-          theme: AppTheme.light,
-          home: const Scaffold(body: ProfilePage()),
-        ),
-      ),
-    );
-    await tester.pumpAndSettle();
-    for (final title in ['临期提醒', '冰箱布局', '外观与可访问性']) {
-      await tester.ensureVisible(find.text(title));
-      await tester.tap(find.text(title));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsOneWidget);
-      await tester.tap(find.text('关闭'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsNothing);
-    }
-    expect(find.byType(Switch), findsNothing);
-  });
   testWidgets('profile displays data returned by the family API', (
     tester,
   ) async {

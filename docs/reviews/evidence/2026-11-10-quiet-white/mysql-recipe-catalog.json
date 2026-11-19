@@ -1,0 +1,980 @@
+{
+  "code": "OK",
+  "message": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "番茄滑蛋",
+      "summary": "酸甜番茄裹住嫩滑鸡蛋，十几分钟完成的家常菜。",
+      "category": "家常菜",
+      "durationMinutes": 15,
+      "calories": 260,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🍅",
+      "steps": [
+        "番茄切块，鸡蛋加少量盐打散",
+        "热锅放油，将鸡蛋炒至刚凝固后盛出",
+        "下番茄炒出汁水，加少量生抽调味",
+        "倒回鸡蛋快速翻匀即可"
+      ],
+      "ingredients": [
+        {
+          "name": "西红柿",
+          "quantity": 2.0,
+          "unit": "个",
+          "optional": false
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 3.0,
+          "unit": "枚",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": false
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 3,
+      "name": "青椒炒鸡胸",
+      "summary": "鸡胸肉搭配清脆青椒，二十分钟完成的家常小炒。",
+      "category": "快手菜",
+      "durationMinutes": 20,
+      "calories": 310,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🍗",
+      "steps": [
+        "鸡胸肉切片，用生抽和少量油腌制",
+        "青椒去籽切块，生熟食材分开处理",
+        "热锅将鸡胸肉炒至变色后盛出",
+        "下青椒翻炒，再倒回鸡胸肉，炒至中心完全熟透后出锅"
+      ],
+      "ingredients": [
+        {
+          "name": "青椒",
+          "quantity": 2.0,
+          "unit": "个",
+          "optional": false
+        },
+        {
+          "name": "鸡胸肉",
+          "quantity": 250.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 5,
+      "name": "虾仁玉米炒饭",
+      "summary": "用准备好的米饭、虾仁和玉米，炒一盘粒粒分明的家常主食。",
+      "category": "主食",
+      "durationMinutes": 25,
+      "calories": 480,
+      "difficulty": "中等",
+      "servings": 2,
+      "coverEmoji": "🍤",
+      "steps": [
+        "大米提前煮成熟饭并拨散；虾仁冷藏解冻，鸡蛋打散",
+        "热锅炒熟鸡蛋并盛出",
+        "下虾仁和玉米粒炒至熟透",
+        "加入准备好的熟米饭炒散，最后拌入鸡蛋并调味"
+      ],
+      "ingredients": [
+        {
+          "name": "冷冻虾仁",
+          "quantity": 200.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "速冻玉米粒",
+          "quantity": 150.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "大米",
+          "quantity": 200.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 2.0,
+          "unit": "枚",
+          "optional": false
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 7,
+      "name": "酸辣土豆丝",
+      "summary": "细细的土豆丝酸香清爽，适合搭配米饭的一道快手菜。",
+      "category": "快手菜",
+      "durationMinutes": 20,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥔",
+      "steps": [
+        "土豆去皮切细丝，冲洗掉表面淀粉后沥干",
+        "大蒜切末，按口味准备干辣椒和葱段",
+        "热锅放油，炒香蒜末和干辣椒",
+        "放入土豆丝大火翻炒，沿锅边加入白醋",
+        "炒至土豆丝熟透又保留脆感，加盐和葱段翻匀"
+      ],
+      "ingredients": [
+        {
+          "name": "土豆",
+          "quantity": 2.0,
+          "unit": "个",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 2.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白醋",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "干辣椒",
+          "quantity": 2.0,
+          "unit": "个",
+          "optional": true
+        },
+        {
+          "name": "小葱",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 8,
+      "name": "家常红烧肉",
+      "summary": "五花肉小火慢炖，收成一碗酱香软糯的家常红烧肉。",
+      "category": "家常菜",
+      "durationMinutes": 60,
+      "calories": 0,
+      "difficulty": "中等",
+      "servings": 2,
+      "coverEmoji": "🍖",
+      "steps": [
+        "五花肉切成均匀小块，冷水入锅煮开，撇去浮沫后捞出沥干",
+        "锅中放少量油和冰糖，小火融化至浅琥珀色",
+        "倒入肉块翻匀，加入姜片、料酒、生抽和老抽",
+        "加热水没过肉块，按喜好放八角，加盖小火炖约四十分钟",
+        "确认肉已熟透且软烂后开盖收汁，按口味调整咸淡并撒葱花"
+      ],
+      "ingredients": [
+        {
+          "name": "五花肉",
+          "quantity": 400.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "生姜",
+          "quantity": 10.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "料酒",
+          "quantity": 15.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 15.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "老抽",
+          "quantity": 5.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "冰糖",
+          "quantity": 15.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 5.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "八角",
+          "quantity": 1.0,
+          "unit": "个",
+          "optional": true
+        },
+        {
+          "name": "小葱",
+          "quantity": 10.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 9,
+      "name": "宫保鸡丁",
+      "summary": "鸡丁、黄瓜和熟花生米一起快炒，酸甜微辣，口感丰富。",
+      "category": "家常菜",
+      "durationMinutes": 25,
+      "calories": 0,
+      "difficulty": "中等",
+      "servings": 2,
+      "coverEmoji": "🍗",
+      "steps": [
+        "鸡胸肉切丁，用少量生抽和一半淀粉抓匀；黄瓜切丁",
+        "将剩余生抽、白醋、白糖、淀粉与两勺水调成汁",
+        "热锅放油，鸡丁炒散至变色，按口味加入干辣椒",
+        "倒入黄瓜丁翻炒，再倒入调好的汁",
+        "炒至鸡丁中心完全熟透、酱汁略稠，加入熟花生米翻匀出锅"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡胸肉",
+          "quantity": 250.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "黄瓜",
+          "quantity": 1.0,
+          "unit": "根",
+          "optional": false
+        },
+        {
+          "name": "熟花生米",
+          "quantity": 50.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 15.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白醋",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白糖",
+          "quantity": 8.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "淀粉",
+          "quantity": 6.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 12.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "干辣椒",
+          "quantity": 3.0,
+          "unit": "个",
+          "optional": true
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 10,
+      "name": "麻婆豆腐",
+      "summary": "嫩豆腐吸满豆瓣酱汁，配少量肉末，麻辣程度可以自行调整。",
+      "category": "家常菜",
+      "durationMinutes": 20,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥣",
+      "steps": [
+        "豆腐切小块，放入热水中轻煮两分钟，捞出沥干；蒜切末",
+        "热锅放油，炒熟肉末，再放蒜末和豆瓣酱炒香",
+        "加入约二百毫升热水和生抽，煮开后放入豆腐",
+        "小火煮约五分钟，轻推锅边，确认豆腐与肉末完全熟透",
+        "淀粉加水调匀，少量多次倒入收浓，按口味撒花椒粉和葱花"
+      ],
+      "ingredients": [
+        {
+          "name": "嫩豆腐",
+          "quantity": 350.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "猪肉末",
+          "quantity": 80.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "豆瓣酱",
+          "quantity": 15.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 3.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 8.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "淀粉",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "花椒粉",
+          "quantity": 1.0,
+          "unit": "克",
+          "optional": true
+        },
+        {
+          "name": "小葱",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": true
+    },
+    {
+      "id": 2,
+      "name": "蒜蓉生菜",
+      "summary": "大火快炒保留生菜脆嫩口感，适合优先消耗叶菜。",
+      "category": "素菜",
+      "durationMinutes": 8,
+      "calories": 120,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥬",
+      "steps": [
+        "生菜洗净沥干，蒜切末",
+        "热锅放油，小火炒香蒜末",
+        "转大火放入生菜快速翻炒",
+        "加盐调味后立即出锅"
+      ],
+      "ingredients": [
+        {
+          "name": "生菜",
+          "quantity": 1.0,
+          "unit": "把",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 3.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 4,
+      "name": "香煎三文鱼",
+      "summary": "外皮焦香、鱼肉熟透的简单鱼类料理。",
+      "category": "高蛋白",
+      "durationMinutes": 18,
+      "calories": 360,
+      "difficulty": "中等",
+      "servings": 2,
+      "coverEmoji": "🐟",
+      "steps": [
+        "三文鱼擦干水分并撒少量盐",
+        "平底锅放油，鱼皮朝下煎至金黄",
+        "翻面继续煎至中心熟透",
+        "出锅前撒黑胡椒，可按喜好加少量柠檬汁"
+      ],
+      "ingredients": [
+        {
+          "name": "三文鱼",
+          "quantity": 250.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "黑胡椒",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": true
+        },
+        {
+          "name": "食用油",
+          "quantity": 8.0,
+          "unit": "毫升",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 6,
+      "name": "鲜蔬蛋饼",
+      "summary": "面粉、鸡蛋和黄瓜组合成简单的家常早餐。",
+      "category": "早餐",
+      "durationMinutes": 20,
+      "calories": 290,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥚",
+      "steps": [
+        "面粉加水和鸡蛋调成面糊",
+        "黄瓜洗净切细丝后拌入面糊",
+        "平底锅刷油倒入面糊摊平",
+        "两面煎至完全熟透后切块装盘"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "quantity": 2.0,
+          "unit": "枚",
+          "optional": false
+        },
+        {
+          "name": "中筋面粉",
+          "quantity": 150.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "黄瓜",
+          "quantity": 1.0,
+          "unit": "根",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 8.0,
+          "unit": "毫升",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 11,
+      "name": "可乐鸡翅",
+      "summary": "可乐与生抽慢慢收汁，做成色泽透亮、咸甜适口的家常鸡翅。",
+      "category": "家常菜",
+      "durationMinutes": 35,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🍗",
+      "steps": [
+        "鸡翅中冷藏解冻，擦干表面水分，姜切片",
+        "平底锅放少量油，将鸡翅两面煎至微黄",
+        "加入姜片、生抽和可乐，煮开后转中小火",
+        "加盖焖煮约二十分钟，途中翻面，确认鸡翅中心熟透",
+        "开盖收汁，保持翻动避免糊底，按喜好撒少量白芝麻"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡翅中",
+          "quantity": 8.0,
+          "unit": "只",
+          "optional": false
+        },
+        {
+          "name": "可乐",
+          "quantity": 250.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 15.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "生姜",
+          "quantity": 10.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 5.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白芝麻",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 12,
+      "name": "蒜蓉西兰花",
+      "summary": "西兰花先焯后炒，搭配蒜末，清爽又保留蔬菜本味。",
+      "category": "素菜",
+      "durationMinutes": 15,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥦",
+      "steps": [
+        "西兰花切小朵，清洗干净；大蒜切末",
+        "锅中水烧开，西兰花焯约一分钟后捞出沥干",
+        "热锅放油，小火炒香蒜末",
+        "放入西兰花翻炒，加盐和少量清水",
+        "炒至菜梗熟透、软硬合适后装盘"
+      ],
+      "ingredients": [
+        {
+          "name": "西兰花",
+          "quantity": 300.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 4.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 13,
+      "name": "鱼香肉丝",
+      "summary": "肉丝、木耳与蔬菜丝裹上酸甜微辣的鱼香汁，是常见的下饭小炒。",
+      "category": "家常菜",
+      "durationMinutes": 25,
+      "calories": 0,
+      "difficulty": "中等",
+      "servings": 2,
+      "coverEmoji": "🥩",
+      "steps": [
+        "木耳提前泡发后洗净切丝并及时烹饪；胡萝卜、青椒切丝",
+        "猪里脊切丝，用一半淀粉、少量生抽和水抓匀",
+        "将白醋、白糖、剩余生抽和淀粉加水调成汁",
+        "热锅放油，将肉丝炒散至变色，加入豆瓣酱炒香",
+        "下胡萝卜、木耳和青椒翻炒，倒入料汁",
+        "炒至肉丝和木耳完全熟透、酱汁裹匀后出锅"
+      ],
+      "ingredients": [
+        {
+          "name": "猪里脊",
+          "quantity": 200.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "干木耳",
+          "quantity": 8.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "胡萝卜",
+          "quantity": 0.5,
+          "unit": "根",
+          "optional": false
+        },
+        {
+          "name": "青椒",
+          "quantity": 1.0,
+          "unit": "个",
+          "optional": false
+        },
+        {
+          "name": "豆瓣酱",
+          "quantity": 10.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白醋",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "白糖",
+          "quantity": 8.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "淀粉",
+          "quantity": 6.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 12.0,
+          "unit": "毫升",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 14,
+      "name": "香菇青菜",
+      "summary": "香菇与青菜搭配，一道清淡鲜香、方便消耗叶菜的家常素菜。",
+      "category": "素菜",
+      "durationMinutes": 15,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥬",
+      "steps": [
+        "上海青掰开洗净，较大的菜棵对半切；香菇去蒂洗净",
+        "大蒜切末，香菇切厚片或在表面划浅口",
+        "热锅放油炒香蒜末，倒入香菇翻炒",
+        "加入少量清水和生抽，煮至香菇熟透",
+        "先放菜梗后放菜叶，加盐炒至全部熟透即可"
+      ],
+      "ingredients": [
+        {
+          "name": "上海青",
+          "quantity": 300.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "鲜香菇",
+          "quantity": 6.0,
+          "unit": "朵",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 2.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "食用油",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 1.0,
+          "unit": "克",
+          "optional": false
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 15,
+      "name": "紫菜蛋花汤",
+      "summary": "紫菜与蛋花煮成一碗清汤，十分钟给家常饭添一道暖汤。",
+      "category": "汤羹",
+      "durationMinutes": 10,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🍲",
+      "steps": [
+        "按包装说明处理紫菜并撕碎；鸡蛋充分打散",
+        "锅中加入约八百毫升清水，煮开后放入紫菜",
+        "保持汤轻微沸腾，沿锅边缓缓倒入蛋液",
+        "等蛋液凝固成蛋花后轻轻推动，继续煮至完全熟透",
+        "加盐调味，关火后按喜好加入香油和葱花"
+      ],
+      "ingredients": [
+        {
+          "name": "紫菜",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "鸡蛋",
+          "quantity": 2.0,
+          "unit": "枚",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "香油",
+          "quantity": 3.0,
+          "unit": "毫升",
+          "optional": true
+        },
+        {
+          "name": "小葱",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 16,
+      "name": "拍黄瓜",
+      "summary": "黄瓜拍开更容易入味，蒜香酸爽，适合现拌现吃。",
+      "category": "凉菜",
+      "durationMinutes": 10,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥒",
+      "steps": [
+        "黄瓜充分洗净并沥干，使用干净的熟食刀板",
+        "轻拍黄瓜后切成小块，大蒜切末",
+        "将蒜末、白醋、生抽、盐和香油拌成料汁",
+        "黄瓜与料汁拌匀，按口味加入辣椒",
+        "静置片刻入味后装盘，拌好后及时食用"
+      ],
+      "ingredients": [
+        {
+          "name": "黄瓜",
+          "quantity": 2.0,
+          "unit": "根",
+          "optional": false
+        },
+        {
+          "name": "大蒜",
+          "quantity": 3.0,
+          "unit": "瓣",
+          "optional": false
+        },
+        {
+          "name": "白醋",
+          "quantity": 15.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 10.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 2.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "香油",
+          "quantity": 3.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "干辣椒",
+          "quantity": 1.0,
+          "unit": "个",
+          "optional": true
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 17,
+      "name": "嫩滑蒸蛋",
+      "summary": "鸡蛋加温水慢蒸，成品细腻嫩滑，适合搭配家常饭。",
+      "category": "蒸菜",
+      "durationMinutes": 20,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🥚",
+      "steps": [
+        "鸡蛋打散加盐，按蛋液一份、温水约一点五份的比例搅匀",
+        "过滤蛋液并撇去泡沫，倒入耐热浅碗",
+        "用盘子盖住碗口，蒸锅水开后放入",
+        "中小火蒸约十二至十五分钟，至中心完全凝固无流动蛋液",
+        "关火稍焖片刻，出锅后淋生抽和香油，按喜好撒葱花"
+      ],
+      "ingredients": [
+        {
+          "name": "鸡蛋",
+          "quantity": 3.0,
+          "unit": "枚",
+          "optional": false
+        },
+        {
+          "name": "盐",
+          "quantity": 1.0,
+          "unit": "克",
+          "optional": false
+        },
+        {
+          "name": "生抽",
+          "quantity": 5.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "香油",
+          "quantity": 2.0,
+          "unit": "毫升",
+          "optional": false
+        },
+        {
+          "name": "小葱",
+          "quantity": 5.0,
+          "unit": "克",
+          "optional": true
+        }
+      ],
+      "featured": false
+    },
+    {
+      "id": 18,
+      "name": "清蒸南瓜",
+      "summary": "南瓜切块直接蒸熟，保留自然甜味，简单省心。",
+      "category": "蒸菜",
+      "durationMinutes": 25,
+      "calories": 0,
+      "difficulty": "简单",
+      "servings": 2,
+      "coverEmoji": "🎃",
+      "steps": [
+        "南瓜充分洗净，去籽，硬皮可按需要削去",
+        "切成厚薄接近的南瓜块，均匀铺在耐热盘中",
+        "蒸锅加水烧开，放入南瓜盘并盖好锅盖",
+        "中火蒸约十五至二十分钟，用筷子能轻松穿透即熟",
+        "小心取出热盘，稍凉后食用"
+      ],
+      "ingredients": [
+        {
+          "name": "南瓜",
+          "quantity": 500.0,
+          "unit": "克",
+          "optional": false
+        }
+      ],
+      "featured": false
+    }
+  ],
+  "traceId": "b2c802bc-5ae0-4416-9d34-029cbf36d20b"
+}

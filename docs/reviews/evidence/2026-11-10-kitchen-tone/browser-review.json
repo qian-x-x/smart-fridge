@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-10",
+  "scope": "Actual release home, demo inventory, software WebGL; no business writes or physical device acceptance.",
+  "checks": [
+    {
+      "name": "new-login-reference-loaded",
+      "pass": true
+    },
+    {
+      "name": "desktop-new-scene-version",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "desktop-controls-and-inventory",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "desktop-closed-state",
+      "pass": true
+    },
+    {
+      "name": "desktop-open-state",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [
+          "freezerDrawer",
+          "leftDoor",
+          "middleDrawer",
+          "rightDoor"
+        ],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "mobile-new-scene-version",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "mobile-controls-and-inventory",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "mobile-closed-state",
+      "pass": true
+    },
+    {
+      "name": "mobile-open-state",
+      "pass": true,
+      "detail": {
+        "version": "quiet-white-v2.0.1",
+        "open": [
+          "freezerDrawer",
+          "leftDoor",
+          "middleDrawer",
+          "rightDoor"
+        ],
+        "inventory": 10,
+        "noOverlap": true,
+        "buttons": true
+      }
+    },
+    {
+      "name": "no-runtime-exceptions",
+      "pass": true
+    },
+    {
+      "name": "no-failed-scene-assets",
+      "pass": true
+    }
+  ],
+  "passed": 11,
+  "failed": 0
+}

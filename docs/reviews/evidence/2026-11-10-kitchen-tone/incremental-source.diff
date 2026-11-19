@@ -1,0 +1,237 @@
+--- previous/apps/fridge-app/lib/core/config/app_brand.dart
++++ current/apps/fridge-app/lib/core/config/app_brand.dart
+@@ -3,5 +3,5 @@
+   static const englishName = 'XIAOYI FRIDGE';
+   static const tagline = '查食材，看菜谱，都容易';
+   static const themeName = '静白全景';
+-  static const kitchenImage = 'assets/images/kitchen-quiet-white-v2.png';
++  static const kitchenImage = 'assets/images/kitchen-gray-white-v2.0.1.png';
+ }
+--- previous/apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart
++++ current/apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart
+@@ -56,7 +56,7 @@
+               AppBrand.kitchenImage,
+               fit: BoxFit.cover,
+               alignment: Alignment.center,
+-              semanticLabel: '白色冰箱与浅冷灰台面的厨房外观参考图',
++              semanticLabel: '灰白冰箱、石墨灰柜体与深灰台面的厨房外观参考图',
+             ),
+           );
+           return SingleChildScrollView(
+--- previous/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart
++++ current/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart
+@@ -18,7 +18,7 @@
+ 
+   @override
+   Widget build(BuildContext context) => Semantics(
+-    label: '静白厨房外观参考图，非实时三维；食材以清单为准。',
++    label: '灰白黑厨房外观参考图，非实时三维；食材以清单为准。',
+     child: Stack(
+       key: const ValueKey('webgl-fridge-fallback'),
+       fit: StackFit.expand,
+--- previous/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart
++++ current/apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart
+@@ -38,7 +38,7 @@
+     _viewType = 'smart-fridge-webgl-${DateTime.now().microsecondsSinceEpoch}';
+     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
+       final iframe = web.HTMLIFrameElement()
+-        ..src = 'fridge3d/index.html?rev=quiet-white-v2.0.0'
++        ..src = 'fridge3d/index.html?rev=quiet-white-v2.0.1'
+         ..title = '小易冰箱 WebGL 三维模型'
+         ..setAttribute('allowtransparency', 'true')
+         ..style.border = '0'
+--- previous/apps/fridge-app/pubspec.yaml
++++ current/apps/fridge-app/pubspec.yaml
+@@ -67,7 +67,7 @@
+   uses-material-design: true
+   assets:
+     - assets/data/home-recipes-v2.json
+-    - assets/images/kitchen-quiet-white-v2.png
++    - assets/images/kitchen-gray-white-v2.0.1.png
+     - assets/images/fridge-kitchen-v1.png
+     - assets/images/kitchen-harvest.jpg
+     - assets/images/recipe-tomato-eggs.jpg
+--- previous/apps/fridge-app/web/fridge3d/fridge-model.js
++++ current/apps/fridge-app/web/fridge3d/fridge-model.js
+@@ -32,16 +32,18 @@
+ 
+ export function createMaterials(textures = {}) {
+   return {
+-    steel: new THREE.MeshStandardMaterial({ color: 0xf4f6f7, metalness: 0.25, roughness: 0.35, map: textures.steel ?? null, envMapIntensity: 1.1 }),
+-    side: new THREE.MeshStandardMaterial({ color: 0xcbd4da, metalness: 0.25, roughness: 0.45 }),
+-    white: new THREE.MeshStandardMaterial({ color: 0xf5f7f8, roughness: 0.32 }),
+-    gasket: new THREE.MeshStandardMaterial({ color: 0x6f7a82, roughness: 0.85 }),
+-    dark: new THREE.MeshStandardMaterial({ color: 0x20262c, roughness: 0.65 }),
++    steel: new THREE.MeshStandardMaterial({ color: 0xd1d5d8, metalness: 0.18, roughness: 0.55, map: textures.steel ?? null, envMapIntensity: 0.35 }),
++    side: new THREE.MeshStandardMaterial({ color: 0x929da6, metalness: 0.2, roughness: 0.6, envMapIntensity: 0.3 }),
++    white: new THREE.MeshStandardMaterial({ color: 0xdfe3e6, roughness: 0.65, envMapIntensity: 0.3 }),
++    gasket: new THREE.MeshStandardMaterial({ color: 0x56616a, roughness: 0.85 }),
++    dark: new THREE.MeshStandardMaterial({ color: 0x191e23, roughness: 0.8, envMapIntensity: 0.2 }),
+     glass: new THREE.MeshPhysicalMaterial({ color: 0xb7cbd6, transparent: true, opacity: 0.38, roughness: 0.1, metalness: 0, depthWrite: false, side: THREE.DoubleSide }),
+-    led: new THREE.MeshBasicMaterial({ color: 0xf3f8ff }),
+-    wood: new THREE.MeshStandardMaterial({ color: 0xffffff, map: textures.wood ?? null, roughness: 0.7 }),
+-    stone: new THREE.MeshStandardMaterial({ color: 0xc7d1d9, map: textures.stone ?? null, roughness: 0.46 }),
+-    wall: new THREE.MeshStandardMaterial({ color: 0xd7e2e9, roughness: 0.9 }),
++    led: new THREE.MeshBasicMaterial({ color: 0xd4e0e9 }),
++    wood: new THREE.MeshStandardMaterial({ color: 0xffffff, map: textures.wood ?? null, roughness: 0.85, envMapIntensity: 0.2 }),
++    stone: new THREE.MeshStandardMaterial({ color: 0x3d4750, map: textures.stone ?? null, roughness: 0.78, envMapIntensity: 0.2 }),
++    floor: new THREE.MeshStandardMaterial({ color: 0x7e8992, map: textures.stone ?? null, roughness: 0.9, envMapIntensity: 0.2 }),
++    upperCabinet: new THREE.MeshStandardMaterial({ color: 0x929da6, roughness: 0.8, envMapIntensity: 0.2 }),
++    wall: new THREE.MeshStandardMaterial({ color: 0x9ea8b0, roughness: 0.95, envMapIntensity: 0.2 }),
+   };
+ }
+ 
+--- previous/apps/fridge-app/web/fridge3d/fridge3d.js
++++ current/apps/fridge-app/web/fridge3d/fridge3d.js
+@@ -1,8 +1,8 @@
+ import * as THREE from '../vendor/three.module.min.js';
+ import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
+-import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=quiet-white-v2.0.0';
+-import { buildKitchen, createTexture } from './kitchen-scene.js?rev=quiet-white-v2.0.0';
+-import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=quiet-white-v2.0.0';
++import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=quiet-white-v2.0.1';
++import { buildKitchen, createTexture } from './kitchen-scene.js?rev=quiet-white-v2.0.1';
++import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=quiet-white-v2.0.1';
+ 
+ const canvas = document.querySelector('#fridge-canvas');
+ const stage = document.querySelector('#scene');
+@@ -29,28 +29,29 @@
+   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
+   renderer.outputColorSpace = THREE.SRGBColorSpace;
+   renderer.toneMapping = THREE.ACESFilmicToneMapping;
+-  renderer.toneMappingExposure = 0.88;
++  renderer.toneMappingExposure = 0.78;
+   renderer.shadowMap.enabled = true;
+   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+-  scene = new THREE.Scene(); scene.background = new THREE.Color(0xe7edf1);
+-  scene.fog = new THREE.Fog(0xe7edf1, 17, 33);
++  scene = new THREE.Scene(); scene.background = new THREE.Color(0xc9cfd3);
++  scene.fog = new THREE.Fog(0xc9cfd3, 17, 33);
+   camera = new THREE.PerspectiveCamera(32, 1, 0.1, 60);
+   const pmrem = new THREE.PMREMGenerator(renderer);
+   const environment = new RoomEnvironment();
+   const environmentTarget = pmrem.fromScene(environment, 0.04);
+   scene.environment = environmentTarget.texture;
++  scene.environmentIntensity = 0.55;
+   environment.dispose(); pmrem.dispose();
+   const materials = createMaterials({ steel: createTexture('steel'), wood: createTexture('wood'), stone: createTexture('stone') });
+   model = buildFridge(materials); scene.add(model.root);
+   room = buildKitchen(scene, materials, model.foodGroups.pantry);
+-  scene.add(new THREE.HemisphereLight(0xf7fbff, 0xc4cfd8, 1.15));
+-  const sun = new THREE.DirectionalLight(0xf7fbff, 2.0);
++  scene.add(new THREE.HemisphereLight(0xf2f6fa, 0x929da7, 0.9));
++  const sun = new THREE.DirectionalLight(0xf2f6fa, 1.6);
+   sun.position.set(-4.5, 6.5, 4.5); sun.castShadow = true;
+   sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -6; sun.shadow.camera.right = 6;
+   sun.shadow.camera.top = 6; sun.shadow.camera.bottom = -4; sun.shadow.normalBias = 0.018;
+   sun.target.position.set(0, 1.5, 0); scene.add(sun, sun.target);
+-  const fill = new THREE.DirectionalLight(0xebf4ff, 0.45); fill.position.set(4, 4, 7); scene.add(fill);
+-  const interiorLight = new THREE.PointLight(0xf3f8ff, 1.0, 3.2, 2); interiorLight.position.set(0, 3.72, 0.1); scene.add(interiorLight);
++  const fill = new THREE.DirectionalLight(0xe2eaf0, 0.3); fill.position.set(4, 4, 7); scene.add(fill);
++  const interiorLight = new THREE.PointLight(0xe8f0f7, 0.8, 3.2, 2); interiorLight.position.set(0, 3.72, 0.1); scene.add(interiorLight);
+   bindInputs();
+   observer = new ResizeObserver(resize); observer.observe(document.body);
+   resize(); updateStatus();
+@@ -107,7 +108,7 @@
+     button.title = `${button.textContent}：已${isOpen ? '开启，点击关闭' : '关闭，点击开启'}`;
+   });
+   stage.dataset.zone = view.zone; stage.dataset.openParts = openParts.join(',');
+-  stage.dataset.sceneVersion = 'quiet-white-v2.0.0';
++  stage.dataset.sceneVersion = 'quiet-white-v2.0.1';
+   const label = { fresh: '冷藏室', variable: '变温抽屉', freezer: '冷冻抽屉', pantry: '厨房常温柜台' }[view.zone];
+   liveStatus.textContent = `${label}，${openParts.length === 0 ? '冰箱已关闭' : '可拖动查看内部结构'}`;
+ }
+--- previous/apps/fridge-app/web/fridge3d/index.html
++++ current/apps/fridge-app/web/fridge3d/index.html
+@@ -3,8 +3,8 @@
+ <head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+-  <meta name="theme-color" content="#f4f6f7">
+-  <title>小易冰箱 · 静白厨房</title>
++  <meta name="theme-color" content="#c9cfd3">
++  <title>小易冰箱 · 灰白厨房</title>
+   <style>
+     * { box-sizing: border-box; }
+     html, body, #scene { width:100%; height:100%; margin:0; overflow:hidden; background:#f4f6f7; }
+@@ -26,7 +26,7 @@
+   </style>
+ </head>
+ <body>
+-  <main id="scene" aria-label="浅冷色厨房中的白色冰箱三维场景">
++  <main id="scene" aria-label="灰白黑厨房中的哑光灰白冰箱三维场景">
+     <canvas id="fridge-canvas" tabindex="0" aria-label="可交互冰箱。拖动查看；数字1到4选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
+     <div class="controls" role="group" aria-label="冰箱结构控制">
+       <button id="overview" type="button">展开概览</button>
+@@ -46,6 +46,6 @@
+     window.addEventListener('unhandledrejection', showLoadError);
+   </script>
+   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
+-  <script type="module" src="./fridge3d.js?rev=quiet-white-v2.0.0"></script>
++  <script type="module" src="./fridge3d.js?rev=quiet-white-v2.0.1"></script>
+ </body>
+ </html>
+--- previous/apps/fridge-app/web/fridge3d/kitchen-scene.js
++++ current/apps/fridge-app/web/fridge3d/kitchen-scene.js
+@@ -1,5 +1,5 @@
+ import * as THREE from '../vendor/three.module.min.js';
+-import { box } from './fridge-model.js?rev=quiet-white-v2.0.0';
++import { box } from './fridge-model.js?rev=quiet-white-v2.0.1';
+ 
+ export function createTexture(kind) {
+   const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 512;
+@@ -11,7 +11,7 @@
+     const index = (y * 256 + x) * 4;
+     const grain = kind === 'wood' ? Math.sin(x * 0.9) * 0.5 + random() * 0.8
+       : kind === 'steel' ? Math.sin(y * 1.4) * 2 + random() * 3 : random() * 3.5;
+-    const base = kind === 'wood' ? [211, 220, 226] : kind === 'steel' ? [245, 246, 247] : [222, 229, 234];
++    const base = kind === 'wood' ? [63, 72, 80] : kind === 'steel' ? [211, 216, 219] : [195, 201, 206];
+     for (let channel = 0; channel < 3; channel++) image.data[index + channel] = base[channel] + grain;
+     image.data[index + 3] = 255;
+   }
+@@ -23,16 +23,17 @@
+ 
+ export function buildKitchen(scene, materials, pantryFoodGroup) {
+   const room = new THREE.Group(); room.name = 'quiet-white-kitchen'; scene.add(room);
+-  box(room, 'floor', [18, 0.08, 16], [0, -0.065, 2], materials.stone);
++  box(room, 'floor', [18, 0.08, 16], [0, -0.065, 2], materials.floor);
+   box(room, 'back-wall', [17, 7, 0.12], [0, 3.4, -1.48], materials.wall);
+-  const grout = new THREE.MeshStandardMaterial({ color: 0xc9d2d9, roughness: 1 });
+-  for (let x = -7; x < 8; x += 1.4) box(room, 'floor-grout-x', [0.009, 0.002, 12], [x, -0.023, 2], grout);
+-  for (let z = -1; z < 9; z += 1.4) box(room, 'floor-grout-z', [17, 0.002, 0.009], [0, -0.023, z], grout);
++  const grout = new THREE.MeshStandardMaterial({ color: 0x626d76, roughness: 1 });
++  const floorGrout = new THREE.MeshStandardMaterial({ color: 0x8c969e, roughness: 1 });
++  for (let x = -7; x < 8; x += 1.4) box(room, 'floor-grout-x', [0.009, 0.002, 12], [x, -0.023, 2], floorGrout);
++  for (let z = -1; z < 9; z += 1.4) box(room, 'floor-grout-z', [17, 0.002, 0.009], [0, -0.023, z], floorGrout);
+   for (const x of [-1.25, 1.25]) box(room, 'tall-oak-bay-panel', [0.095, 4.95, 1.25], [x, 2.49, -0.68], materials.wood);
+   box(room, 'above-fridge-cabinet', [2.6, 0.48, 1.23], [0, 4.8, -0.69], materials.wood);
+   box(room, 'above-fridge-door-seam', [0.012, 0.44, 0.012], [0, 4.8, -0.066], grout);
+   const black = materials.dark;
+-  const ceramic = new THREE.MeshStandardMaterial({ color: 0xf3f5f6, roughness: 0.75 });
++  const ceramic = new THREE.MeshStandardMaterial({ color: 0xcdd3d7, roughness: 0.8 });
+   for (const x of [-2.68, 2.68]) {
+     box(room, 'base-cabinet', [2.68, 1.94, 1.5], [x, 1.05, -0.56], materials.wood);
+     box(room, 'quartz-worktop', [2.75, 0.065, 1.61], [x, 2.055, -0.52], materials.stone);
+@@ -44,11 +45,11 @@
+   }
+   for (let x = 1.34; x < 4.1; x += 0.46) box(room, 'backsplash-vertical-joint', [0.008, 1.15, 0.008], [x, 2.65, -1.407], grout);
+   for (let y = 2.14; y < 3.25; y += 0.27) box(room, 'backsplash-horizontal-joint', [2.76, 0.008, 0.008], [2.7, y, -1.407], grout);
+-  box(room, 'upper-white-cabinet', [2.7, 1.16, 0.7], [2.7, 3.86, -1.08], materials.white);
++  box(room, 'upper-white-cabinet', [2.7, 1.16, 0.7], [2.7, 3.86, -1.08], materials.upperCabinet);
+   for (const x of [2.25, 3.15]) box(room, 'upper-cabinet-seam', [0.009, 1.12, 0.012], [x, 3.86, -0.725], grout);
+   box(room, 'under-cabinet-light', [2.5, 0.025, 0.025], [2.7, 3.27, -0.75], materials.led);
+   const window = new THREE.Group(); window.position.set(-2.82, 3.55, -1.4); room.add(window);
+-  box(window, 'window-outside', [2.5, 2.35, 0.018], [0, 0, 0], new THREE.MeshBasicMaterial({ color: 0xe4eff0 }));
++  box(window, 'window-outside', [2.5, 2.35, 0.018], [0, 0, 0], new THREE.MeshBasicMaterial({ color: 0xc4ccd1 }));
+   for (const x of [-1.25, 0, 1.25]) box(window, 'window-frame-upright', [0.038, 2.46, 0.065], [x, 0, 0.045], black);
+   for (const y of [-1.19, 1.19]) box(window, 'window-frame-horizontal', [2.58, 0.04, 0.065], [0, y, 0.045], black);
+   box(window, 'window-sill', [2.7, 0.06, 0.25], [0, -1.23, 0.13], materials.stone);
+@@ -67,7 +68,7 @@
+   box(room, 'oak-cutting-board', [0.45, 0.7, 0.035], [1.7, 2.46, -1.34], materials.wood, 0.08);
+   const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), ceramic);
+   bowl.position.set(-3.45, 2.24, -0.18); bowl.scale.y = 0.7; room.add(bowl);
+-  const cloth = new THREE.MeshStandardMaterial({ color: 0x9eafb9, roughness: 0.95 });
++  const cloth = new THREE.MeshStandardMaterial({ color: 0x4f5a63, roughness: 0.95 });
+   box(room, 'folded-kitchen-cloth', [0.42, 0.035, 0.29], [2.02, 2.12, -0.24], cloth, 0.025);
+   box(room, 'cloth-upper-fold', [0.37, 0.025, 0.27], [2.02, 2.15, -0.25], cloth, 0.02);
+   pantryFoodGroup.position.set(-2.5, 2.1, -0.18); room.add(pantryFoodGroup);

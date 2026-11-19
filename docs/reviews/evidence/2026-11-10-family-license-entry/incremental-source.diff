@@ -1,0 +1,16 @@
+diff --git a/docs/reviews/evidence/2026-11-10-family-license-entry/profile_page.before.dart b/apps/fridge-app/lib/features/profile/presentation/profile_page.dart
+index 9740de8..4bf3716 100644
+--- a/docs/reviews/evidence/2026-11-10-family-license-entry/profile_page.before.dart
++++ b/apps/fridge-app/lib/features/profile/presentation/profile_page.dart
+@@ -231,11 +231,6 @@ class ProfilePage extends ConsumerWidget {
+             ),
+           ),
+         ),
+-        TextButton(
+-          onPressed: () =>
+-              showLicensePage(context: context, applicationName: '小易冰箱'),
+-          child: const Text('开源许可'),
+-        ),
+       ],
+     ),
+   );

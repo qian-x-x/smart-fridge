@@ -6,6 +6,7 @@ import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.da
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/cook_confirm_sheet.dart';
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 import 'package:smart_fridge_app/features/recipe/domain/recipe.dart';
+import 'package:smart_fridge_app/features/recipe/presentation/recipe_artwork.dart';
 import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 
 class RecipesPage extends ConsumerStatefulWidget {
@@ -49,180 +50,171 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final desktop = constraints.maxWidth >= 950;
-        return SingleChildScrollView(
+        final padding = desktop ? 32.0 : 18.0;
+        final available = constraints.maxWidth - padding * 2;
+        final columns = available >= 1120
+            ? 3
+            : available >= 660
+            ? 2
+            : 1;
+        final cardWidth = (available - (columns - 1) * 20) / columns;
+        final imageHeight = cardWidth * 0.62;
+        final textScale = MediaQuery.textScalerOf(context).scale(14) / 14;
+        return CustomScrollView(
           key: const PageStorageKey('recipe-page-scroll'),
-          padding: EdgeInsets.fromLTRB(
-            desktop ? 32 : 20,
-            26,
-            desktop ? 32 : 20,
-            32,
-          ),
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1440),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const Text(
-                    'COOK WITH WHAT YOU HAVE',
-                    style: TextStyle(
-                      color: AppColors.muted,
-                      letterSpacing: 2,
-                      fontSize: 10,
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(padding, 26, padding, 24),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'COOK WITH WHAT YOU HAVE',
+                      style: TextStyle(
+                        color: AppColors.muted,
+                        letterSpacing: 2,
+                        fontSize: 11,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 9),
-                  Text(
-                    desktop ? '好食材，值得好好做。' : '今天，吃点什么？',
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 9),
-                  Text(
-                    '查查冰箱里的食材，让 ${matches.length} 道菜谱给下一餐一点灵感。',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.muted,
-                      height: 1.6,
+                    const SizedBox(height: 9),
+                    Text(
+                      '下一餐，就从冰箱开始。',
+                      style: Theme.of(context).textTheme.headlineMedium,
                     ),
-                  ),
-                  const SizedBox(height: 22),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                      horizontal: 18,
+                    const SizedBox(height: 9),
+                    Text(
+                      '${matches.length} 道家常菜，按冰箱里的现有食材寻找下一餐。',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        color: AppColors.muted,
+                        height: 1.6,
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.butter,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.eco_outlined,
-                          size: 20,
-                          color: AppColors.warning,
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            matches.any((m) => m.expiringMatches > 0)
-                                ? '有菜谱能用上临期食材，切换“临期优先”看看。'
-                                : '优先选择食材齐全的菜谱，少补一点，也能好好吃饭。',
-                            style: const TextStyle(
-                              color: AppColors.warning,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 22),
-                  Wrap(
-                    alignment: WrapAlignment.spaceBetween,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: 20,
-                    runSpacing: 14,
-                    children: [
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 13,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.cool,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Row(
                         children: [
-                          for (final label in [
-                            '全部菜谱',
-                            '临期优先',
-                            '20 分钟内',
-                          ].indexed)
-                            ChoiceChip(
-                              label: Text(label.$2),
-                              selected: _filter == label.$1,
-                              showCheckmark: false,
-                              labelStyle: TextStyle(
-                                fontFamily: 'XiaoyiUI',
-                                color: _filter == label.$1
-                                    ? Colors.white
-                                    : AppColors.muted,
+                          const Icon(
+                            Icons.eco_outlined,
+                            size: 20,
+                            color: AppColors.muted,
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(
+                              matches.any((m) => m.expiringMatches > 0)
+                                  ? '有菜谱能用上临期食材，切换“临期优先”看看。'
+                                  : '先看看已有原料，再补齐缺少的食材。',
+                              style: const TextStyle(
+                                color: AppColors.muted,
                                 fontSize: 12,
                               ),
-                              onSelected: (_) =>
-                                  setState(() => _filter = label.$1),
                             ),
+                          ),
                         ],
                       ),
-                      SizedBox(
-                        width: desktop ? 280 : constraints.maxWidth - 40,
-                        child: TextField(
-                          key: const ValueKey('recipe-search-input'),
-                          controller: _search,
-                          onChanged: (_) => setState(() {}),
-                          decoration: InputDecoration(
-                            hintText: '搜索菜谱名称',
-                            prefixIcon: const Icon(Icons.search, size: 20),
-                            suffixIcon: _search.text.isNotEmpty
-                                ? IconButton(
-                                    tooltip: '清除搜索',
-                                    onPressed: () => setState(_search.clear),
-                                    icon: const Icon(Icons.close, size: 18),
-                                  )
-                                : null,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 24),
-                  if (filtered.isEmpty)
-                    _RecipeEmptyState(
-                      onClear: _filter != 0 || query.isNotEmpty
-                          ? () => setState(() {
-                              _filter = 0;
-                              _search.clear();
-                            })
-                          : null,
-                    )
-                  else if (desktop)
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    const SizedBox(height: 20),
+                    Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 20,
+                      runSpacing: 14,
                       children: [
-                        Expanded(
-                          flex: 6,
-                          child: _RecipeCard(
-                            match: filtered.first,
-                            hero: true,
-                            onTap: () => _showDetails(filtered.first),
-                          ),
-                        ),
-                        const SizedBox(width: 22),
-                        Expanded(
-                          flex: 5,
-                          child: Column(
-                            children: [
-                              for (final match in filtered.skip(1))
-                                Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: _RecipeCard(
-                                    match: match,
-                                    onTap: () => _showDetails(match),
-                                  ),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: [
+                            for (final label in [
+                              '全部菜谱',
+                              '临期优先',
+                              '20 分钟内',
+                            ].indexed)
+                              ChoiceChip(
+                                label: Text(label.$2),
+                                selected: _filter == label.$1,
+                                showCheckmark: false,
+                                labelStyle: TextStyle(
+                                  fontFamily: 'XiaoyiUI',
+                                  color: _filter == label.$1
+                                      ? Colors.white
+                                      : AppColors.muted,
+                                  fontSize: 13,
                                 ),
-                            ],
+                                onSelected: (_) =>
+                                    setState(() => _filter = label.$1),
+                              ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: desktop ? 280 : available,
+                          child: TextField(
+                            key: const ValueKey('recipe-search-input'),
+                            controller: _search,
+                            onChanged: (_) => setState(() {}),
+                            decoration: InputDecoration(
+                              hintText: '搜索菜谱名称',
+                              prefixIcon: const Icon(Icons.search, size: 20),
+                              suffixIcon: _search.text.isNotEmpty
+                                  ? IconButton(
+                                      tooltip: '清除搜索',
+                                      onPressed: () => setState(_search.clear),
+                                      icon: const Icon(Icons.close, size: 18),
+                                    )
+                                  : null,
+                            ),
                           ),
                         ),
                       ],
-                    )
-                  else
-                    for (final match in filtered)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 14),
-                        child: _RecipeCard(
-                          match: match,
-                          onTap: () => _showDetails(match),
-                        ),
-                      ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+            if (filtered.isEmpty)
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: padding),
+                sliver: SliverToBoxAdapter(
+                  child: _RecipeEmptyState(
+                    onClear: _filter != 0 || query.isNotEmpty
+                        ? () => setState(() {
+                            _filter = 0;
+                            _search.clear();
+                          })
+                        : null,
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: EdgeInsets.fromLTRB(padding, 0, padding, 32),
+                sliver: SliverGrid(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) => _RecipeCard(
+                      match: filtered[index],
+                      imageHeight: imageHeight,
+                      onTap: () => _showDetails(filtered[index]),
+                    ),
+                    childCount: filtered.length,
+                  ),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisExtent: imageHeight + 244 * textScale,
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -236,7 +228,7 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
       isScrollControlled: true,
       useSafeArea: true,
       backgroundColor: AppColors.paper,
-      builder: (context) => _RecipeDetailsSheet(
+      builder: (sheetContext) => _RecipeDetailsSheet(
         match: match,
         canCook:
             workspace != null &&
@@ -244,12 +236,15 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
             workspace.canEdit &&
             !workspace.isDemo &&
             match.matchedFoods.isNotEmpty,
-        onCook: () => _openCook(match),
+        onCook: () => _openCook(match, ModalRoute.of(sheetContext)),
       ),
     );
   }
 
-  Future<void> _openCook(RecipeMatch match) async {
+  Future<void> _openCook(
+    RecipeMatch match,
+    Route<dynamic>? detailsRoute,
+  ) async {
     final workspace = _workspaceOrNull();
     if (workspace == null || !workspace.hasFridge) {
       _notify('还没有可用的冰箱');
@@ -285,7 +280,7 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
     if (!mounted) {
       return;
     }
-    navigator.maybePop();
+    if (detailsRoute?.isCurrent == true) navigator.pop();
     _notify(message);
   }
 
@@ -301,20 +296,7 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
   }
 }
 
-String? _recipeImage(Recipe recipe) {
-  final name = recipe.name;
-  if ((name.contains('番茄') || name.contains('西红柿')) && name.contains('蛋')) {
-    return 'assets/images/recipe-tomato-eggs.jpg';
-  }
-  if (name.contains('西兰花')) return 'assets/images/recipe-broccoli.jpg';
-  if (name.contains('南瓜') && name.contains('粥')) {
-    return 'assets/images/recipe-pumpkin.jpg';
-  }
-  if (name.contains('蒸蛋') || name.contains('鸡蛋羹')) {
-    return 'assets/images/recipe-steamed-eggs.jpg';
-  }
-  return null;
-}
+String? _recipeImage(Recipe recipe) => RecipeArtwork.forName(recipe.name);
 
 class _RecipeArtwork extends StatelessWidget {
   const _RecipeArtwork({required this.recipe, required this.height});
@@ -323,24 +305,25 @@ class _RecipeArtwork extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = _recipeImage(recipe);
-    return SizedBox(
+    final placeholder = Container(
       height: height,
-      child: image != null
-          ? Image.asset(
-              image,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              semanticLabel: '${recipe.name}示意图',
-            )
-          : ColoredBox(
-              color: AppColors.linen,
-              child: Center(
-                child: Text(
-                  recipe.coverEmoji,
-                  style: TextStyle(fontSize: height > 160 ? 94 : 46),
-                ),
-              ),
-            ),
+      color: AppColors.cool,
+      alignment: Alignment.center,
+      child: const Icon(
+        Icons.restaurant_menu_outlined,
+        color: AppColors.muted,
+        size: 42,
+      ),
+    );
+    if (image == null) return placeholder;
+    return Image.asset(
+      image,
+      height: height,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      semanticLabel: '${recipe.name}成品参考图',
+      cacheWidth: 900,
+      errorBuilder: (_, _, _) => placeholder,
     );
   }
 }
@@ -349,131 +332,120 @@ class _RecipeCard extends StatelessWidget {
   const _RecipeCard({
     required this.match,
     required this.onTap,
-    this.hero = false,
+    required this.imageHeight,
   });
   final RecipeMatch match;
   final VoidCallback onTap;
-  final bool hero;
+  final double imageHeight;
   @override
   Widget build(BuildContext context) {
     final recipe = match.recipe;
-    final content = Padding(
-      padding: EdgeInsets.all(hero ? 24 : 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Text(
-                  recipe.name,
-                  style: TextStyle(
-                    fontSize: hero ? 23 : 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 5),
-              const Icon(Icons.north_east, size: 18, color: AppColors.muted),
-            ],
-          ),
-          const SizedBox(height: 6),
-          Text(
-            '${recipe.durationMinutes} 分钟 · ${recipe.category}',
-            style: const TextStyle(fontSize: 12, color: AppColors.muted),
-          ),
-          if (hero) ...[
-            const SizedBox(height: 12),
-            Text(
-              recipe.summary,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.muted,
-                height: 1.7,
-              ),
-            ),
-          ],
-          const SizedBox(height: 14),
-          Wrap(
-            spacing: 10,
-            runSpacing: 5,
-            children: [
-              Text(
-                '${match.score}% 匹配',
-                style: const TextStyle(
-                  color: AppColors.terracotta,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                '${match.matchedCount} / ${match.requiredCount} 食材已有',
-                style: const TextStyle(color: AppColors.muted, fontSize: 12),
-              ),
-            ],
-          ),
-          const SizedBox(height: 7),
-          Text(
-            match.complete
-                ? '食材齐全'
-                : '缺少：${match.missingIngredients.map((i) => i.name).join('、')}',
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              color: match.complete ? AppColors.sage : AppColors.terracotta,
-              fontSize: 11,
-            ),
-          ),
-          const SizedBox(height: 12),
-          LinearProgressIndicator(
-            value: match.score / 100,
-            minHeight: 4,
-            borderRadius: BorderRadius.circular(4),
-            backgroundColor: AppColors.linen,
-            color: AppColors.terracotta,
-            semanticsLabel: '食材匹配',
-            semanticsValue: '${match.score}%',
-          ),
-          if (match.expiringMatches > 0)
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text(
-                '优先消耗 ${match.expiringMatches} 项临期食材',
-                style: const TextStyle(color: AppColors.warning, fontSize: 11),
-              ),
-            ),
-        ],
-      ),
-    );
     return PressFeedback(
       child: Material(
         color: AppColors.paper,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
           side: const BorderSide(color: AppColors.border),
         ),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: onTap,
-          child: hero
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _RecipeArtwork(recipe: recipe, height: 320),
-                    content,
-                  ],
-                )
-              : Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 104,
-                      child: _RecipeArtwork(recipe: recipe, height: 186),
-                    ),
-                    Expanded(child: content),
-                  ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _RecipeArtwork(recipe: recipe, height: imageHeight),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 17, 18, 14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        recipe.name,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 19,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      const SizedBox(height: 7),
+                      Text(
+                        '${recipe.durationMinutes} 分钟 · ${recipe.category} · ${recipe.difficulty}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.muted,
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 4,
+                        children: [
+                          Text(
+                            '${match.score}% 匹配',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          Text(
+                            '${match.matchedCount} / ${match.requiredCount} 食材已有',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.muted,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        match.complete
+                            ? '原料种类齐全'
+                            : '缺少：${match.missingIngredients.map((i) => i.name).join('、')}',
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: match.complete
+                              ? AppColors.sage
+                              : AppColors.muted,
+                        ),
+                      ),
+                      if (match.expiringMatches > 0) ...[
+                        const SizedBox(height: 6),
+                        Text(
+                          '可用上 ${match.expiringMatches} 项临期食材',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: AppColors.warning,
+                          ),
+                        ),
+                      ],
+                      const Spacer(),
+                      const Divider(),
+                      const SizedBox(height: 8),
+                      const Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            '查看做法',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                          Icon(Icons.arrow_forward, size: 18),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -515,17 +487,30 @@ class _RecipeDetailsSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  '菜谱详情',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
+                IconButton(
+                  tooltip: '关闭菜谱详情',
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.close),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
             if (_recipeImage(recipe) != null) ...[
               ClipRRect(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(12),
                 child: _RecipeArtwork(recipe: recipe, height: 210),
               ),
               const SizedBox(height: 20),
             ],
             Row(
               children: [
-                Text(recipe.coverEmoji, style: const TextStyle(fontSize: 54)),
-                const SizedBox(width: 14),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -536,10 +521,10 @@ class _RecipeDetailsSheet extends StatelessWidget {
                       ),
                       Text(
                         '${recipe.durationMinutes} 分钟 · ${recipe.difficulty} · '
-                        '${recipe.calories} kcal',
+                        '${recipe.servings} 人份',
                         style: TextStyle(
                           color: AppColors.cocoa.withValues(alpha: 0.58),
-                          fontSize: 11,
+                          fontSize: 12,
                         ),
                       ),
                     ],
@@ -582,6 +567,11 @@ class _RecipeDetailsSheet extends StatelessWidget {
                 available: !match.missingIngredients.contains(ingredient),
               ),
             const SizedBox(height: 18),
+            const Text(
+              '匹配按原料种类计算，用量请在做饭前确认。',
+              style: TextStyle(fontSize: 12, color: AppColors.muted),
+            ),
+            const SizedBox(height: 10),
             AppFilledButton.icon(
               onPressed: canCook ? onCook : null,
               icon: const Icon(Icons.soup_kitchen_outlined, size: 18),
@@ -659,8 +649,21 @@ class _RecipeIngredientRow extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            available ? Icons.check_circle_rounded : Icons.add_circle_outline,
-            color: available ? AppColors.sage : AppColors.terracotta,
+            ingredient.optional
+                ? Icons.radio_button_unchecked
+                : available
+                ? Icons.check_circle_rounded
+                : Icons.add_circle_outline,
+            color: ingredient.optional
+                ? AppColors.muted
+                : available
+                ? AppColors.sage
+                : AppColors.ink,
+            semanticLabel: ingredient.optional
+                ? '可选原料'
+                : available
+                ? '已备食材'
+                : '缺少食材',
             size: 18,
           ),
           const SizedBox(width: 9),

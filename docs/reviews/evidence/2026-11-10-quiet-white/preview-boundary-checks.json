@@ -1,0 +1,40 @@
+{
+  "checks": [
+    {
+      "name": "release",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "name": "recipe-gallery",
+      "expected": 200,
+      "actual": 200,
+      "pass": true
+    },
+    {
+      "name": "source-traversal",
+      "expected": 403,
+      "actual": 403,
+      "pass": true
+    },
+    {
+      "name": "workspace-traversal",
+      "expected": 403,
+      "actual": 403,
+      "pass": true
+    },
+    {
+      "name": "missing-asset",
+      "expected": 404,
+      "actual": 404,
+      "pass": true
+    },
+    {
+      "name": "fixed-api-origin",
+      "expected": 401,
+      "actual": 401,
+      "pass": true
+    }
+  ]
+}

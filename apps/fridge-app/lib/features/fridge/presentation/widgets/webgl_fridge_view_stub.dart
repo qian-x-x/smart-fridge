@@ -18,7 +18,7 @@ class WebGLFridgeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: '暖橙厨房外观参考图，非实时三维；食材以清单为准。',
+    label: '灰白黑厨房外观参考图，非实时三维；食材以清单为准。',
     child: Stack(
       key: const ValueKey('webgl-fridge-fallback'),
       fit: StackFit.expand,

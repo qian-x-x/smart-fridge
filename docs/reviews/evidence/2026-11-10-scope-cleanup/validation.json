@@ -1,0 +1,164 @@
+{
+  "date": "2026-11-10",
+  "scope": "Completed-function scope cleanup, current directory, builds and demo browser review",
+  "passed": true,
+  "checks": [
+    {
+      "name": "prototype-removed-from-active-apps",
+      "passed": true,
+      "detail": "Reversible ignored local archive; no recursive deletion executed"
+    },
+    {
+      "name": "archive-ignored",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "compose-retained-service-definitions",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unused-infrastructure-removed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "ci-jobs",
+      "passed": true,
+      "detail": [
+        "backend",
+        "compose",
+        "flutter"
+      ]
+    },
+    {
+      "name": "active-profile-boundary",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "active-document-links",
+      "passed": true,
+      "detail": {
+        "checked": 94,
+        "missing": []
+      }
+    },
+    {
+      "name": "active-runbook-no-removed-app",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "historical-plans-superseded",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unrelated-prior-worktree-patches-preserved",
+      "passed": true,
+      "detail": {
+        "prior_patches": 26,
+        "unexpected": []
+      }
+    },
+    {
+      "name": "dependency-lock-unchanged",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "flutter-existing-regression-and-builds",
+      "passed": true,
+      "detail": "Analysis, 94 existing tests, Web and APK"
+    },
+    {
+      "name": "actual-release-demo-browser-review",
+      "passed": true,
+      "detail": "Actual current release, demo session, Edge software rendering; no real-account E2E or physical-device acceptance."
+    },
+    {
+      "name": "defense-questions-preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "word-crc-and-markdown-parity",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "word-table-and-title-structure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "word-rendered-pages",
+      "passed": true,
+      "detail": {
+        "pages": 20,
+        "visually_reinspected": [
+          1,
+          4
+        ],
+        "prior_review_pixel_identical_pages": [
+          2,
+          3,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20
+        ]
+      }
+    },
+    {
+      "name": "apk-crc-and-catalog-assets",
+      "passed": true,
+      "detail": {
+        "recipe_images": 18,
+        "bytes": 69757843
+      }
+    }
+  ],
+  "product_real_database_e2e_rerun": false,
+  "android_device_acceptance": false,
+  "maven_rerun": false,
+  "commit_push_deploy": false,
+  "artifacts": [
+    {
+      "path": "docs\\答辩\\小易冰箱技术使用说明与答辩问答.md",
+      "bytes": 46581,
+      "sha256": "2395e4b77aaffd55528367dfac0883650e8f74ef390192e2d1ef9958f5ef01db"
+    },
+    {
+      "path": "docs\\答辩\\小易冰箱技术使用说明与答辩问答.docx",
+      "bytes": 68349,
+      "sha256": "0e0bec013a0a93a13a5e01ff1ced88dfa35648edb64e231eaf29b653c3b064dd"
+    },
+    {
+      "path": "apps\\fridge-app\\build\\app\\outputs\\flutter-apk\\app-release.apk",
+      "bytes": 69757843,
+      "sha256": "76d3b98df3f00e83f64a44ac8335c6ba66f95ad01496eb434e09d732e3530234"
+    },
+    {
+      "path": "apps\\fridge-app\\build\\web\\main.dart.js",
+      "bytes": 3211604,
+      "sha256": "5241de78915e9884f4f252f97ee6b9f754be561ba179e24a9395411d480dada1"
+    }
+  ]
+}

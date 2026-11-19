@@ -1,8 +1,8 @@
 import * as THREE from '../vendor/three.module.min.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=warm-harvest-v1.5.1';
-import { buildKitchen, createTexture } from './kitchen-scene.js?rev=warm-harvest-v1.5.1';
-import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=warm-harvest-v1.5.1';
+import { buildFridge, createMaterials, poseFridge, replaceInventory } from './fridge-model.js?rev=quiet-white-v2.0.1';
+import { buildKitchen, createTexture } from './kitchen-scene.js?rev=quiet-white-v2.0.1';
+import { createViewState, transition, fitDistance, normalizeFoods, PARTS, ZONES } from './fridge-state.js?rev=quiet-white-v2.0.1';
 
 const canvas = document.querySelector('#fridge-canvas');
 const stage = document.querySelector('#scene');
@@ -10,7 +10,7 @@ const loading = document.querySelector('#loading');
 const liveStatus = document.querySelector('#live-status');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let renderer, scene, camera, model, room, observer;
-let view = createViewState();
+let view = transition(createViewState(), 'closeAll');
 let animated = { ...view };
 let yaw = 0.1, targetYaw = yaw, pitch = 0.09, targetPitch = pitch;
 let distance = 10;
@@ -29,28 +29,29 @@ function init() {
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.9;
+  renderer.toneMappingExposure = 0.78;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  scene = new THREE.Scene(); scene.background = new THREE.Color(0xfcf5e9);
-  scene.fog = new THREE.Fog(0xfcf5e9, 17, 33);
+  scene = new THREE.Scene(); scene.background = new THREE.Color(0xc9cfd3);
+  scene.fog = new THREE.Fog(0xc9cfd3, 17, 33);
   camera = new THREE.PerspectiveCamera(32, 1, 0.1, 60);
   const pmrem = new THREE.PMREMGenerator(renderer);
   const environment = new RoomEnvironment();
   const environmentTarget = pmrem.fromScene(environment, 0.04);
   scene.environment = environmentTarget.texture;
+  scene.environmentIntensity = 0.55;
   environment.dispose(); pmrem.dispose();
   const materials = createMaterials({ steel: createTexture('steel'), wood: createTexture('wood'), stone: createTexture('stone') });
   model = buildFridge(materials); scene.add(model.root);
   room = buildKitchen(scene, materials, model.foodGroups.pantry);
-  scene.add(new THREE.HemisphereLight(0xfff7e9, 0xbba382, 1.15));
-  const sun = new THREE.DirectionalLight(0xffedd8, 2.25);
+  scene.add(new THREE.HemisphereLight(0xf2f6fa, 0x929da7, 0.9));
+  const sun = new THREE.DirectionalLight(0xf2f6fa, 1.6);
   sun.position.set(-4.5, 6.5, 4.5); sun.castShadow = true;
   sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -6; sun.shadow.camera.right = 6;
   sun.shadow.camera.top = 6; sun.shadow.camera.bottom = -4; sun.shadow.normalBias = 0.018;
   sun.target.position.set(0, 1.5, 0); scene.add(sun, sun.target);
-  const fill = new THREE.DirectionalLight(0xfff1e1, 0.7); fill.position.set(4, 4, 7); scene.add(fill);
-  const interiorLight = new THREE.PointLight(0xf0fffa, 1.8, 3.2, 2); interiorLight.position.set(0, 3.72, 0.1); scene.add(interiorLight);
+  const fill = new THREE.DirectionalLight(0xe2eaf0, 0.3); fill.position.set(4, 4, 7); scene.add(fill);
+  const interiorLight = new THREE.PointLight(0xe8f0f7, 0.8, 3.2, 2); interiorLight.position.set(0, 3.72, 0.1); scene.add(interiorLight);
   bindInputs();
   observer = new ResizeObserver(resize); observer.observe(document.body);
   resize(); updateStatus();
@@ -83,7 +84,7 @@ function render(now) {
 
 function resize() {
   if (!renderer) return;
-  const { width, height } = document.body.getBoundingClientRect();
+  const { width, height } = canvas.getBoundingClientRect();
   camera.aspect = Math.max(width, 1) / Math.max(height, 1);
   distance = fitDistance(camera.aspect, 32) * (height < 480 ? 1.08 : 1);
   camera.updateProjectionMatrix(); renderer.setSize(Math.max(width, 1), Math.max(height, 1), false);
@@ -107,7 +108,7 @@ function updateStatus() {
     button.title = `${button.textContent}：已${isOpen ? '开启，点击关闭' : '关闭，点击开启'}`;
   });
   stage.dataset.zone = view.zone; stage.dataset.openParts = openParts.join(',');
-  stage.dataset.sceneVersion = 'warm-harvest-v1.5.1';
+  stage.dataset.sceneVersion = 'quiet-white-v2.0.1';
   const label = { fresh: '冷藏室', variable: '变温抽屉', freezer: '冷冻抽屉', pantry: '厨房常温柜台' }[view.zone];
   liveStatus.textContent = `${label}，${openParts.length === 0 ? '冰箱已关闭' : '可拖动查看内部结构'}`;
 }

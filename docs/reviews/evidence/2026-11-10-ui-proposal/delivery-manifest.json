@@ -1,0 +1,353 @@
+{
+  "date": "2026-11-10",
+  "base": "60a0077",
+  "scope": "D0 design proposal only; user selection pending",
+  "browserChecks": {
+    "passed": 206,
+    "failed": 0
+  },
+  "newTextWhitespaceCheck": {
+    "passed": true,
+    "files": 11
+  },
+  "localHtmlReferences": "passed",
+  "productionSourcesChanged": false,
+  "files": [
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/assets/kitchen-reference.png",
+      "bytes": 1769940,
+      "sha256": "7457a86055cbf6dab5a6898363c591df0503ccab43c3f5130dae85c6f7f8a63c",
+      "width": 1536,
+      "height": 1024
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/assets/素材说明.md",
+      "bytes": 3149,
+      "sha256": "36857fc34e54e540cf55b2eb0982f6295dd4577f850c9db08f972becb6307fa4"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/board.html",
+      "bytes": 3984,
+      "sha256": "a60d74e1f074b471d86c6e91d30ee5d6b7abc23f0259f04ae7105b248e57a580"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/capture-review.mjs",
+      "bytes": 16801,
+      "sha256": "c58c294820e2f05dd2551af154a1ecdb5e89648224683744ba3af20ab9225fa9"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/index.html",
+      "bytes": 4250,
+      "sha256": "9e70e9100f902d3c19cafc7142173d7934e1189fc08d82951ceeab1548ce6b5c"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/prototype.css",
+      "bytes": 31978,
+      "sha256": "e0bd7f36ed6ac7ff6707e14e93d3b88a3631173ff6673a21cabcd05d8d2ef331"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/prototype.html",
+      "bytes": 1456,
+      "sha256": "d3faf128e5ce4559d1524cd521adf77247252aa00b8b372a7bbb47a6825ddc57"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/prototype.js",
+      "bytes": 42670,
+      "sha256": "9d48d4c5c3386a8393347d57cb7038626b5ea175c1a3e187cf80c70b2bcbd4bf"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/review-a.png",
+      "bytes": 696958,
+      "sha256": "f2c291fd81a35e5a2458975fac6e68a951640659caba24764f66c39f5a5ffc64",
+      "width": 1800,
+      "height": 1500
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/review-b.png",
+      "bytes": 632198,
+      "sha256": "04992210885832ed167a0e12eb7351a7fa7d93445ac0a831d4fc414939a54b42",
+      "width": 1800,
+      "height": 1500
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/review-c.png",
+      "bytes": 610033,
+      "sha256": "229fec2e58d9616066779039683b6bbea6c9656096d4fb5ad5fde523bc15298f",
+      "width": 1800,
+      "height": 1500
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/review-overview.png",
+      "bytes": 281856,
+      "sha256": "96875e16ba6d2004a445f9ec6d04beb5c8d32f3dce3860bcbce4ad4bd90b54a7",
+      "width": 1425,
+      "height": 1351
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/review.css",
+      "bytes": 6461,
+      "sha256": "e619fd8ba51e91474ee7b76dcff8566309c1918ddaef239e9610fc29e91af20c"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens.html",
+      "bytes": 1854,
+      "sha256": "c2dab3cf6dba49184162ff3ba05a6c48a44164c19479983dfc4986e3a7a13b16"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/add.png",
+      "bytes": 36308,
+      "sha256": "7a59be36213a976c28f93e83730dbfad7e8a13407eaf42fa9b865d0bd010a71e",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/components.png",
+      "bytes": 122749,
+      "sha256": "1ce6914846ae256e19d691b6689aa53db83917f04597eb593546450401b9031a",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/detail.png",
+      "bytes": 37351,
+      "sha256": "a4640f3c7d4b1a6dcc4b856c92e7e91ea6e85d09e99440f70c606528dc2230ee",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/family.png",
+      "bytes": 100953,
+      "sha256": "f5a540087453d5eba3f0bb860458440a2d2adb5d14b1f6a3eee6b496d48b1586",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/foods.png",
+      "bytes": 95627,
+      "sha256": "7ca527180b3b4af2cab10704bb6b44cdbb9ab9d876b645d4c38e72a1a0d6a174",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/home.png",
+      "bytes": 539639,
+      "sha256": "c386d9d0ce8795d3f2804e651442af7acf19f0cd66fb8733f230f9f1c4539bbd",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/login.png",
+      "bytes": 513681,
+      "sha256": "4592651d65ba2fb72f7fa2b992ed4e4401a480b2b395080a15a28a263fd6b3a1",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/mobile-foods.png",
+      "bytes": 62123,
+      "sha256": "2d7ff7ecb7f09d3b77f9ff2fdc548ef1609b0ba1b50253dd94a855d8c1455f59",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/mobile.png",
+      "bytes": 158362,
+      "sha256": "5ee4139809bb0650c14081b59c141b44af415724d369d5af195e84ffe741ba13",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/recipes.png",
+      "bytes": 552497,
+      "sha256": "c197cfb1589cff11aa8cf4992a4a30aa4d1da2a70eec67f817e205b22c9f603b",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/a/records.png",
+      "bytes": 70927,
+      "sha256": "875d856bc8f707a0143de4fdfd4ebbeffe19ccb8098421be4e03d7d67d5bf8a3",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/add.png",
+      "bytes": 35813,
+      "sha256": "e15d63a47008329a290234780c3e4c2a618206e1d522936acd1ee7244b8b67db",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/components.png",
+      "bytes": 117986,
+      "sha256": "da67ff2b89a3e6dc2a2c8d725a58bf51166bae879a7b8c238ca445817055e558",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/detail.png",
+      "bytes": 36773,
+      "sha256": "93a1483d435d9fc7a96a21102a26b6c05756655ccd6f4d57ccfc71f927adf0d0",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/family.png",
+      "bytes": 96478,
+      "sha256": "0cb91820ae47a6f1b6a8bf46b97706fdc7045594010b2ca4fa621f943b6c5a74",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/foods.png",
+      "bytes": 91119,
+      "sha256": "8e1c81536e4409cff60f6b2092fc581011bdc2022704dfd57f549534e90c50e0",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/home.png",
+      "bytes": 434759,
+      "sha256": "a187359abb6c1649b1be8aeb43ded1f60978a42ed60e2d345529853c8fd4ae55",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/login.png",
+      "bytes": 537664,
+      "sha256": "ad4a01dbc7f533169b0a120433760295b746840057bef6041f637c1b8145b17d",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/mobile-foods.png",
+      "bytes": 62165,
+      "sha256": "c85c50280f420b8fc977eb5ec1a9ee5df9aaa86e2672e10f80fccdc919060e64",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/mobile.png",
+      "bytes": 160040,
+      "sha256": "f4e2a22fe65941104dd3b38239d639d0344603293280a7b46807a0db90347e11",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/recipes.png",
+      "bytes": 566165,
+      "sha256": "f5138202cfc63d35ff060be19189bc31f537ee1feaecf20aa60a649e62b5df9e",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/b/records.png",
+      "bytes": 65580,
+      "sha256": "409bc509f18798610f20ca1c5087afd00bf8467fcb8e26466747d698a6252ae7",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/add.png",
+      "bytes": 35645,
+      "sha256": "820145d87964bfd50624da5d1fe4b3206dc80d6899db12a0c7de24432f1c6e54",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/components.png",
+      "bytes": 117912,
+      "sha256": "6fe6a562bbe0945f000d32577fe3f9153ca2d3820adb15b89ce5fb306c729ab9",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/detail.png",
+      "bytes": 36086,
+      "sha256": "9a4e1ef8a19a2579fcda7b94323abf3b81005f7b0c245149d2cd23137c9946fe",
+      "width": 480,
+      "height": 900
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/family.png",
+      "bytes": 100111,
+      "sha256": "fb9a63e39b877e34b7efa7d6d1c5ec17ee16a9731988aa3a02f47c6066bb7051",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/foods.png",
+      "bytes": 93240,
+      "sha256": "81a0fa9fabfe89339ad59078b5f5a1ed4ecd20e79a6f04434e58ffe1ad2989e7",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/home.png",
+      "bytes": 396587,
+      "sha256": "4c30c171e0a16be7c73eb4aa2a72b4c1b95032ff177f650a7d17c6dc685d4102",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/login.png",
+      "bytes": 483100,
+      "sha256": "717ecca90ff3acb267e77a285a112de8426b251d3a68009a229db6f82567cf75",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/mobile-foods.png",
+      "bytes": 61453,
+      "sha256": "598873920f53163a5c8bca66db5d596d08f436c06b1651475a48931addbc98bc",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/mobile.png",
+      "bytes": 158724,
+      "sha256": "55fde6240fabc5a2547329fa7a0aa9584e7c90b742017819a56f93d98a22386d",
+      "width": 390,
+      "height": 844
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/recipes.png",
+      "bytes": 523904,
+      "sha256": "a0fd886a1150184301d16ce7bbef475f2ba493700b73e4ed710ec634fecf043a",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/screens/c/records.png",
+      "bytes": 69930,
+      "sha256": "b6c04845664db7b9aeb51dfd8d122e852ce6ceb0e049f9951c60b7dd14550b41",
+      "width": 1440,
+      "height": 960
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/总体设计文档.md",
+      "bytes": 17226,
+      "sha256": "876982c2456589e7440e57ade10679efc24ff74ccc13f6ac5c5b7e45f9187fd2"
+    },
+    {
+      "path": "docs/reviews/2026-11-10-monochrome-kitchen-design.md",
+      "bytes": 8215,
+      "sha256": "290e4f2792a63a15cd8c7ff7df7700e3a5dfd77c96a5e7fc0391f051f652591a"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-ui-proposal/browser-checks.json",
+      "bytes": 18593,
+      "sha256": "c72dbf7e7d04de1739ca1f4378c66d11da27dd65e0eca929f180629ef6b8ee58"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-ui-proposal/source-diff.patch",
+      "bytes": 146949,
+      "sha256": "38560453227535f181f59d1926c7b1af46fc5bd46bbd41071d106522d3c730ad"
+    },
+    {
+      "path": "docs/开发状态.md",
+      "bytes": 39652,
+      "sha256": "33a799344a97165a35de450d5b20cfd4f6226783d9021679ae551a3292a971f0"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "date": "2026-11-10",
+  "scope": "Actual rebuilt release Web, demo-only family page, desktop 1440x1000 and mobile 390x844, native CDP mouse input. No account or business writes; no physical device acceptance.",
+  "checks": [
+    {
+      "name": "desktop-license-entry-and-description-absent",
+      "pass": true
+    },
+    {
+      "name": "desktop-other-settings-and-footer-present",
+      "pass": true
+    },
+    {
+      "name": "desktop-logout-confirmation-still-works",
+      "pass": true
+    },
+    {
+      "name": "mobile-license-entry-and-description-absent",
+      "pass": true
+    },
+    {
+      "name": "mobile-other-settings-and-footer-present",
+      "pass": true
+    },
+    {
+      "name": "mobile-logout-confirmation-still-works",
+      "pass": true
+    },
+    {
+      "name": "no-runtime-exceptions",
+      "pass": true
+    }
+  ],
+  "passed": 7,
+  "failed": 0
+}

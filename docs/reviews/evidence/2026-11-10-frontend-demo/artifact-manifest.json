@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-10",
+  "entry": "apps/frontend-demo/index.html",
+  "bytes": 2668654,
+  "sha256": "00ee73c730b2408f9e23e558b0dfb6f0844c547a4cbf7e987f157ac361a8fd98",
+  "embeddedRecipePhotos": 6,
+  "validation": {
+    "passed": 130,
+    "failed": 0,
+    "protocol": "file://",
+    "browser": "local Edge headless",
+    "viewports": [
+      "1440x1000",
+      "390x844",
+      "320x740"
+    ],
+    "productionBackendUsed": false
+  },
+  "files": [
+    {
+      "path": "apps/frontend-demo/index.html",
+      "bytes": 2668654,
+      "sha256": "00ee73c730b2408f9e23e558b0dfb6f0844c547a4cbf7e987f157ac361a8fd98"
+    },
+    {
+      "path": "apps/frontend-demo/README.md",
+      "bytes": 4149,
+      "sha256": "b43a89001fcfd1e05a4d1447ce7204dbd3e480b3a9d3332021b58a371e500850"
+    },
+    {
+      "path": "scripts/review-frontend-demo.mjs",
+      "bytes": 24902,
+      "sha256": "78d51275a8c78c181a0dcf980908968f563faa3e23c7e6672a543ea1a2cbd640"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-frontend-demo/browser-review.json",
+      "bytes": 15162,
+      "sha256": "7a8fecbf32f0795f3e35b6a4b9aab8eba330455d22fcd5f5f1ddbc559de5d232"
+    }
+  ]
+}

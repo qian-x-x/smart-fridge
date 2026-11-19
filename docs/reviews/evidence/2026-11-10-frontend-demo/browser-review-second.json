@@ -1,0 +1,313 @@
+{
+  "date": "2026-11-10",
+  "scope": "Standalone HTML file://, Edge headless, desktop/mobile viewport emulation; no production API or physical-device acceptance.",
+  "checks": [
+    {
+      "name": "inline-script-parses",
+      "passed": true
+    },
+    {
+      "name": "six-embedded-photos-and-no-external-assets",
+      "passed": true
+    },
+    {
+      "name": "file-protocol-renders-twelve-foods",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-0",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-1",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-2",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-3",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-4",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-5",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-6",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-7",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-8",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-9",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-10",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-11",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-12",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-13",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-14",
+      "passed": true
+    },
+    {
+      "name": "desktop-independent-doors-15",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-0",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-1",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-2",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-3",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-4",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-5",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-6",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-7",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-8",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-9",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-10",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-11",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-12",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-13",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-14",
+      "passed": true
+    },
+    {
+      "name": "mobile-independent-doors-15",
+      "passed": true
+    },
+    {
+      "name": "live-name-search",
+      "passed": true
+    },
+    {
+      "name": "combined-filter-empty-state",
+      "passed": true
+    },
+    {
+      "name": "zone-filter-one-frozen-food",
+      "passed": true
+    },
+    {
+      "name": "category-filter",
+      "passed": true
+    },
+    {
+      "name": "quantity-sort",
+      "passed": true
+    },
+    {
+      "name": "required-name-validation",
+      "passed": true
+    },
+    {
+      "name": "negative-quantity-native-validation",
+      "passed": true
+    },
+    {
+      "name": "invalid-chronology-retains-form",
+      "passed": true
+    },
+    {
+      "name": "draft-discard-confirmation",
+      "passed": true
+    },
+    {
+      "name": "draft-cancel-retains-value",
+      "passed": true
+    },
+    {
+      "name": "failed-save-preserves-draft-and-no-write",
+      "passed": true
+    },
+    {
+      "name": "retry-add-succeeds-once",
+      "passed": true
+    },
+    {
+      "name": "file-reload-preserves-data",
+      "passed": true
+    },
+    {
+      "name": "user-content-escaped",
+      "passed": true
+    },
+    {
+      "name": "use-food-decrements-exactly",
+      "passed": true
+    },
+    {
+      "name": "move-preserves-quantity",
+      "passed": true
+    },
+    {
+      "name": "discard-cancel-no-write",
+      "passed": true
+    },
+    {
+      "name": "discard-removes-food",
+      "passed": true
+    },
+    {
+      "name": "undo-restores-discard",
+      "passed": true
+    },
+    {
+      "name": "redo-reapplies-discard",
+      "passed": true
+    },
+    {
+      "name": "six-offline-photos-load",
+      "passed": true
+    },
+    {
+      "name": "favorite-filter",
+      "passed": true
+    },
+    {
+      "name": "servings-updates-ingredients",
+      "passed": true
+    },
+    {
+      "name": "cook-atomic-multi-food-deduction",
+      "passed": true
+    },
+    {
+      "name": "expired-stock-not-cookable",
+      "passed": true
+    },
+    {
+      "name": "missing-food-form-prefill",
+      "passed": true
+    },
+    {
+      "name": "cooking-excludes-expired-batch",
+      "passed": true
+    },
+    {
+      "name": "duplicate-batch-first-expiry-first-out",
+      "passed": true
+    },
+    {
+      "name": "missing-recipe-shows-disabled-action",
+      "passed": true
+    },
+    {
+      "name": "expiry-cleanup-preserves-today",
+      "passed": true
+    },
+    {
+      "name": "cleanup-undo-restores-expired",
+      "passed": true
+    },
+    {
+      "name": "stale-undo-actions-disabled",
+      "passed": true
+    },
+    {
+      "name": "add-local-member",
+      "passed": true
+    },
+    {
+      "name": "change-member-role",
+      "passed": true
+    },
+    {
+      "name": "remove-local-member",
+      "passed": true
+    },
+    {
+      "name": "family-isolation-empty-workspace",
+      "passed": true
+    },
+    {
+      "name": "empty-workspace-add-action",
+      "passed": true
+    },
+    {
+      "name": "family-switch-restores-original-data",
+      "passed": true
+    },
+    {
+      "name": "invalid-invite-feedback",
+      "passed": true
+    },
+    {
+      "name": "join-demo-readonly-family",
+      "passed": false
+    },
+    {
+      "name": "completed",
+      "passed": false,
+      "detail": "Error: join-demo-readonly-family"
+    }
+  ],
+  "passed": 74,
+  "failed": 2
+}

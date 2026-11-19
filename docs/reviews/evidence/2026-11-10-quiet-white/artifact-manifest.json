@@ -1,0 +1,594 @@
+{
+  "date": "2026-11-10",
+  "baseCommit": "60a0077d85d20e3c73ec1f97ed1ade6cea95bae1",
+  "scope": "Local source, actual release build, isolated MySQL recipe schema/gateway and new auth/fridge acceptance accounts. No public deployment or commit.",
+  "verification": {
+    "flutter": {
+      "passed": 95,
+      "failed": 0
+    },
+    "maven": {
+      "auth-family-service": {
+        "tests": 27,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "common-core": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "fridge-service": {
+        "tests": 44,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "gateway-service": {
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "recipe-service": {
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    },
+    "threejs": {
+      "passed": 5,
+      "failed": 0
+    },
+    "browser": {
+      "passed": 48,
+      "failed": 0
+    },
+    "previewBoundary": {
+      "passed": 6,
+      "failed": 0
+    },
+    "webBuild": "passed",
+    "androidBuild": "passed",
+    "apkCrc": "passed",
+    "apkSignature": "Android Debug; verified with apksigner",
+    "androidDevice": "not run",
+    "hardwareGpu": "not run"
+  },
+  "catalog": {
+    "recipes": 18,
+    "ingredients": 100,
+    "newRecipes": 12
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/fridge-app/assets/data/home-recipes-v2.json",
+      "bytes": 24833,
+      "sha256": "2303c3c0d1a27cea1a1230024f6e43586b827f76b72a57f7d24c0a4601930d2f"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/kitchen-quiet-white-v2.png",
+      "bytes": 1769940,
+      "sha256": "7457a86055cbf6dab5a6898363c591df0503ccab43c3f5130dae85c6f7f8a63c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/cola-chicken-wings.jpg",
+      "bytes": 319374,
+      "sha256": "ecf4041018831494ae1e4661682f43c3bcd73e3e8982e0455c2a2c4fcb785de9"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/fish-fragrant-pork.jpg",
+      "bytes": 330686,
+      "sha256": "edfb7a07a7e053ccb572dbdcc03f3bf4c38aa378286540c448c6a82d730a5427"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-broccoli.jpg",
+      "bytes": 346787,
+      "sha256": "020c3154446b529e38cdec43e72477924275902572466ad461a3961bcf482259"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-lettuce.jpg",
+      "bytes": 350692,
+      "sha256": "9b09391e27a726ccadbad9367d709809d4183366709d8ed3c7bb6520ffcbc147"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/kung-pao-chicken.jpg",
+      "bytes": 325321,
+      "sha256": "846d6df5ca007f77a37b471e70aa8935352fa104e6935e25e54b13020d6e7f98"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/mapo-tofu.jpg",
+      "bytes": 357025,
+      "sha256": "57ee6c2d2b6e6137565e00641611f9948b0fccf517cd814321bc62fbe65ee876"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pan-seared-salmon.jpg",
+      "bytes": 286926,
+      "sha256": "2a1890b2975d982e93ab184f041ed3aeb636a0a9fdeb485d0a3cd5de5b5da84c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pepper-chicken.jpg",
+      "bytes": 315422,
+      "sha256": "f222708a058fe27302264a09811084c9dfaea046b4a1b430fb41ebda76d49e4c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/red-braised-pork.jpg",
+      "bytes": 334188,
+      "sha256": "b8ef1bb3d3dc4aae31125bc924db599e57439aabc421f789ecb22abbe43b07c6"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/seaweed-egg-soup.jpg",
+      "bytes": 283075,
+      "sha256": "8ee6b52dfe965497155d422564b3038b05661cc6df6e35f4e6e709cae15f659e"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shiitake-bok-choy.jpg",
+      "bytes": 298565,
+      "sha256": "94571dd82130256e46d16290661582ba4748c4bdc7c569da5b88e04d7ca3e933"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shrimp-corn-rice.jpg",
+      "bytes": 312212,
+      "sha256": "4704cbb960328928589e4b3b4610ddd659dc87917c9f0665445d791c74549403"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/smashed-cucumber.jpg",
+      "bytes": 315247,
+      "sha256": "e541e25eac1d12e37d542e53cc0fe47dab63316dd367c90c79f859d7a8730d89"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/sour-spicy-potatoes.jpg",
+      "bytes": 334334,
+      "sha256": "fbcf1f31313d8007bdab174bb15ccf1fa086b8cec9606c5bb828105018f0a458"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-eggs.jpg",
+      "bytes": 218907,
+      "sha256": "ed2449fde983d6af348c56f614a11381e194abe4fd134726f51b6927490a33b4"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-pumpkin.jpg",
+      "bytes": 310908,
+      "sha256": "d615dec8962eff5fb1b4055aa7235dd8937cec8ca6b9e7aa78cb97aebf8b204c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/tomato-eggs.jpg",
+      "bytes": 329863,
+      "sha256": "321280762585fb2e466a56bff3da9d4aee3ff53379efdcaa789334e146313898"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/vegetable-egg-pancake.jpg",
+      "bytes": 342493,
+      "sha256": "62d326dad39110808d8ecc70b4779d454c94c848014d9b642a8c9be9f0c80f64"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/config/app_brand.dart",
+      "bytes": 297,
+      "sha256": "068660aa653e9335dfd6d06c2f81f7168ce7b1c6f22bd31e3797eae9830ae9df"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/theme/app_theme.dart",
+      "bytes": 7441,
+      "sha256": "664604231ca5a7a3523c4755857307e123c1e3cf8655be0805e32e9a254a8067"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart",
+      "bytes": 4451,
+      "sha256": "38ed3d3e4e1e03eba0d536f9dcf7f5c31eb8558cf0d1641c4ed46100dd9a4f6d"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/fridge_home_page.dart",
+      "bytes": 25602,
+      "sha256": "94e1070a7b832e6e67d0d4166b6dbed25979cd52d900e30d57bdd10489e405bb"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_scene.dart",
+      "bytes": 6693,
+      "sha256": "84ec3792bf689a77722ec2bd1da5769871c16d2f7e008385ef52f2cc47fc55c8"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart",
+      "bytes": 1547,
+      "sha256": "0500de3b7c85a18e5858fbba533b61461c14732567ac787a381364cbf3d1e9eb"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+      "bytes": 5668,
+      "sha256": "377752c8f81a52db8c4f3a93f6055b886adc9b76c8b377ca4cd9cf0bd1298b05"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/profile/presentation/profile_page.dart",
+      "bytes": 13096,
+      "sha256": "9debdf6ca5e551038314f244cfe1ca9bbbebe0dae4bc5295b054a9998338e610"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/data/home_recipe_catalog.dart",
+      "bytes": 20336,
+      "sha256": "cdf624d92c1982927a22b023e519a8eeaae48761b6067461083f344fbcc4341a"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/data/recipe_repository.dart",
+      "bytes": 2619,
+      "sha256": "56b80d6f51a7c2db9bec4fca4c79437b5fffc699c014422d7eacf4b3f15c88fe"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/presentation/recipe_artwork.dart",
+      "bytes": 1548,
+      "sha256": "40899b4c92c7b7b3389c79b6cc73e57ccd54b9844977991d0e87655e1986d1bd"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/presentation/recipes_page.dart",
+      "bytes": 27927,
+      "sha256": "17114c747b6fba44b500e54540ef3a93aaf89d5353b7dd7eacca275acf8ed936"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/layout/home_shell.dart",
+      "bytes": 12936,
+      "sha256": "1c7a4f734e8b9faf7722c2343e39c15eac699ac95a390235ee529c58c7306fbc"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/widgets/action_button.dart",
+      "bytes": 2947,
+      "sha256": "29b55519ac0155ca394d4b932e004d7e635e1f59ddb9608eea25f26a69df5087"
+    },
+    {
+      "path": "apps/fridge-app/pubspec.yaml",
+      "bytes": 4777,
+      "sha256": "eee27a294b6967231460d9340501d2468fff33d5f0a1a6ac946ed0c88e0d6b47"
+    },
+    {
+      "path": "apps/fridge-app/test/fridge_home_test.dart",
+      "bytes": 28271,
+      "sha256": "f4392d806cd079d7f5e71220546921912b592ba0941bf9fb9bcfbb0fc6911dc4"
+    },
+    {
+      "path": "apps/fridge-app/test/recipe_repository_test.dart",
+      "bytes": 3598,
+      "sha256": "725b9c7c27c53e3eef6d854ff8546559133a8bb29fcaf3007bbf7195011f93ca"
+    },
+    {
+      "path": "apps/fridge-app/test/recipes_page_test.dart",
+      "bytes": 10159,
+      "sha256": "70528a98682cf4997ec34c3be00d31a5f6e3b78d866cd04d1329d4448521698e"
+    },
+    {
+      "path": "apps/fridge-app/web/favicon.svg",
+      "bytes": 341,
+      "sha256": "2bbbd294d5e7d1721f94525764725a14ddcc3f4bc1d002f2a1db3b1727777e0c"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge-model.js",
+      "bytes": 14139,
+      "sha256": "1774102c15668c5a124cc47a277f17292d248dd88a9fe99116a630d6ffa22143"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge3d.js",
+      "bytes": 10729,
+      "sha256": "cf2c6580df297f4d68f228ef189bbfaf87fac99f70ee3c8c522ded2583a7e22a"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/index.html",
+      "bytes": 4093,
+      "sha256": "ab8449cd14f5799210fafa52098157c225169a342c0663dbdca145ac8c8aa8d6"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/kitchen-scene.js",
+      "bytes": 5487,
+      "sha256": "3b86ae7a8eba94f7e6176ea6893c1a4b77cc121eb3b17aab72aa938faed01713"
+    },
+    {
+      "path": "apps/fridge-app/web/index.html",
+      "bytes": 1659,
+      "sha256": "1729bfb266dd28147032e0ddeb2aba7c12961b95a295964339b3f928c46d036c"
+    },
+    {
+      "path": "apps/fridge-app/web/manifest.json",
+      "bytes": 846,
+      "sha256": "035aa73397cf5d66b2c961e2801b071d52e2a57bcdec5a4b8701e7799ec67b39"
+    },
+    {
+      "path": "backend/recipe-service/src/main/resources/db/migration/V2__home_recipe_catalog.sql",
+      "bytes": 10668,
+      "sha256": "edb78ba5f83bf75270d179c6437d583451398fd07ac7d1ff3342cbc302cdff24"
+    },
+    {
+      "path": "backend/recipe-service/src/test/java/com/smartfridge/recipe/RecipeApiIntegrationTest.java",
+      "bytes": 5008,
+      "sha256": "fe1cd523873921146c1eab2b65f19c0a3e53b2f8b144e0bfaa47be78ea75fc89"
+    },
+    {
+      "path": "backend/recipe-service/src/test/java/com/smartfridge/recipe/RecipeMigrationCompatibilityTest.java",
+      "bytes": 2393,
+      "sha256": "cb45c7a431d0a8fea34258feef022350515be792f9dee7dc5846e786fc87751f"
+    },
+    {
+      "path": "scripts/Build-Flutter.ps1",
+      "bytes": 2770,
+      "sha256": "e6051b7465e8a03a72ddc01c35d895bb2f3c9c653909cfdbbfe9a89fa6105299"
+    },
+    {
+      "path": "scripts/Start-QuietWhiteAcceptance.ps1",
+      "bytes": 4721,
+      "sha256": "0c2f2a16ccbad53605153970f33d3cf23f1d686f7e3b6f53f57a09747fbb3d16"
+    },
+    {
+      "path": "scripts/preview-quiet-white.mjs",
+      "bytes": 2379,
+      "sha256": "479ba765478d9f97241f5b6af98e6e1bbe5b1b21fd48a3b678ecb897c70c752b"
+    },
+    {
+      "path": "scripts/sync-recipe-catalog.mjs",
+      "bytes": 2817,
+      "sha256": "0c7139ef1d41d8e989488bdd4511f42ed578c4e1784658dd74627848fafce1fd"
+    },
+    {
+      "path": "scripts/ui-acceptance-quiet-white.mjs",
+      "bytes": 15808,
+      "sha256": "92389a4687292dc030dcdcf601d4f6493bd74d7c8096cf641d4367ad67dbbe01"
+    }
+  ],
+  "recipeImages": [
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/cola-chicken-wings.jpg",
+      "bytes": 319374,
+      "sha256": "ecf4041018831494ae1e4661682f43c3bcd73e3e8982e0455c2a2c4fcb785de9"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/fish-fragrant-pork.jpg",
+      "bytes": 330686,
+      "sha256": "edfb7a07a7e053ccb572dbdcc03f3bf4c38aa378286540c448c6a82d730a5427"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-broccoli.jpg",
+      "bytes": 346787,
+      "sha256": "020c3154446b529e38cdec43e72477924275902572466ad461a3961bcf482259"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-lettuce.jpg",
+      "bytes": 350692,
+      "sha256": "9b09391e27a726ccadbad9367d709809d4183366709d8ed3c7bb6520ffcbc147"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/kung-pao-chicken.jpg",
+      "bytes": 325321,
+      "sha256": "846d6df5ca007f77a37b471e70aa8935352fa104e6935e25e54b13020d6e7f98"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/mapo-tofu.jpg",
+      "bytes": 357025,
+      "sha256": "57ee6c2d2b6e6137565e00641611f9948b0fccf517cd814321bc62fbe65ee876"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pan-seared-salmon.jpg",
+      "bytes": 286926,
+      "sha256": "2a1890b2975d982e93ab184f041ed3aeb636a0a9fdeb485d0a3cd5de5b5da84c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pepper-chicken.jpg",
+      "bytes": 315422,
+      "sha256": "f222708a058fe27302264a09811084c9dfaea046b4a1b430fb41ebda76d49e4c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/red-braised-pork.jpg",
+      "bytes": 334188,
+      "sha256": "b8ef1bb3d3dc4aae31125bc924db599e57439aabc421f789ecb22abbe43b07c6"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/seaweed-egg-soup.jpg",
+      "bytes": 283075,
+      "sha256": "8ee6b52dfe965497155d422564b3038b05661cc6df6e35f4e6e709cae15f659e"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shiitake-bok-choy.jpg",
+      "bytes": 298565,
+      "sha256": "94571dd82130256e46d16290661582ba4748c4bdc7c569da5b88e04d7ca3e933"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shrimp-corn-rice.jpg",
+      "bytes": 312212,
+      "sha256": "4704cbb960328928589e4b3b4610ddd659dc87917c9f0665445d791c74549403"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/smashed-cucumber.jpg",
+      "bytes": 315247,
+      "sha256": "e541e25eac1d12e37d542e53cc0fe47dab63316dd367c90c79f859d7a8730d89"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/sour-spicy-potatoes.jpg",
+      "bytes": 334334,
+      "sha256": "fbcf1f31313d8007bdab174bb15ccf1fa086b8cec9606c5bb828105018f0a458"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-eggs.jpg",
+      "bytes": 218907,
+      "sha256": "ed2449fde983d6af348c56f614a11381e194abe4fd134726f51b6927490a33b4"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-pumpkin.jpg",
+      "bytes": 310908,
+      "sha256": "d615dec8962eff5fb1b4055aa7235dd8937cec8ca6b9e7aa78cb97aebf8b204c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/tomato-eggs.jpg",
+      "bytes": 329863,
+      "sha256": "321280762585fb2e466a56bff3da9d4aee3ff53379efdcaa789334e146313898"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/vegetable-egg-pancake.jpg",
+      "bytes": 342493,
+      "sha256": "62d326dad39110808d8ecc70b4779d454c94c848014d9b642a8c9be9f0c80f64"
+    }
+  ],
+  "recipeOriginals": [
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/cola-chicken-wings.png",
+      "bytes": 2440605,
+      "sha256": "eb18562cfb9cbd7661ff7266813a4e20f28a68bd527e4b882d5e4e82cb8a3e94"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/fish-fragrant-pork.png",
+      "bytes": 2515782,
+      "sha256": "516c2f61fa776dbf273a183448c8c3054d35ca47095f9056b6fb619a97e8798d"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/garlic-broccoli.png",
+      "bytes": 2520567,
+      "sha256": "618b661d621cb73a3b27fe5955942a7bacc44f45bbe9744d80a9543029159a59"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/garlic-lettuce.png",
+      "bytes": 2634368,
+      "sha256": "33731bcd1a607ab11a3f991dd3d00fa6fa43036b1551fa8939c015025ce56235"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/kung-pao-chicken.png",
+      "bytes": 2509452,
+      "sha256": "e46e6bed33c690f54051e52e7ba9e701b9b26148bd97a277fbb5ff3fccc4250c"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/mapo-tofu.png",
+      "bytes": 2601183,
+      "sha256": "40fdefa825ff936797f131fa78cd81268ccb7253cf664d0e3df9fe23b1dbb41f"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/pan-seared-salmon.png",
+      "bytes": 2358985,
+      "sha256": "f16230605fde4e882536d684cf2c46bb45eaf46e03399e79d58f776b281ef51b"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/pepper-chicken.png",
+      "bytes": 2512830,
+      "sha256": "acdbb6159d9b9f630bf3c6db3b3d86cadf2138ea497238036ad4c28641d62b2b"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/red-braised-pork.png",
+      "bytes": 2516172,
+      "sha256": "4d50ef01a23d4212d8ecb6c087e181969853a07dadc1849a449823fbe470e9aa"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/seaweed-egg-soup.png",
+      "bytes": 2324826,
+      "sha256": "4c448677df640f5382b5dfffea1d460ad83daa5dff67431ab9ca5f4c95ba7b72"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/shiitake-bok-choy.png",
+      "bytes": 2402108,
+      "sha256": "c99776822e8429096802c99dc4dc8d10105dba6e43ab01354c5d6a41bb99af4c"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/shrimp-corn-rice.png",
+      "bytes": 2393758,
+      "sha256": "aac8a30ddb1c54e225d52e02f3dd0d242ce2e176d08175224e9abb7d78bb425f"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/smashed-cucumber.png",
+      "bytes": 2472412,
+      "sha256": "ea0434358c65011432e8362459c75f9f269f9975410b1ff317aea868f6b863b9"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/sour-spicy-potatoes.png",
+      "bytes": 2494484,
+      "sha256": "c45141bde49ea13c97882db01c2917acb0e71e68fc49f7f7e87400fa50feabe1"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/steamed-eggs.png",
+      "bytes": 2093395,
+      "sha256": "686d338dd2fb5a4a2d85e4d5d18b6264c931bf35e5166cf4836069aa2992627c"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/steamed-pumpkin.png",
+      "bytes": 2457348,
+      "sha256": "9e9269c5606c7cf3cf555927fd8f81199e26570f2d9443c245b789375f08b286"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/tomato-eggs.png",
+      "bytes": 2543708,
+      "sha256": "e5ba571582c0b3f31a9337ddbb663374caaa12f7ca4edbee7a83536123cc9cad"
+    },
+    {
+      "path": "docs/design/ui-redesign-2026-11-10/recipe-originals/vegetable-egg-pancake.png",
+      "bytes": 2639937,
+      "sha256": "a641ae73ce9888ea431c189713f3a12bdc27839a5f14fbf9679f6ec0920546e2"
+    }
+  ],
+  "apk": {
+    "path": "apps/fridge-app/build/app/outputs/flutter-apk/app-release.apk",
+    "bytes": 69739648,
+    "sha256": "d9289aa13134862565e835b73a8d4bfff315c68378ed391518bcc67d532355ac"
+  },
+  "webMain": {
+    "path": "apps/fridge-app/build/web/main.dart.js",
+    "bytes": 3296736,
+    "sha256": "7f0dd5f29f9651a3a87ee580c211d98e4e7f9edea50cefc46284c4dc79b5dfd4"
+  },
+  "screenshots": [
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/recipe-gallery.png",
+      "bytes": 2239900,
+      "sha256": "2a04cebd4062f65ee91a91921101c1cd73f468b913900eab7bc0dedccf2e884a"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-cook-confirm.png",
+      "bytes": 213508,
+      "sha256": "81dc94da09535fad0286225dbe0d5d2b866503a9152c7cd8f82165d2513dc1d7"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-family-desktop.png",
+      "bytes": 93604,
+      "sha256": "f18108a1837ba03806fec724d5930a8440293c576cf729cce60033542cadd253"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-family-mobile.png",
+      "bytes": 60369,
+      "sha256": "4359546ecf88694636c45b7d24adfe88df3947fd3720b82f1950cdecb8278fcc"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-home-desktop.png",
+      "bytes": 145945,
+      "sha256": "c5972414097366411d890f8d7e9f0cbf6560df6587f80a8065fb81aa75a3e04c"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-home-mobile.png",
+      "bytes": 55585,
+      "sha256": "b1a85bfd44fcba3de91ad7cca4b61329ea432189e5a1d92f4c7f1071ea19de9f"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-home-viewer.png",
+      "bytes": 148181,
+      "sha256": "4ffa77a76f73f8b5c7b1990f57e3cd29825dd9525854a1e570f4c87797394637"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-login-desktop.png",
+      "bytes": 550367,
+      "sha256": "cda073049a4c1f662cd2e2cf49ced63a5ab1933a4db8444f83f81f3413dcbc63"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-recipe-detail.png",
+      "bytes": 500088,
+      "sha256": "3e688a1605c2ef1303585900bae9a4f7671d58c00af52c8074261aee0b7c8301"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-recipe-search.png",
+      "bytes": 291249,
+      "sha256": "a7e05d34a64d7d2f2c77d0da0161e5669f549a007e6d765ee3eebeaf080791ae"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-recipes-desktop.png",
+      "bytes": 968206,
+      "sha256": "3eb7a9f13d2553f29e31b710f060289b9e6ea28162f766e13876a86f8565de3a"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-quiet-white/ui-recipes-mobile.png",
+      "bytes": 199553,
+      "sha256": "0e1f3ff701bbfa320b443b9fa95ea5e32678d96c462ea56427f1489c5f91c604"
+    }
+  ],
+  "sourceDiff": {
+    "path": "docs/reviews/evidence/2026-11-10-quiet-white/implementation-source.diff",
+    "bytes": 206771,
+    "sha256": "b33f2ee582bcffaecc78a67b51ed9f8202ca83c4999a83bd6f9cc7b944b6b0f2"
+  }
+}

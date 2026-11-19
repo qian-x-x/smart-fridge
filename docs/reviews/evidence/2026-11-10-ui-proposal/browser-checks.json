@@ -1,0 +1,891 @@
+{
+  "date": "2026-11-10",
+  "scope": "Isolated design proposal only; not Flutter, backend or real-world end-to-end acceptance.",
+  "checks": 206,
+  "passed": 206,
+  "failed": 0,
+  "results": [
+    {
+      "name": "a/home/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/home/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/home/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/home/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/home/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/home/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/foods/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/recipes/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/family/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/login/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/records/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a/components/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "a: doors highlight independently",
+      "passed": true
+    },
+    {
+      "name": "a: close all resets parts",
+      "passed": true
+    },
+    {
+      "name": "a: empty name is validated",
+      "passed": true
+    },
+    {
+      "name": "a: draft close asks before discarding",
+      "passed": true
+    },
+    {
+      "name": "a: continue preserves draft",
+      "passed": true
+    },
+    {
+      "name": "a: save locks duplicate submission",
+      "passed": true
+    },
+    {
+      "name": "a: pending locks form values",
+      "passed": true
+    },
+    {
+      "name": "a: failed save preserves input and retry",
+      "passed": true
+    },
+    {
+      "name": "a: retry succeeds exactly once",
+      "passed": true
+    },
+    {
+      "name": "a: name filter narrows results",
+      "passed": true
+    },
+    {
+      "name": "a: combined filters show empty recovery",
+      "passed": true
+    },
+    {
+      "name": "a: reset restores all data",
+      "passed": true
+    },
+    {
+      "name": "a: read-only disables writes",
+      "passed": true
+    },
+    {
+      "name": "a: read-only detail has no enabled writes",
+      "passed": true
+    },
+    {
+      "name": "a: discard shows explicit confirmation",
+      "passed": true
+    },
+    {
+      "name": "a: cancel discard keeps inventory",
+      "passed": true
+    },
+    {
+      "name": "a: closing detail returns focus",
+      "passed": true,
+      "details": {
+        "action": "detail"
+      }
+    },
+    {
+      "name": "a: expired food remains editable with valid purchase date",
+      "passed": true
+    },
+    {
+      "name": "a: mobile modal fits",
+      "passed": true,
+      "details": {
+        "width": 390,
+        "scroll": 390,
+        "rect": 390
+      }
+    },
+    {
+      "name": "a: save action stays at modal bottom",
+      "passed": true
+    },
+    {
+      "name": "a: dialog uses scheme button shape",
+      "passed": true
+    },
+    {
+      "name": "a: mobile add shares bottom bar instead of covering door controls",
+      "passed": true
+    },
+    {
+      "name": "a: reduced motion respected",
+      "passed": true
+    },
+    {
+      "name": "b/home/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/home/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/home/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/home/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/home/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/home/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/foods/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/recipes/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/family/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/login/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/records/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b/components/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "b: doors highlight independently",
+      "passed": true
+    },
+    {
+      "name": "b: close all resets parts",
+      "passed": true
+    },
+    {
+      "name": "b: empty name is validated",
+      "passed": true
+    },
+    {
+      "name": "b: draft close asks before discarding",
+      "passed": true
+    },
+    {
+      "name": "b: continue preserves draft",
+      "passed": true
+    },
+    {
+      "name": "b: save locks duplicate submission",
+      "passed": true
+    },
+    {
+      "name": "b: pending locks form values",
+      "passed": true
+    },
+    {
+      "name": "b: failed save preserves input and retry",
+      "passed": true
+    },
+    {
+      "name": "b: retry succeeds exactly once",
+      "passed": true
+    },
+    {
+      "name": "b: name filter narrows results",
+      "passed": true
+    },
+    {
+      "name": "b: combined filters show empty recovery",
+      "passed": true
+    },
+    {
+      "name": "b: reset restores all data",
+      "passed": true
+    },
+    {
+      "name": "b: read-only disables writes",
+      "passed": true
+    },
+    {
+      "name": "b: read-only detail has no enabled writes",
+      "passed": true
+    },
+    {
+      "name": "b: discard shows explicit confirmation",
+      "passed": true
+    },
+    {
+      "name": "b: cancel discard keeps inventory",
+      "passed": true
+    },
+    {
+      "name": "b: closing detail returns focus",
+      "passed": true,
+      "details": {
+        "action": "detail"
+      }
+    },
+    {
+      "name": "b: expired food remains editable with valid purchase date",
+      "passed": true
+    },
+    {
+      "name": "b: mobile modal fits",
+      "passed": true,
+      "details": {
+        "width": 390,
+        "scroll": 390,
+        "rect": 390
+      }
+    },
+    {
+      "name": "b: save action stays at modal bottom",
+      "passed": true
+    },
+    {
+      "name": "b: dialog uses scheme button shape",
+      "passed": true
+    },
+    {
+      "name": "b: mobile add shares bottom bar instead of covering door controls",
+      "passed": true
+    },
+    {
+      "name": "b: reduced motion respected",
+      "passed": true
+    },
+    {
+      "name": "c/home/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/320: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/home/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/390: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/home/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/768: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/home/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/1024: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/home/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/1440: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/home/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/foods/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/recipes/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/family/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/login/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/records/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c/components/1920: layout and assets",
+      "passed": true
+    },
+    {
+      "name": "c: doors highlight independently",
+      "passed": true
+    },
+    {
+      "name": "c: close all resets parts",
+      "passed": true
+    },
+    {
+      "name": "c: empty name is validated",
+      "passed": true
+    },
+    {
+      "name": "c: draft close asks before discarding",
+      "passed": true
+    },
+    {
+      "name": "c: continue preserves draft",
+      "passed": true
+    },
+    {
+      "name": "c: save locks duplicate submission",
+      "passed": true
+    },
+    {
+      "name": "c: pending locks form values",
+      "passed": true
+    },
+    {
+      "name": "c: failed save preserves input and retry",
+      "passed": true
+    },
+    {
+      "name": "c: retry succeeds exactly once",
+      "passed": true
+    },
+    {
+      "name": "c: name filter narrows results",
+      "passed": true
+    },
+    {
+      "name": "c: combined filters show empty recovery",
+      "passed": true
+    },
+    {
+      "name": "c: reset restores all data",
+      "passed": true
+    },
+    {
+      "name": "c: read-only disables writes",
+      "passed": true
+    },
+    {
+      "name": "c: read-only detail has no enabled writes",
+      "passed": true
+    },
+    {
+      "name": "c: discard shows explicit confirmation",
+      "passed": true
+    },
+    {
+      "name": "c: cancel discard keeps inventory",
+      "passed": true
+    },
+    {
+      "name": "c: closing detail returns focus",
+      "passed": true,
+      "details": {
+        "action": "detail"
+      }
+    },
+    {
+      "name": "c: expired food remains editable with valid purchase date",
+      "passed": true
+    },
+    {
+      "name": "c: mobile modal fits",
+      "passed": true,
+      "details": {
+        "width": 390,
+        "scroll": 390,
+        "rect": 390
+      }
+    },
+    {
+      "name": "c: save action stays at modal bottom",
+      "passed": true
+    },
+    {
+      "name": "c: dialog uses scheme button shape",
+      "passed": true
+    },
+    {
+      "name": "c: mobile add shares bottom bar instead of covering door controls",
+      "passed": true
+    },
+    {
+      "name": "c: reduced motion respected",
+      "passed": true
+    },
+    {
+      "name": "Review entry: all preview images loaded",
+      "passed": true
+    },
+    {
+      "name": "Browser: no runtime exceptions",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "Local resources: no missing assets",
+      "passed": true,
+      "details": []
+    },
+    {
+      "name": "Contrast: body",
+      "passed": true,
+      "details": {
+        "ratio": 17.47,
+        "minimum": 4.5
+      }
+    },
+    {
+      "name": "Contrast: secondary",
+      "passed": true,
+      "details": {
+        "ratio": 6.12,
+        "minimum": 4.5
+      }
+    },
+    {
+      "name": "Contrast: secondary on cool",
+      "passed": true,
+      "details": {
+        "ratio": 5.17,
+        "minimum": 4.5
+      }
+    },
+    {
+      "name": "Contrast: primary",
+      "passed": true,
+      "details": {
+        "ratio": 17.47,
+        "minimum": 4.5
+      }
+    },
+    {
+      "name": "Contrast: input border",
+      "passed": true,
+      "details": {
+        "ratio": 3.22,
+        "minimum": 3
+      }
+    },
+    {
+      "name": "Contrast: focus",
+      "passed": true,
+      "details": {
+        "ratio": 8.55,
+        "minimum": 3
+      }
+    },
+    {
+      "name": "Contrast: danger",
+      "passed": true,
+      "details": {
+        "ratio": 5.95,
+        "minimum": 4.5
+      }
+    },
+    {
+      "name": "Contrast: warning",
+      "passed": true,
+      "details": {
+        "ratio": 6.05,
+        "minimum": 4.5
+      }
+    }
+  ]
+}

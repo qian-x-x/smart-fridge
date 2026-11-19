@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/application/auth_controller.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
-import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -18,7 +17,6 @@ class ProfilePage extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final desktop = constraints.maxWidth >= 950;
-        final settings = _settings(context, ref);
         final families = Container(
           padding: EdgeInsets.all(desktop ? 24 : 16),
           decoration: BoxDecoration(
@@ -46,7 +44,7 @@ class ProfilePage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 9),
-            Text('家庭与设置', style: Theme.of(context).textTheme.headlineMedium),
+            Text('家庭协作', style: Theme.of(context).textTheme.headlineMedium),
             const SizedBox(height: 9),
             const Text(
               '家人共享，日常各自有序。',
@@ -103,160 +101,33 @@ class ProfilePage extends ConsumerWidget {
               ],
             ),
             const SizedBox(height: 28),
-            if (desktop)
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(flex: 5, child: families),
-                  const SizedBox(width: 24),
-                  Expanded(flex: 6, child: settings),
-                ],
-              )
-            else ...[
-              families,
-              const SizedBox(height: 22),
-              settings,
-            ],
+            families,
+            const SizedBox(height: 24),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: AppOutlinedButton.icon(
+                onPressed: () => _logout(context, ref),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.rose,
+                  side: const BorderSide(color: Color(0x55B75B64)),
+                ),
+                icon: const Icon(Icons.logout_rounded),
+                label: const Text('退出当前账号'),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              '小易冰箱 · 查食材，看菜谱，都容易',
+              style: TextStyle(
+                color: AppColors.cocoa.withValues(alpha: 0.38),
+                fontSize: 11,
+              ),
+            ),
           ],
         );
       },
     );
   }
-
-  Widget _settings(BuildContext context, WidgetRef ref) => Container(
-    padding: const EdgeInsets.all(22),
-    decoration: BoxDecoration(
-      color: AppColors.paper,
-      borderRadius: BorderRadius.circular(24),
-      border: Border.all(color: AppColors.border),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text('偏好设置', style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 10),
-        _SettingTile(
-          icon: Icons.notifications_none_rounded,
-          title: '临期提醒',
-          subtitle: '库存显示临期状态 · 推送通知尚未接入',
-          onTap: () => _showSetting(
-            context,
-            '临期提醒',
-            const Text(
-              '库存会标记未来 3 天内到期及已过期的食材，菜谱页可筛选临期食材。当前版本尚未接入系统推送通知，也不提供通知开关。',
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        _SettingTile(
-          icon: Icons.layers_outlined,
-          title: '冰箱布局',
-          subtitle: '冷藏与独立抽屉 · 厨房常温储物',
-          onTap: () => _showSetting(
-            context,
-            '冰箱布局',
-            Consumer(
-              builder: (context, ref, _) => ref
-                  .watch(fridgeWorkspaceProvider)
-                  .when(
-                    data: (workspace) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          workspace.hasFridge
-                              ? workspace.fridgeName
-                              : '当前家庭尚未创建冰箱',
-                        ),
-                        for (final zone in workspace.zones)
-                          ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            title: Text('${zone.name} · ${zone.temperature}'),
-                            subtitle: Text(
-                              zone.containers
-                                  .map((item) => item.name)
-                                  .join('、'),
-                            ),
-                          ),
-                        const Text('当前布局为只读。分区与容器编辑尚未接入；常温食品存放在厨房柜台。'),
-                      ],
-                    ),
-                    loading: () => const Text('正在读取冰箱布局…'),
-                    error: (error, _) => Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(error.toString()),
-                        TextButton(
-                          onPressed: () => ref
-                              .read(fridgeWorkspaceProvider.notifier)
-                              .refresh(),
-                          child: const Text('重试'),
-                        ),
-                      ],
-                    ),
-                  ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 8),
-        _SettingTile(
-          icon: Icons.palette_outlined,
-          title: '外观与可访问性',
-          subtitle: '暖橙食集 · 跟随系统字号与动态效果偏好',
-          onTap: () => _showSetting(
-            context,
-            '外观与可访问性',
-            const Text(
-              '当前采用暖橙食集主题。文字跟随系统字号，三维动画遵循浏览器减少动态效果偏好。可在系统或浏览器的可访问性设置中调整；当前版本暂不提供其他主题。',
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-        AppOutlinedButton.icon(
-          onPressed: () => _logout(context, ref),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: AppColors.rose,
-            side: const BorderSide(color: Color(0x55B75B64)),
-          ),
-          icon: const Icon(Icons.logout_rounded),
-          label: const Text('退出当前账号'),
-        ),
-        const SizedBox(height: 12),
-        Center(
-          child: Text(
-            '小易冰箱 · 查食材，看菜谱，都容易',
-            style: TextStyle(
-              color: AppColors.cocoa.withValues(alpha: 0.38),
-              fontSize: 11,
-            ),
-          ),
-        ),
-        TextButton(
-          onPressed: () =>
-              showLicensePage(context: context, applicationName: '小易冰箱'),
-          child: const Text('开源许可'),
-        ),
-      ],
-    ),
-  );
-
-  Future<void> _showSetting(
-    BuildContext context,
-    String title,
-    Widget content,
-  ) => showDialog<void>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(title),
-      content: SingleChildScrollView(child: content),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('关闭'),
-        ),
-      ],
-    ),
-  );
 
   Future<void> _logout(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
@@ -288,74 +159,5 @@ class ProfilePage extends ConsumerWidget {
       'EDITOR' => '编辑者',
       _ => '只读者',
     };
-  }
-}
-
-class _SettingTile extends StatelessWidget {
-  const _SettingTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.paper,
-      borderRadius: BorderRadius.circular(20),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(20),
-        child: Container(
-          padding: const EdgeInsets.all(15),
-          decoration: BoxDecoration(
-            color: AppColors.paper,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.cream,
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                child: Icon(icon, size: 20, color: AppColors.cocoa),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        color: AppColors.ink,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      subtitle,
-                      style: TextStyle(color: AppColors.muted, fontSize: 11),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded, color: AppColors.sand),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

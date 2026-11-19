@@ -17,6 +17,32 @@ import 'package:smart_fridge_app/features/recipe/presentation/recipes_page.dart'
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
 
 void main() {
+  testWidgets('optional ingredient is not marked as stocked', (tester) async {
+    final semantics = tester.ensureSemantics();
+    try {
+      await tester.binding.setSurfaceSize(const Size(390, 844));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [recipeBrowserProvider.overrideWith(_OptionalRecipe.new)],
+          child: MaterialApp(
+            theme: AppTheme.light,
+            home: const Scaffold(body: RecipesPage()),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('测试蒸蛋'));
+      await tester.pumpAndSettle();
+      expect(find.byIcon(Icons.radio_button_unchecked), findsOneWidget);
+      expect(find.byIcon(Icons.check_circle_rounded), findsNothing);
+      expect(find.bySemanticsLabel(RegExp('可选原料')), findsAtLeastNWidgets(1));
+      expect(tester.takeException(), isNull);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
   for (final width in [390.0, 1366.0]) {
     testWidgets(
       'empty expiry filter can return to all recipes at width $width',
@@ -83,6 +109,29 @@ class _NoExpiringRecipes extends RecipeBrowserController {
   @override
   Future<List<RecipeMatch>> build() async =>
       RecipeMatcher.rank(await _RecipeSource().load(AuthSession.demo()), []);
+}
+
+class _OptionalRecipe extends RecipeBrowserController {
+  @override
+  Future<List<RecipeMatch>> build() async => RecipeMatcher.rank(const [
+    Recipe(
+      id: 100,
+      name: '测试蒸蛋',
+      summary: '用于原料状态验证',
+      category: '测试',
+      durationMinutes: 10,
+      calories: 0,
+      difficulty: '简单',
+      servings: 2,
+      coverEmoji: '',
+      steps: ['处理食材', '烹饪'],
+      featured: false,
+      ingredients: [
+        RecipeIngredient(name: '鸡蛋', quantity: 2, unit: '枚'),
+        RecipeIngredient(name: '小葱', quantity: 5, unit: '克', optional: true),
+      ],
+    ),
+  ], []);
 }
 
 class _RecipeSessionStore implements SessionStore {
@@ -206,7 +255,10 @@ class _RecipeFridgeSource implements FridgeDataSource {
   }) async => const <FoodOperation>[];
 
   @override
-  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {}
+  Future<void> undoOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {}
 
   @override
   Future<void> restoreOperation(

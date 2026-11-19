@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-10",
+  "scope": "Actual current release, demo session, Edge software rendering; no real-account E2E or physical-device acceptance.",
+  "checks": [
+    {
+      "name": "desktop-family-heading",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-no-placeholder-settings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-family-actions-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-logout-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-logout-confirmation",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "desktop-cancel-preserves-session",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-family-heading",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-no-placeholder-settings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-family-actions-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-logout-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-logout-confirmation",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "mobile-cancel-preserves-session",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-family-heading",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-no-placeholder-settings",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-family-actions-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-logout-retained",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-logout-confirmation",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "narrow-cancel-preserves-session",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no-runtime-exceptions",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "no-backend-business-writes",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "passed": 20,
+  "failed": 0
+}

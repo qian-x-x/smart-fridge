@@ -26,7 +26,7 @@ void main() {
       final source = _RemoteFridgeSource();
       await tester.pumpWidget(_realApp(source));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('放进一份新食材'));
+      await tester.tap(find.text('新增食材'));
       await tester.pumpAndSettle();
       final field = find.byKey(const ValueKey('food-category-input'));
       await tester.ensureVisible(field);
@@ -56,7 +56,7 @@ void main() {
       addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(_realApp(_RemoteFridgeSource()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('放进一份新食材'));
+      await tester.tap(find.text('新增食材'));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey('food-name-input')));
       await tester.pump();
@@ -76,7 +76,7 @@ void main() {
     final source = _RemoteFridgeSource();
     await tester.pumpWidget(_realApp(source));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('放进一份新食材'));
+    await tester.tap(find.text('新增食材'));
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('food-name-input')),
@@ -145,8 +145,8 @@ void main() {
       tester.widget<WebGLFridgeView>(find.byType(WebGLFridgeView)).interactive,
       isTrue,
     );
-    await tester.ensureVisible(find.text('放进一份新食材'));
-    await tester.tap(find.text('放进一份新食材'));
+    await tester.ensureVisible(find.text('新增食材'));
+    await tester.tap(find.text('新增食材'));
     await tester.pumpAndSettle();
     expect(
       tester.widget<WebGLFridgeView>(find.byType(WebGLFridgeView)).interactive,
@@ -169,8 +169,8 @@ void main() {
     final source = _RemoteFridgeSource();
     await tester.pumpWidget(_realApp(source));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('放进一份新食材'));
-    await tester.tap(find.text('放进一份新食材'));
+    await tester.ensureVisible(find.text('新增食材'));
+    await tester.tap(find.text('新增食材'));
     await tester.pumpAndSettle();
     await tester.enterText(
       find.byKey(const ValueKey('food-name-input')),
@@ -402,11 +402,11 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.text('放进一份新食材'),
+      find.text('新增食材'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('放进一份新食材'));
+    await tester.tap(find.text('新增食材'));
     await tester.pumpAndSettle();
 
     await tester.enterText(
@@ -714,6 +714,7 @@ class _RemoteFridgeSource implements FridgeDataSource {
     movedFood = food;
     movedZone = targetZone;
   }
+
   @override
   Future<List<FoodOperation>> loadOperations(
     AuthSession session,
@@ -722,7 +723,10 @@ class _RemoteFridgeSource implements FridgeDataSource {
   }) async => const <FoodOperation>[];
 
   @override
-  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {}
+  Future<void> undoOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {}
 
   @override
   Future<void> restoreOperation(

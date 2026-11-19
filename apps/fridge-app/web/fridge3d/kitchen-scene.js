@@ -1,5 +1,5 @@
 import * as THREE from '../vendor/three.module.min.js';
-import { box } from './fridge-model.js?rev=warm-harvest-v1.5.1';
+import { box } from './fridge-model.js?rev=quiet-white-v2.0.1';
 
 export function createTexture(kind) {
   const canvas = document.createElement('canvas'); canvas.width = 256; canvas.height = 512;
@@ -9,9 +9,9 @@ export function createTexture(kind) {
   const image = context.createImageData(256, 512);
   for (let y = 0; y < 512; y++) for (let x = 0; x < 256; x++) {
     const index = (y * 256 + x) * 4;
-    const grain = kind === 'wood' ? Math.sin(x * 1.8 + Math.sin(y * 0.008) * 1.7) * 3 + random() * 4
-      : kind === 'steel' ? Math.sin(y * 1.4) * 5 + random() * 8 : random() * 9;
-    const base = kind === 'wood' ? [154, 105, 65] : kind === 'steel' ? [244, 237, 224] : [234, 221, 200];
+    const grain = kind === 'wood' ? Math.sin(x * 0.9) * 0.5 + random() * 0.8
+      : kind === 'steel' ? Math.sin(y * 1.4) * 2 + random() * 3 : random() * 3.5;
+    const base = kind === 'wood' ? [63, 72, 80] : kind === 'steel' ? [211, 216, 219] : [195, 201, 206];
     for (let channel = 0; channel < 3; channel++) image.data[index + channel] = base[channel] + grain;
     image.data[index + 3] = 255;
   }
@@ -22,17 +22,18 @@ export function createTexture(kind) {
 }
 
 export function buildKitchen(scene, materials, pantryFoodGroup) {
-  const room = new THREE.Group(); room.name = 'v1-kitchen'; scene.add(room);
-  box(room, 'floor', [18, 0.08, 16], [0, -0.065, 2], materials.stone);
+  const room = new THREE.Group(); room.name = 'quiet-white-kitchen'; scene.add(room);
+  box(room, 'floor', [18, 0.08, 16], [0, -0.065, 2], materials.floor);
   box(room, 'back-wall', [17, 7, 0.12], [0, 3.4, -1.48], materials.wall);
-  const grout = new THREE.MeshStandardMaterial({ color: 0xcac9c2, roughness: 1 });
-  for (let x = -7; x < 8; x += 1.4) box(room, 'floor-grout-x', [0.009, 0.002, 12], [x, -0.023, 2], grout);
-  for (let z = -1; z < 9; z += 1.4) box(room, 'floor-grout-z', [17, 0.002, 0.009], [0, -0.023, z], grout);
+  const grout = new THREE.MeshStandardMaterial({ color: 0x626d76, roughness: 1 });
+  const floorGrout = new THREE.MeshStandardMaterial({ color: 0x8c969e, roughness: 1 });
+  for (let x = -7; x < 8; x += 1.4) box(room, 'floor-grout-x', [0.009, 0.002, 12], [x, -0.023, 2], floorGrout);
+  for (let z = -1; z < 9; z += 1.4) box(room, 'floor-grout-z', [17, 0.002, 0.009], [0, -0.023, z], floorGrout);
   for (const x of [-1.25, 1.25]) box(room, 'tall-oak-bay-panel', [0.095, 4.95, 1.25], [x, 2.49, -0.68], materials.wood);
   box(room, 'above-fridge-cabinet', [2.6, 0.48, 1.23], [0, 4.8, -0.69], materials.wood);
   box(room, 'above-fridge-door-seam', [0.012, 0.44, 0.012], [0, 4.8, -0.066], grout);
   const black = materials.dark;
-  const ceramic = new THREE.MeshStandardMaterial({ color: 0xd9d9cf, roughness: 0.75 });
+  const ceramic = new THREE.MeshStandardMaterial({ color: 0xcdd3d7, roughness: 0.8 });
   for (const x of [-2.68, 2.68]) {
     box(room, 'base-cabinet', [2.68, 1.94, 1.5], [x, 1.05, -0.56], materials.wood);
     box(room, 'quartz-worktop', [2.75, 0.065, 1.61], [x, 2.055, -0.52], materials.stone);
@@ -44,11 +45,11 @@ export function buildKitchen(scene, materials, pantryFoodGroup) {
   }
   for (let x = 1.34; x < 4.1; x += 0.46) box(room, 'backsplash-vertical-joint', [0.008, 1.15, 0.008], [x, 2.65, -1.407], grout);
   for (let y = 2.14; y < 3.25; y += 0.27) box(room, 'backsplash-horizontal-joint', [2.76, 0.008, 0.008], [2.7, y, -1.407], grout);
-  box(room, 'upper-white-cabinet', [2.7, 1.16, 0.7], [2.7, 3.86, -1.08], materials.white);
+  box(room, 'upper-white-cabinet', [2.7, 1.16, 0.7], [2.7, 3.86, -1.08], materials.upperCabinet);
   for (const x of [2.25, 3.15]) box(room, 'upper-cabinet-seam', [0.009, 1.12, 0.012], [x, 3.86, -0.725], grout);
   box(room, 'under-cabinet-light', [2.5, 0.025, 0.025], [2.7, 3.27, -0.75], materials.led);
   const window = new THREE.Group(); window.position.set(-2.82, 3.55, -1.4); room.add(window);
-  box(window, 'window-outside', [2.5, 2.35, 0.018], [0, 0, 0], new THREE.MeshBasicMaterial({ color: 0xe4eff0 }));
+  box(window, 'window-outside', [2.5, 2.35, 0.018], [0, 0, 0], new THREE.MeshBasicMaterial({ color: 0xc4ccd1 }));
   for (const x of [-1.25, 0, 1.25]) box(window, 'window-frame-upright', [0.038, 2.46, 0.065], [x, 0, 0.045], black);
   for (const y of [-1.19, 1.19]) box(window, 'window-frame-horizontal', [2.58, 0.04, 0.065], [0, y, 0.045], black);
   box(window, 'window-sill', [2.7, 0.06, 0.25], [0, -1.23, 0.13], materials.stone);
@@ -67,6 +68,9 @@ export function buildKitchen(scene, materials, pantryFoodGroup) {
   box(room, 'oak-cutting-board', [0.45, 0.7, 0.035], [1.7, 2.46, -1.34], materials.wood, 0.08);
   const bowl = new THREE.Mesh(new THREE.SphereGeometry(0.21, 24, 12, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), ceramic);
   bowl.position.set(-3.45, 2.24, -0.18); bowl.scale.y = 0.7; room.add(bowl);
+  const cloth = new THREE.MeshStandardMaterial({ color: 0x4f5a63, roughness: 0.95 });
+  box(room, 'folded-kitchen-cloth', [0.42, 0.035, 0.29], [2.02, 2.12, -0.24], cloth, 0.025);
+  box(room, 'cloth-upper-fold', [0.37, 0.025, 0.27], [2.02, 2.15, -0.25], cloth, 0.02);
   pantryFoodGroup.position.set(-2.5, 2.1, -0.18); room.add(pantryFoodGroup);
   const pantryHit = box(room, 'ambient-storage-target', [1.6, 0.045, 1.12], [-2.5, 2.108, -0.22], materials.wood);
   pantryHit.userData.zone = 'pantry';

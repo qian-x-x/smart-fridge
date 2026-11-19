@@ -1,0 +1,9 @@
+{
+  "scope": "Isolated recipe schema and gateway; existing local auth/fridge services reused; no deployment",
+  "recipeBase": "http://127.0.0.1:18083",
+  "recipeContainer": "sf-quiet-white-recipe",
+  "gatewayContainer": "sf-quiet-white-gateway",
+  "schema": "recipe_ui_20261110_012654",
+  "date": "2026-11-10",
+  "gateway": "http://127.0.0.1:18080"
+}

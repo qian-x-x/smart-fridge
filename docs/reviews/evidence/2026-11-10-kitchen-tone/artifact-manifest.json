@@ -1,0 +1,382 @@
+{
+  "date": "2026-11-10",
+  "version": "quiet-white-v2.0.1",
+  "baseCommit": "60a0077d85d20e3c73ec1f97ed1ade6cea95bae1",
+  "scope": "Kitchen materials/light/reference image only; previous uncommitted source retained. No business writes, commit, push or public deployment.",
+  "verification": {
+    "dartAnalyze": "passed",
+    "flutter": {
+      "passed": 95,
+      "failed": 0
+    },
+    "threejs": {
+      "passed": 5,
+      "failed": 0
+    },
+    "browser": {
+      "passed": 11,
+      "failed": 0,
+      "scope": "Demo inventory, desktop/mobile web, closed/open states and new login image, software WebGL"
+    },
+    "webBuild": "passed",
+    "androidBuild": "passed",
+    "apkCrc": "passed",
+    "apkImageHash": "passed",
+    "apkSignature": "Android Debug; apksigner passed",
+    "backendTests": "not rerun; unchanged",
+    "realApiMatrix": "not rerun",
+    "androidDevice": "not run",
+    "hardwareGpu": "not run"
+  },
+  "changedPreviousSourceFiles": [
+    "apps/fridge-app/lib/core/config/app_brand.dart",
+    "apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart",
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart",
+    "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+    "apps/fridge-app/pubspec.yaml",
+    "apps/fridge-app/web/fridge3d/fridge-model.js",
+    "apps/fridge-app/web/fridge3d/fridge3d.js",
+    "apps/fridge-app/web/fridge3d/index.html",
+    "apps/fridge-app/web/fridge3d/kitchen-scene.js"
+  ],
+  "sourceFiles": [
+    {
+      "path": "apps/fridge-app/assets/data/home-recipes-v2.json",
+      "bytes": 24833,
+      "sha256": "2303c3c0d1a27cea1a1230024f6e43586b827f76b72a57f7d24c0a4601930d2f"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/kitchen-gray-white-v2.0.1.png",
+      "bytes": 1772065,
+      "sha256": "44f78ce051dd45d53214f19e9b7badd16be54b61161572db784533a3cee026e7"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/kitchen-quiet-white-v2.png",
+      "bytes": 1769940,
+      "sha256": "7457a86055cbf6dab5a6898363c591df0503ccab43c3f5130dae85c6f7f8a63c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/cola-chicken-wings.jpg",
+      "bytes": 319374,
+      "sha256": "ecf4041018831494ae1e4661682f43c3bcd73e3e8982e0455c2a2c4fcb785de9"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/fish-fragrant-pork.jpg",
+      "bytes": 330686,
+      "sha256": "edfb7a07a7e053ccb572dbdcc03f3bf4c38aa378286540c448c6a82d730a5427"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-broccoli.jpg",
+      "bytes": 346787,
+      "sha256": "020c3154446b529e38cdec43e72477924275902572466ad461a3961bcf482259"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/garlic-lettuce.jpg",
+      "bytes": 350692,
+      "sha256": "9b09391e27a726ccadbad9367d709809d4183366709d8ed3c7bb6520ffcbc147"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/kung-pao-chicken.jpg",
+      "bytes": 325321,
+      "sha256": "846d6df5ca007f77a37b471e70aa8935352fa104e6935e25e54b13020d6e7f98"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/mapo-tofu.jpg",
+      "bytes": 357025,
+      "sha256": "57ee6c2d2b6e6137565e00641611f9948b0fccf517cd814321bc62fbe65ee876"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pan-seared-salmon.jpg",
+      "bytes": 286926,
+      "sha256": "2a1890b2975d982e93ab184f041ed3aeb636a0a9fdeb485d0a3cd5de5b5da84c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/pepper-chicken.jpg",
+      "bytes": 315422,
+      "sha256": "f222708a058fe27302264a09811084c9dfaea046b4a1b430fb41ebda76d49e4c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/red-braised-pork.jpg",
+      "bytes": 334188,
+      "sha256": "b8ef1bb3d3dc4aae31125bc924db599e57439aabc421f789ecb22abbe43b07c6"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/seaweed-egg-soup.jpg",
+      "bytes": 283075,
+      "sha256": "8ee6b52dfe965497155d422564b3038b05661cc6df6e35f4e6e709cae15f659e"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shiitake-bok-choy.jpg",
+      "bytes": 298565,
+      "sha256": "94571dd82130256e46d16290661582ba4748c4bdc7c569da5b88e04d7ca3e933"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/shrimp-corn-rice.jpg",
+      "bytes": 312212,
+      "sha256": "4704cbb960328928589e4b3b4610ddd659dc87917c9f0665445d791c74549403"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/smashed-cucumber.jpg",
+      "bytes": 315247,
+      "sha256": "e541e25eac1d12e37d542e53cc0fe47dab63316dd367c90c79f859d7a8730d89"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/sour-spicy-potatoes.jpg",
+      "bytes": 334334,
+      "sha256": "fbcf1f31313d8007bdab174bb15ccf1fa086b8cec9606c5bb828105018f0a458"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-eggs.jpg",
+      "bytes": 218907,
+      "sha256": "ed2449fde983d6af348c56f614a11381e194abe4fd134726f51b6927490a33b4"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/steamed-pumpkin.jpg",
+      "bytes": 310908,
+      "sha256": "d615dec8962eff5fb1b4055aa7235dd8937cec8ca6b9e7aa78cb97aebf8b204c"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/tomato-eggs.jpg",
+      "bytes": 329863,
+      "sha256": "321280762585fb2e466a56bff3da9d4aee3ff53379efdcaa789334e146313898"
+    },
+    {
+      "path": "apps/fridge-app/assets/images/quiet-white-v2/vegetable-egg-pancake.jpg",
+      "bytes": 342493,
+      "sha256": "62d326dad39110808d8ecc70b4779d454c94c848014d9b642a8c9be9f0c80f64"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/config/app_brand.dart",
+      "bytes": 300,
+      "sha256": "e28f586b2757c9fe2fd32720bbbaf3554203cf2f8c74695d0a83477e11e68379"
+    },
+    {
+      "path": "apps/fridge-app/lib/core/theme/app_theme.dart",
+      "bytes": 7441,
+      "sha256": "664604231ca5a7a3523c4755857307e123c1e3cf8655be0805e32e9a254a8067"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/auth/presentation/widgets/auth_scaffold.dart",
+      "bytes": 4466,
+      "sha256": "20478fdc602075da1e0afc548fdab1863ff4628af0ea1d8b243c813984a8a3cd"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/fridge_home_page.dart",
+      "bytes": 25602,
+      "sha256": "94e1070a7b832e6e67d0d4166b6dbed25979cd52d900e30d57bdd10489e405bb"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/fridge_scene.dart",
+      "bytes": 6693,
+      "sha256": "84ec3792bf689a77722ec2bd1da5769871c16d2f7e008385ef52f2cc47fc55c8"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_stub.dart",
+      "bytes": 1550,
+      "sha256": "ed412bcbb9d1c988e6d3ac7e89a0d8cc6f23e3a0e485280339e0655f309a6574"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/fridge/presentation/widgets/webgl_fridge_view_web.dart",
+      "bytes": 5668,
+      "sha256": "bf38be42366f90b519e766abb784235a7f669a89a8bfb76990b384d691d7a139"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/profile/presentation/profile_page.dart",
+      "bytes": 13096,
+      "sha256": "9debdf6ca5e551038314f244cfe1ca9bbbebe0dae4bc5295b054a9998338e610"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/data/home_recipe_catalog.dart",
+      "bytes": 20336,
+      "sha256": "cdf624d92c1982927a22b023e519a8eeaae48761b6067461083f344fbcc4341a"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/data/recipe_repository.dart",
+      "bytes": 2619,
+      "sha256": "56b80d6f51a7c2db9bec4fca4c79437b5fffc699c014422d7eacf4b3f15c88fe"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/presentation/recipe_artwork.dart",
+      "bytes": 1548,
+      "sha256": "40899b4c92c7b7b3389c79b6cc73e57ccd54b9844977991d0e87655e1986d1bd"
+    },
+    {
+      "path": "apps/fridge-app/lib/features/recipe/presentation/recipes_page.dart",
+      "bytes": 27927,
+      "sha256": "17114c747b6fba44b500e54540ef3a93aaf89d5353b7dd7eacca275acf8ed936"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/layout/home_shell.dart",
+      "bytes": 12936,
+      "sha256": "1c7a4f734e8b9faf7722c2343e39c15eac699ac95a390235ee529c58c7306fbc"
+    },
+    {
+      "path": "apps/fridge-app/lib/shared/widgets/action_button.dart",
+      "bytes": 2947,
+      "sha256": "29b55519ac0155ca394d4b932e004d7e635e1f59ddb9608eea25f26a69df5087"
+    },
+    {
+      "path": "apps/fridge-app/pubspec.yaml",
+      "bytes": 4780,
+      "sha256": "1f17fd113af903311bb2cdcf76533c78351feea22bb7f3355f10c459201f0933"
+    },
+    {
+      "path": "apps/fridge-app/test/fridge_home_test.dart",
+      "bytes": 28271,
+      "sha256": "f4392d806cd079d7f5e71220546921912b592ba0941bf9fb9bcfbb0fc6911dc4"
+    },
+    {
+      "path": "apps/fridge-app/test/recipe_repository_test.dart",
+      "bytes": 3598,
+      "sha256": "725b9c7c27c53e3eef6d854ff8546559133a8bb29fcaf3007bbf7195011f93ca"
+    },
+    {
+      "path": "apps/fridge-app/test/recipes_page_test.dart",
+      "bytes": 10159,
+      "sha256": "70528a98682cf4997ec34c3be00d31a5f6e3b78d866cd04d1329d4448521698e"
+    },
+    {
+      "path": "apps/fridge-app/web/favicon.svg",
+      "bytes": 341,
+      "sha256": "2bbbd294d5e7d1721f94525764725a14ddcc3f4bc1d002f2a1db3b1727777e0c"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge-model.js",
+      "bytes": 14513,
+      "sha256": "7aaa87abb1cf28739cf751f2fc4497a95161eb22737ebb7aecd96c34918d9f1c"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/fridge3d.js",
+      "bytes": 10765,
+      "sha256": "b1a9539c9136fdd5738f0ec680ef46aa8261a605496bb3fd7412f68e7498b0b0"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/index.html",
+      "bytes": 4099,
+      "sha256": "1404cae100889d6c00c6a5549c3aeb404ce62445e984034e848324fc48bfcea1"
+    },
+    {
+      "path": "apps/fridge-app/web/fridge3d/kitchen-scene.js",
+      "bytes": 5589,
+      "sha256": "745d937562f78989ce0478b349b3e06aa1d8b42ce5204ed91b37e6e3956659d0"
+    },
+    {
+      "path": "apps/fridge-app/web/index.html",
+      "bytes": 1659,
+      "sha256": "1729bfb266dd28147032e0ddeb2aba7c12961b95a295964339b3f928c46d036c"
+    },
+    {
+      "path": "apps/fridge-app/web/manifest.json",
+      "bytes": 846,
+      "sha256": "035aa73397cf5d66b2c961e2801b071d52e2a57bcdec5a4b8701e7799ec67b39"
+    },
+    {
+      "path": "backend/recipe-service/src/main/resources/db/migration/V2__home_recipe_catalog.sql",
+      "bytes": 10668,
+      "sha256": "edb78ba5f83bf75270d179c6437d583451398fd07ac7d1ff3342cbc302cdff24"
+    },
+    {
+      "path": "backend/recipe-service/src/test/java/com/smartfridge/recipe/RecipeApiIntegrationTest.java",
+      "bytes": 5008,
+      "sha256": "fe1cd523873921146c1eab2b65f19c0a3e53b2f8b144e0bfaa47be78ea75fc89"
+    },
+    {
+      "path": "backend/recipe-service/src/test/java/com/smartfridge/recipe/RecipeMigrationCompatibilityTest.java",
+      "bytes": 2393,
+      "sha256": "cb45c7a431d0a8fea34258feef022350515be792f9dee7dc5846e786fc87751f"
+    },
+    {
+      "path": "scripts/Build-Flutter.ps1",
+      "bytes": 2770,
+      "sha256": "e6051b7465e8a03a72ddc01c35d895bb2f3c9c653909cfdbbfe9a89fa6105299"
+    },
+    {
+      "path": "scripts/Start-QuietWhiteAcceptance.ps1",
+      "bytes": 4721,
+      "sha256": "0c2f2a16ccbad53605153970f33d3cf23f1d686f7e3b6f53f57a09747fbb3d16"
+    },
+    {
+      "path": "scripts/preview-quiet-white.mjs",
+      "bytes": 2379,
+      "sha256": "479ba765478d9f97241f5b6af98e6e1bbe5b1b21fd48a3b678ecb897c70c752b"
+    },
+    {
+      "path": "scripts/review-kitchen-tone.mjs",
+      "bytes": 7292,
+      "sha256": "bb972eb9f2bf0ff5f93b96064fcb069cc0136007c216e397c9b4fbd04292ab5b"
+    },
+    {
+      "path": "scripts/sync-recipe-catalog.mjs",
+      "bytes": 2817,
+      "sha256": "0c7139ef1d41d8e989488bdd4511f42ed578c4e1784658dd74627848fafce1fd"
+    },
+    {
+      "path": "scripts/ui-acceptance-quiet-white.mjs",
+      "bytes": 15808,
+      "sha256": "92389a4687292dc030dcdcf601d4f6493bd74d7c8096cf641d4367ad67dbbe01"
+    }
+  ],
+  "referenceImage": {
+    "path": "apps/fridge-app/assets/images/kitchen-gray-white-v2.0.1.png",
+    "bytes": 1772065,
+    "sha256": "44f78ce051dd45d53214f19e9b7badd16be54b61161572db784533a3cee026e7"
+  },
+  "referenceImageSize": [
+    1536,
+    1024
+  ],
+  "promptRecord": "docs/design/ui-redesign-2026-11-10/厨房灰白黑生成记录.json",
+  "apk": {
+    "path": "apps/fridge-app/build/app/outputs/flutter-apk/app-release.apk",
+    "bytes": 69741783,
+    "sha256": "946e45634cfff57045f7fd29475dc617c72f344cfbfbee0dd4413041cb45e7df"
+  },
+  "webMain": {
+    "path": "apps/fridge-app/build/web/main.dart.js",
+    "bytes": 3296769,
+    "sha256": "37921d590c11cad70b1456de5eb214da9cb01cba7d664db7c4f030f56cd8292a"
+  },
+  "screenshots": [
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/before-home-desktop.png",
+      "bytes": 145945,
+      "sha256": "c5972414097366411d890f8d7e9f0cbf6560df6587f80a8065fb81aa75a3e04c"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/home-desktop-closed.png",
+      "bytes": 168049,
+      "sha256": "f49aacf41717c9e236680780b846d717494ce408fddeb459c6e4dd8592c51392"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/home-desktop-open.png",
+      "bytes": 179634,
+      "sha256": "bb09ffba6804cf49bc9043e3a694ea10e0ecea0b5cccb76f02196c1091f5cefc"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/home-mobile-closed.png",
+      "bytes": 60372,
+      "sha256": "62b4dff8b3b2a6ded6bc6a85d108f2ab9f73519562232f49cd94771c6fd6c167"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/home-mobile-open.png",
+      "bytes": 67547,
+      "sha256": "b49ad813d12c08b05ee87da05689cf0ae48d80d0d16c0fe5c2279ca7339fab8f"
+    },
+    {
+      "path": "docs/reviews/evidence/2026-11-10-kitchen-tone/login-desktop.png",
+      "bytes": 554824,
+      "sha256": "441b1f25668611f6e658496d3989b1729b7c1f94df0e870fc106ab00d417b823"
+    }
+  ],
+  "toneMeasurement": {
+    "before-home-desktop": {
+      "meanLuma0to255": 230.38,
+      "pixelsAbove235Percent": 43.45
+    },
+    "home-desktop-closed": {
+      "meanLuma0to255": 152.91,
+      "pixelsAbove235Percent": 0.02
+    },
+    "scope": "Fixed desktop canvas rectangle, encoded grayscale statistics; not display luminance or hardware calibration."
+  }
+}

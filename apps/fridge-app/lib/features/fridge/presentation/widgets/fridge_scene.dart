@@ -43,10 +43,10 @@ class FridgeScene extends StatelessWidget {
                   label: '${zone.name}区，${zone.temperature}',
                   child: Material(
                     color: active ? AppColors.terracotta : AppColors.paper,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(10),
                     child: InkWell(
                       onTap: () => onZoneSelected(zone.id),
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(10),
                       child: Container(
                         width: compact
                             ? ((constraints.maxWidth - 24) / 4)
@@ -63,7 +63,7 @@ class FridgeScene extends StatelessWidget {
                                 ? AppColors.terracotta
                                 : AppColors.border,
                           ),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(10),
                         ),
                         child: Row(
                           children: [
@@ -121,9 +121,9 @@ class FridgeScene extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ClipRRect(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(14),
             child: SizedBox(
-              height: compact ? 290 : 500,
+              height: compact ? 380 : 500,
               child: WebGLFridgeView(
                 zone: selectedZone,
                 onZoneSelected: onZoneSelected,

@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>小易冰箱 · 黑白厨房设计审查</title>
+  <link rel="stylesheet" href="prototype.css">
+  <script src="prototype.js" defer></script>
+</head>
+<body>
+  <div class="review-bar">
+    <a href="index.html" class="review-back">← 审查入口</a>
+    <span class="review-note">设计样稿 · 演示数据 · 未连接真实家庭</span>
+    <details class="review-tools">
+      <summary>审查控制</summary>
+      <div class="review-tools-panel">
+        <label>方案<select id="scheme-picker"><option value="a">A · 静白全景</option><option value="b">B · 冷雾工作台</option><option value="c">C · 墨线橱窗</option></select></label>
+        <label>演示角色<select id="role-picker"><option value="OWNER">家庭主人 / 可编辑</option><option value="VIEWER">只读成员</option></select></label>
+        <label class="checkbox-label"><input type="checkbox" id="fail-next"> 模拟下一次保存失败</label>
+        <a href="prototype.html?page=components">查看按钮状态</a>
+      </div>
+    </details>
+  </div>
+  <div id="app" class="app-shell"></div>
+  <dialog id="modal" class="modal"></dialog>
+  <dialog id="confirm-dialog" class="confirm-dialog"></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body>
+</html>
