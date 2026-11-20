@@ -87,11 +87,20 @@ class _ReferenceStickerLayerState extends State<ReferenceStickerLayer>
 
   @override
   Widget build(BuildContext context) {
-    final fresh = widget.zone == FridgeZoneId.fresh;
-    final (left, right) = fresh ? (.353, .647) : (.157, .843);
-    final rowEdges = fresh
-        ? const [.118, .224, .344, .459, .556]
-        : const [.157, .298, .439, .580, .721];
+    // The grid is projected into each square reference image.
+    final (left, right, rowEdges) = switch (widget.zone) {
+      FridgeZoneId.fresh => (.351, .649, const [.151, .236, .351, .463, .553]),
+      FridgeZoneId.variable => (
+        .151,
+        .849,
+        const [.233, .354, .475, .596, .717],
+      ),
+      FridgeZoneId.freezer => (
+        .169,
+        .831,
+        const [.247, .362, .476, .591, .706],
+      ),
+    };
     final cellWidth = (right - left) / _columns;
     final visible = _stacks.skip(_page * _capacity).take(_capacity);
     final photoOrigin =

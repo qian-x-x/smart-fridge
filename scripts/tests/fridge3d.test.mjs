@@ -1,8 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import * as THREE from '../../apps/fridge-app/web/vendor/three.module.min.js';
-import { buildFridge, createMaterials, poseFridge } from '../../apps/fridge-app/web/fridge3d/fridge-model.js';
-import { buildKitchen } from '../../apps/fridge-app/web/fridge3d/kitchen-scene.js';
+import { GLTFLoader } from '../../apps/fridge-app/web/vendor/loaders/GLTFLoader.js';
+import { buildFridge, poseFridge } from '../../apps/fridge-app/web/fridge3d/fridge-model.js';
 import { projectStickerSlot, stickerLayout } from '../../apps/fridge-app/web/fridge3d/sticker-layout.js';
 import {
   CAMERA_FOV, CAMERA_TRANSITION_MS, DRAWERS, PARTS, ZONES, applyCameraPose,
@@ -10,6 +11,11 @@ import {
 } from '../../apps/fridge-app/web/fridge3d/fridge-state.js';
 
 const openParts = (state) => PARTS.filter((part) => state[part]);
+const asset = await readFile(new URL('../../apps/fridge-app/web/fridge3d/assets/fridge-scene.glb', import.meta.url));
+const { scene: importedScene } = await new GLTFLoader().parseAsync(
+  asset.buffer.slice(asset.byteOffset, asset.byteOffset + asset.byteLength), '',
+);
+const newModel = () => buildFridge(importedScene.clone());
 
 test('selecting either drawer closes every other part, including when all are open in overview', () => {
   const bothDoors = transition(createViewState(), 'focusZone', 'fresh');
@@ -38,7 +44,7 @@ test('the upper cold-storage doors retain their shared compartment and independe
 });
 
 test('doors pivot on the outer edges and the drawers move with their trays and baskets', () => {
-  const model = buildFridge(createMaterials());
+  const model = newModel();
   poseFridge(model.parts, transition(createViewState(), 'closeAll'));
   assert.equal(Math.abs(model.parts.leftDoor.rotation.y), 0);
   assert.equal(model.parts.rightDoor.userData.zone, 'fresh');
@@ -53,9 +59,42 @@ test('doors pivot on the outer edges and the drawers move with their trays and b
   assert.ok(model.parts.freezerDrawer.getObjectByName('upper-sliding-basket'));
   assert.ok(model.parts.middleDrawer.getObjectByName('tray-floor'));
   assert.ok(model.parts.middleDrawer.position.y > model.parts.freezerDrawer.position.y);
-  assert.ok(!model.root.getObjectByName('carcass-solid'));
-  const bounds = new THREE.Box3().setFromObject(model.root);
+  const bounds = new THREE.Box3().setFromObject(model.root.getObjectByName('fridge'));
   assert.ok(bounds.min.y >= -0.02 && bounds.max.y < 4.5);
+});
+
+test('the Blender panels and handles open with their own assemblies and expose all three cavities', () => {
+  const { root, parts, hitTargets } = newModel();
+  for (const [part, names] of Object.entries({
+    leftDoor: ['Door_Upper_L', 'Handle_Bar_L', 'Handle_Standoff_L_0', 'Handle_Standoff_L_1'],
+    rightDoor: ['Door_Upper_R', 'Handle_Bar_R', 'Handle_Standoff_R_0', 'Handle_Standoff_R_1'],
+    middleDrawer: ['Drawer_Middle', 'Drawer_Middle_Pocket'],
+    freezerDrawer: ['Drawer_Bottom', 'Drawer_Bottom_Pocket'],
+  })) {
+    for (const name of names) {
+      assert.ok(parts[part].getObjectByName(name), name);
+      assert.ok(hitTargets.some((mesh) => mesh.name === name && mesh.userData.part === part), name);
+    }
+  }
+
+  poseFridge(parts, transition(createViewState(), 'overview'));
+  root.updateMatrixWorld(true);
+  const skin = ['Fridge_Body', 'Door_Gasket'].map((name) => root.getObjectByName(name));
+  for (const y of [3.02, DRAWERS.variable.y, DRAWERS.freezer.y]) {
+    const ray = new THREE.Raycaster(new THREE.Vector3(0, y, 5), new THREE.Vector3(0, 0, -1));
+    const [hit] = ray.intersectObjects(skin);
+    assert.ok(hit?.point.z < -0.62, 'the ray reaches the back wall through the storage opening');
+  }
+  for (const [part, name] of [['middleDrawer', 'Drawer_Middle'], ['freezerDrawer', 'Drawer_Bottom']]) {
+    const drawer = parts[part];
+    for (const x of [-0.6, 0, 0.6]) {
+      const ray = new THREE.Raycaster(
+        new THREE.Vector3(x, drawer.position.y - 0.08, 5), new THREE.Vector3(0, 0, -1),
+      );
+      const [hit] = ray.intersectObject(drawer.getObjectByName(name));
+      assert.ok(hit?.normal.z > 0.999, name + ' has even surface normals below the handle');
+    }
+  }
 });
 
 test('inventory normalization filters invalid stock and unsafe asset names without capping inventory', () => {
@@ -106,17 +145,17 @@ test('a seventeenth ingredient kind changes each drawer from 16 to 32 slots', ()
 });
 
 test('the model and the kitchen contain only the three retained storage areas', () => {
-  const materials = createMaterials();
-  const scene = new THREE.Scene();
-  const { parts } = buildFridge(materials);
-  buildKitchen(scene, materials);
+  const { root, parts } = newModel();
   assert.deepEqual(ZONES, ['fresh', 'variable', 'freezer']);
   assert.deepEqual(PARTS, ['leftDoor', 'rightDoor', 'middleDrawer', 'freezerDrawer']);
   assert.deepEqual(Object.keys(parts), PARTS);
-  const worktops = scene.getObjectByName('kitchen').children.filter((object) => object.name === 'worktop');
+  const kitchen = root.getObjectByName('kitchen');
+  const worktops = kitchen.children.filter((object) => /^Counter_[LR]_Slab$/.test(object.name));
   assert.equal(worktops.length, 2);
   assert.ok(worktops.every((worktop) => !worktop.userData.zone));
-  assert.equal(scene.getObjectByName('sink-basin'), undefined);
+  for (const name of ['Floor', 'Wall_Back', 'Counter_L_HobGlass', 'Counter_L_ZoneRing']) {
+    assert.ok(kitchen.getObjectByName(name));
+  }
   assert.equal(transition(createViewState(), 'focusZone', 'pantry').focus, null);
 });
 
@@ -147,7 +186,7 @@ test('the camera advances through intermediate poses over 400 ms and retargets f
 });
 
 test('both vertical views frame the complete drawer and its inventory on narrow and wide screens', () => {
-  const model = buildFridge(createMaterials());
+  const model = newModel();
   for (const [zone, { part, travel }] of Object.entries(DRAWERS)) {
     const opened = transition(createViewState(), 'focusZone', zone);
     poseFridge(model.parts, opened);

@@ -22,6 +22,7 @@
     .is-hidden { display:none; }
     .fallback { position:absolute; inset:0; display:none; place-content:center; padding:24px; background:#f4f6f7; text-align:center; z-index:2; }
     .fallback.is-visible { display:grid; } .fallback strong { font-size:18px; margin-bottom:10px; } .fallback span { max-width:300px; line-height:1.7; }
+    .fallback button { justify-self:center; margin-top:12px; padding-inline:16px; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
     #sticker-layer { position:absolute; inset:0; pointer-events:none; }
     button.inventory-sticker { position:absolute; transform:translate(-50%,-50%); padding:0;
@@ -64,7 +65,7 @@
   </style>
 </head>
 <body>
-  <main id="scene" aria-label="灰白黑厨房中的哑光灰白冰箱三维场景">
+  <main id="scene" aria-label="不锈钢冰箱与两侧台面的三维场景">
     <div class="scene-view">
       <canvas id="fridge-canvas" tabindex="0" aria-label="三维冰箱。拖动旋转；数字1到3选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
       <div id="sticker-layer" role="group" aria-label="当前分区食材"></div>
@@ -82,16 +83,27 @@
       <button id="freezer-drawer" type="button" data-part="freezerDrawer" aria-pressed="false">冷冻</button>
       <button id="close-all" type="button" aria-label="关闭所有门和抽屉">关闭</button>
     </div>
-    <div id="fallback" class="fallback" role="status"><strong>三维场景暂不可用</strong><span>请重新加载或打开食材清单。</span></div>
+    <div id="fallback" class="fallback">
+      <div role="status"><strong>三维场景暂不可用</strong><br><span>可以打开食材清单查看库存。</span></div>
+      <button id="retry-scene" type="button">重新加载</button>
+    </div>
     <div id="loading" class="loading" role="status">正在加载…</div>
     <output id="live-status" class="sr-only" aria-live="polite"></output>
   </main>
   <script>
-    const showLoadError = () => { document.querySelector('#loading').classList.add('is-hidden'); document.querySelector('#fallback').classList.add('is-visible'); };
+    const showLoadError = () => {
+      document.querySelector('#scene').dataset.ready = 'error';
+      document.querySelector('.scene-view').inert = true;
+      document.querySelector('.controls').inert = true;
+      document.querySelector('#loading').classList.add('is-hidden');
+      document.querySelector('#fallback').classList.add('is-visible');
+    };
+    document.querySelector('#retry-scene').addEventListener('click', () => location.reload());
+    window.addEventListener('fridge-scene-error', showLoadError);
     window.addEventListener('error', showLoadError);
     window.addEventListener('unhandledrejection', showLoadError);
   </script>
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./fridge3d.js?rev=fridge-sticker-grid-v2.3"></script>
+  <script type="module" src="./fridge3d.js?rev=blender-scene-v1"></script>
 </body>
 </html>

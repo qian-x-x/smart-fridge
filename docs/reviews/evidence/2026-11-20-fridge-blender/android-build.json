@@ -1,0 +1,12 @@
+{
+  "path": "apps/fridge-app/build/app/outputs/flutter-apk/app-debug.apk",
+  "bytes": 225765485,
+  "sha256": "8c4f7969b278daf1f1e4517d29af4f8e1ad208d5f47e7dbf71b9bc9034fa3aa4",
+  "zipCrc": "passed",
+  "referenceImages": {
+    "assets/images/kitchen-focus-closed.jpg": "b75f1ee8d2a8689bb1beba593aab18ad10dbee9418982fe56cb537bed7866775",
+    "assets/images/kitchen-focus-open.jpg": "ef02d117afb726efd768f9963020484c81023dd1d76eedacfef17905331ff206",
+    "assets/images/kitchen-variable-drawer.jpg": "7d19d9a6f03279ae531479425aa1e4e71d1cd242ec47d2f4af552d34204d2b2e",
+    "assets/images/kitchen-freezer-drawer.jpg": "e95983fe3142ce165a1faa3a714cc38b0147f916d02e285e3f43f3976a2a0417"
+  }
+}

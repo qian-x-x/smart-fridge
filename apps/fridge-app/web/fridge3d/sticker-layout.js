@@ -1,5 +1,5 @@
 import { Vector3 } from '../vendor/three.module.min.js';
-import { DRAWERS, TRAY } from './fridge-state.js?rev=fridge-sticker-grid-v2.3';
+import { DRAWERS, TRAY } from './fridge-state.js?rev=blender-scene-v1';
 
 const SLOT_ROWS = 4;
 const COLD_COLUMNS = 6;

@@ -79,7 +79,7 @@ class WebGLFridgeView extends StatelessWidget {
               duration: duration,
               curve: Curves.easeInOutCubic,
               child: ColoredBox(
-                color: const Color(0xFF738390),
+                color: const Color(0xFF919397),
                 child: Image.asset(
                   asset,
                   fit: BoxFit.contain,

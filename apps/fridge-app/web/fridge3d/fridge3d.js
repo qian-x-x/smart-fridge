@@ -1,19 +1,21 @@
 import * as THREE from '../vendor/three.module.min.js';
 import { RoomEnvironment } from '../vendor/RoomEnvironment.js';
-import { buildFridge, createMaterials, poseFridge } from './fridge-model.js?rev=fridge-sticker-grid-v2.3';
-import { buildKitchen, createTexture } from './kitchen-scene.js?rev=fridge-sticker-grid-v2.3';
-import { StickerInventory } from './sticker-inventory.js?rev=fridge-sticker-grid-v2.3';
+import { GLTFLoader } from '../vendor/loaders/GLTFLoader.js';
+import { buildFridge, poseFridge } from './fridge-model.js?rev=blender-scene-v1';
+import { StickerInventory } from './sticker-inventory.js?rev=blender-scene-v1';
 import {
   CAMERA_FOV, CAMERA_TRANSITION_MS, PARTS, ZONES, applyCameraPose, cameraPose,
   createViewState, interpolateCamera, isOverhead, transition,
-} from './fridge-state.js?rev=fridge-sticker-grid-v2.3';
+} from './fridge-state.js?rev=blender-scene-v1';
 
 const canvas = document.querySelector('#fridge-canvas');
 const stage = document.querySelector('#scene');
 const loading = document.querySelector('#loading');
 const liveStatus = document.querySelector('#live-status');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-let renderer, scene, camera, model, observer;
+const modelUrl = new URL('./assets/fridge-scene.glb?rev=blender-scene-v1', import.meta.url);
+const modelRequest = new AbortController();
+let renderer, scene, camera, model, observer, environmentTarget;
 let view = createViewState();
 let animated = { ...view };
 let cameraFrame, cameraMove, lastFrame;
@@ -21,6 +23,7 @@ let orbitYaw = 0, targetOrbitYaw = 0, orbitPitch = 0, targetOrbitPitch = 0;
 let pointerDown = null;
 let moved = 0;
 let sceneFailed = false;
+let disposed = false;
 let needsRender = true;
 const pointer = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
@@ -29,9 +32,38 @@ const inventory = new StickerInventory(
   () => { needsRender = true; },
 );
 
-try { init(); } catch (error) { showError(error); }
+window.addEventListener('pagehide', (event) => {
+  if (event.persisted) return;
+  disposed = true;
+  modelRequest.abort();
+  renderer?.setAnimationLoop(null);
+  observer?.disconnect();
+  const materials = new Set();
+  scene?.traverse((object) => {
+    object.geometry?.dispose();
+    if (object.material) [].concat(object.material).forEach((material) => materials.add(material));
+  });
+  for (const material of materials) material.dispose();
+  environmentTarget?.dispose();
+  renderer?.dispose();
+});
+init().catch((error) => { if (!disposed) showError(error); });
 
-function init() {
+async function init() {
+  const timeout = setTimeout(() => modelRequest.abort(), 15000);
+  let data;
+  try {
+    const response = await fetch(modelUrl, { signal: modelRequest.signal });
+    if (!response.ok) throw new Error(`冰箱模型加载失败 (${response.status})`);
+    data = await response.arrayBuffer();
+  } finally {
+    clearTimeout(timeout);
+  }
+  const { scene: imported } = await new GLTFLoader().parseAsync(data, new URL('.', modelUrl).href);
+  if (disposed) return;
+  model = buildFridge(imported);
+  scene = new THREE.Scene();
+  scene.add(model.root);
   renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -41,18 +73,15 @@ function init() {
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   renderer.shadowMap.autoUpdate = false;
   renderer.shadowMap.needsUpdate = true;
-  scene = new THREE.Scene(); scene.background = new THREE.Color(0xc9cfd3);
+  scene.background = new THREE.Color(0xc9cfd3);
   scene.fog = new THREE.Fog(0xc9cfd3, 17, 33);
   camera = new THREE.PerspectiveCamera(CAMERA_FOV, 1, 0.1, 60);
   const pmrem = new THREE.PMREMGenerator(renderer);
   const environment = new RoomEnvironment();
-  const environmentTarget = pmrem.fromScene(environment, 0.04);
+  environmentTarget = pmrem.fromScene(environment, 0.04);
   scene.environment = environmentTarget.texture;
   scene.environmentIntensity = 0.55;
   environment.dispose(); pmrem.dispose();
-  const materials = createMaterials({ steel: createTexture('steel'), wood: createTexture('wood'), stone: createTexture('stone') });
-  model = buildFridge(materials); scene.add(model.root);
-  buildKitchen(scene, materials);
   scene.add(new THREE.HemisphereLight(0xf2f6fa, 0x929da7, 0.9));
   const sun = new THREE.DirectionalLight(0xf2f6fa, 1.6);
   sun.position.set(-4.5, 6.5, 4.5); sun.castShadow = true;
@@ -69,12 +98,6 @@ function init() {
   renderer.setAnimationLoop(render);
   stage.dataset.ready = 'true';
   post({ type: 'ready' });
-  window.addEventListener('pagehide', () => {
-    renderer.setAnimationLoop(null); observer.disconnect();
-    scene.traverse((object) => { object.geometry?.dispose(); });
-    Object.values(materials).forEach((material) => { material.map?.dispose(); material.dispose(); });
-    environmentTarget.dispose(); renderer.dispose();
-  }, { once: true });
 }
 
 function render(now) {
@@ -163,7 +186,7 @@ function updateStatus() {
   });
   stage.dataset.zone = view.zone; stage.dataset.openParts = openParts.join(',');
   stage.dataset.focus = view.focus ?? 'overview';
-  stage.dataset.sceneVersion = 'fridge-sticker-grid-v2.3';
+  stage.dataset.sceneVersion = 'blender-scene-v1';
   const label = { fresh: '冷藏室', variable: '变温抽屉俯视', freezer: '冷冻抽屉俯视' }[view.focus];
   liveStatus.textContent = label ?? (openParts.length ? '冰箱概览' : '冰箱已关闭');
 }
@@ -200,7 +223,7 @@ function bindInputs() {
     pointer.set((event.clientX - rect.left) / rect.width * 2 - 1, -(event.clientY - rect.top) / rect.height * 2 + 1);
     raycaster.setFromCamera(pointer, camera);
     const hit = raycaster.intersectObjects(model.hitTargets, false)[0];
-    const part = hit?.object.parent.userData.part;
+    const part = hit?.object.userData.part;
     if (part) setView('togglePart', part);
   });
   canvas.addEventListener('pointercancel', () => { pointerDown = null; canvas.style.cursor = ''; });
@@ -237,9 +260,7 @@ function post(payload) { parent.postMessage(JSON.stringify({ source: 'smart-frid
 function showError(error) {
   sceneFailed = true;
   renderer?.setAnimationLoop(null);
-  document.querySelector('#fallback').classList.add('is-visible');
-  loading.classList.add('is-hidden'); canvas.style.display = 'none';
-  stage.dataset.ready = 'error';
+  window.dispatchEvent(new Event('fridge-scene-error'));
   post({ type: 'error', message: error instanceof Error ? error.message : String(error) });
   console.error('Kitchen scene unavailable', error);
 }

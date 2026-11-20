@@ -1,5 +1,5 @@
-import { DRAWERS, normalizeFoods } from './fridge-state.js?rev=fridge-sticker-grid-v2.3';
-import { projectStickerSlot, stickerLayout } from './sticker-layout.js?rev=fridge-sticker-grid-v2.3';
+import { DRAWERS, normalizeFoods } from './fridge-state.js?rev=blender-scene-v1';
+import { projectStickerSlot, stickerLayout } from './sticker-layout.js?rev=blender-scene-v1';
 
 export class StickerInventory {
   #layer = document.querySelector('#sticker-layer');

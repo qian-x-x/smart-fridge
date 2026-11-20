@@ -30,6 +30,17 @@ Windows 中文路径可能触发 Gradle 或 Dart AOT 的路径限制。仓库根
 
 当前 Android release 包使用模板 debug 签名，只用于开发验收；正式签名在交付阶段注入。
 
+## Blender 场景
+
+可编辑源文件为 [fridge_scene.blend](../../docs/design/realistic-fridge/fridge_scene.blend)。Web 从 `web/fridge3d/assets/fridge-scene.glb` 加载冰箱和两侧台面。Three.js 按源文件的部件名称绑定双门和两个抽屉，并在打开时显示内衬及库存。Android 首页和登录背景使用同一场景渲染的参考图。
+
+修改 Blender 源文件后，在仓库根目录用 Blender 5.3 重新导出。可将命令中的 `blender` 替换为本机可执行文件路径。导出脚本在内存中加工内腔并写入 GLB，保留源文件以便继续编辑。
+
+```powershell
+blender --background --factory-startup --disable-autoexec docs/design/realistic-fridge/fridge_scene.blend --python-exit-code 1 --python scripts/Export-FridgeScene.py
+node --test scripts/tests/fridge3d.test.mjs
+```
+
 ## 目录
 
 - `lib/core`：配置、网络、会话、主题和路由。

@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-20",
+  "scope": "本机 Flutter Web release，Edge SwiftShader，演示库存；未写真实业务数据。",
+  "passed": 17,
+  "checks": [
+    {
+      "name": "登录页加载更新后的冰箱参考图",
+      "passed": true
+    },
+    {
+      "name": "Web release 首页读取库存并渲染导入场景",
+      "passed": true
+    },
+    {
+      "name": "GLB 从相同站点以正确媒体类型加载",
+      "passed": true
+    },
+    {
+      "name": "在画布中直接点击 Blender 左门可打开并显示冷藏贴纸",
+      "passed": true
+    },
+    {
+      "name": "左右门独立，双门开启后贴纸仍在画布内",
+      "passed": true
+    },
+    {
+      "name": "场景忽略其他窗口和来源的消息",
+      "passed": true
+    },
+    {
+      "name": "食材贴纸打开 Flutter 详情并暂停场景输入",
+      "passed": true
+    },
+    {
+      "name": "关闭详情后恢复同一场景与库存",
+      "passed": true
+    },
+    {
+      "name": "桌面变温抽屉独立开启并显示区内贴纸",
+      "passed": true
+    },
+    {
+      "name": "快速切换抽屉以最后一次选择为准",
+      "passed": true
+    },
+    {
+      "name": "手机视口保留可用画布宽高",
+      "passed": true
+    },
+    {
+      "name": "手机尺寸触摸冷冻抽屉并显示完整贴纸",
+      "passed": true
+    },
+    {
+      "name": "320 像素视口可切换抽屉且格位不越界",
+      "passed": true
+    },
+    {
+      "name": "演示浏览不发出写入请求",
+      "passed": true
+    },
+    {
+      "name": "首次加载和交互无脚本异常或场景资源失败",
+      "passed": true
+    },
+    {
+      "name": "GLB 请求失败时显示重试并阻止失效控件",
+      "passed": true
+    },
+    {
+      "name": "重试后恢复场景和控件",
+      "passed": true
+    }
+  ]
+}

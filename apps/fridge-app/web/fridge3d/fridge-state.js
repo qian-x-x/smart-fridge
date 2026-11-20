@@ -1,12 +1,10 @@
 const DOORS = ['leftDoor', 'rightDoor'];
 export const DRAWERS = Object.freeze({
-  variable: { part: 'middleDrawer', y: 1.47, height: 0.51, travel: 1.68 },
-  freezer: { part: 'freezerDrawer', y: 0.68, height: 0.98, travel: 1.68 },
+  variable: { part: 'middleDrawer', y: 1.454, height: 0.541, travel: 1.68 },
+  freezer: { part: 'freezerDrawer', y: 0.655, height: 1.021, travel: 1.68 },
 });
-export const TRAY = Object.freeze({ width: 1.89, depth: 1.4, z: 0.035, floorY: -0.18, rimDepth: 0.052 });
-export const DRAWER_FRONT = Object.freeze({
-  width: 2.09, depth: 0.18, z: 0.86, handleDepth: 0.045, handleZ: 0.963,
-});
+export const TRAY = Object.freeze({ width: 1.89, depth: 1.36, z: 0.06, floorY: -0.18, rimDepth: 0.052 });
+const DRAWER_FRONT = Object.freeze({ width: 2.19, edgeZ: 0.89 });
 const DRAWER_ZONES = Object.keys(DRAWERS);
 export const ZONES = Object.freeze(['fresh', ...DRAWER_ZONES]);
 export const PARTS = Object.freeze([...DOORS, ...DRAWER_ZONES.map((zone) => DRAWERS[zone].part)]);
@@ -14,7 +12,7 @@ export const CAMERA_TRANSITION_MS = 400;
 export const CAMERA_FOV = 32;
 
 const CAMERA_VIEWS = Object.freeze({
-  overview: { x: 0, y: 2.15, z: 0.56, height: 5.05, width: 3.0, depth: 0.64, yaw: 0.025, pitch: 0.07 },
+  overview: { x: 0, y: 2.15, z: 0.56, height: 5.20, width: 3.65, depth: 0.64, yaw: 0, pitch: 0.07 },
   fresh: { x: 0, y: 3.02, z: 0.48, height: 2.95, width: 2.4, depth: 0.4, yaw: 0, pitch: 0.06 },
 });
 
@@ -57,7 +55,7 @@ export function cameraPose(focus, aspect) {
   if (isOverhead(focus)) {
     const { y, height, travel } = DRAWERS[focus];
     const back = TRAY.z - (TRAY.depth + TRAY.rimDepth) / 2;
-    const front = DRAWER_FRONT.handleZ + DRAWER_FRONT.handleDepth / 2;
+    const front = DRAWER_FRONT.edgeZ;
     // Frame the whole outline at the drawer's highest edge, including its front.
     const frameHeight = Math.max(front - back, DRAWER_FRONT.width / viewportAspect) / 0.92;
     return { x: 0, y: y + height / 2, z: travel + (back + front) / 2,

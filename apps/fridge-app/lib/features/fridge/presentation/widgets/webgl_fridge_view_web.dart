@@ -44,7 +44,7 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     _viewType = 'smart-fridge-webgl-${DateTime.now().microsecondsSinceEpoch}';
     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
       final iframe = web.HTMLIFrameElement()
-        ..src = 'fridge3d/index.html?rev=fridge-sticker-grid-v2.3'
+        ..src = 'fridge3d/index.html?rev=blender-scene-v1'
         ..title = '小易冰箱 WebGL 三维模型'
         ..setAttribute('allowtransparency', 'true')
         ..style.border = '0'

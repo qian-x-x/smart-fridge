@@ -15,7 +15,7 @@ const build=process.env.PREVIEW_BUILD_DIR
 const port=Number(process.env.PREVIEW_PORT||18000);
 const host=process.env.PREVIEW_HOST||'127.0.0.1';
 const api=new URL(process.env.PREVIEW_API||'http://127.0.0.1:18080');
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.wasm':'application/wasm','.ttf':'font/ttf','.otf':'font/otf'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.wasm':'application/wasm','.ttf':'font/ttf','.otf':'font/otf','.glb':'model/gltf-binary'};
 const server=http.createServer((req,res)=>{
   const url=new URL(req.url,'http://local');
   if(url.pathname.startsWith('/api/')) {

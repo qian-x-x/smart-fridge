@@ -9,6 +9,8 @@
 *.jpeg binary
 *.webp binary
 *.gif binary
+*.blend binary
+*.glb binary
 *.woff binary
 *.woff2 binary
 *.ttf binary
