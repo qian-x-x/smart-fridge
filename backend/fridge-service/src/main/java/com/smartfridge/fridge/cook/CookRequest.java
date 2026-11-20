@@ -35,6 +35,6 @@ public record CookRequest(
 
     @NotEmpty(message = "扣减清单不能为空")
     @Size(max = 20, message = "单次做饭最多扣减 20 种食材")
-    List<@Valid CookItemRequest> items
+    List<@NotNull @Valid CookItemRequest> items
 ) {
 }

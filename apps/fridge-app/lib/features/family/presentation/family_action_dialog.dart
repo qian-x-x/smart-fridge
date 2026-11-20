@@ -71,8 +71,6 @@ class _FamilyActionDialogState extends State<FamilyActionDialog> {
               onFieldSubmitted: (_) => _submit(),
               decoration: InputDecoration(
                 labelText: widget.join ? '8 位邀请码' : '家庭名称',
-                helperText: widget.join ? null : '创建后自动准备家庭冰箱，即可开始记录食材',
-                helperMaxLines: 2,
               ),
               validator: (value) {
                 final text = value?.trim() ?? '';

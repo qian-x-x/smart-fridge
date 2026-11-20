@@ -5,19 +5,25 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
+import 'package:smart_fridge_app/features/fridge/domain/fridge_sticker_stack.dart';
+import 'package:smart_fridge_app/features/fridge/domain/ingredient_stickers.dart';
 import 'package:web/web.dart' as web;
 
 class WebGLFridgeView extends StatefulWidget {
   const WebGLFridgeView({
-    required this.zone,
+    required this.focus,
+    required this.onOverview,
     required this.onZoneSelected,
+    this.onFoodSelected,
     this.foods = const [],
     this.interactive = true,
     super.key,
   });
 
-  final FridgeZoneId zone;
+  final ({FridgeZoneId zone, int request})? focus;
+  final VoidCallback onOverview;
   final ValueChanged<FridgeZoneId> onZoneSelected;
+  final ValueChanged<FridgeFood>? onFoodSelected;
   final List<FridgeFood> foods;
   final bool interactive;
 
@@ -30,7 +36,7 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
   late final StreamSubscription<web.MessageEvent> _messageSubscription;
   web.HTMLIFrameElement? _iframe;
   bool _ready = false;
-  FridgeZoneId? _sceneDrivenZone;
+  int _inventoryRevision = 0;
 
   @override
   void initState() {
@@ -38,7 +44,7 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     _viewType = 'smart-fridge-webgl-${DateTime.now().microsecondsSinceEpoch}';
     ui_web.platformViewRegistry.registerViewFactory(_viewType, (viewId) {
       final iframe = web.HTMLIFrameElement()
-        ..src = 'fridge3d/index.html?rev=quiet-white-v2.0.1'
+        ..src = 'fridge3d/index.html?rev=fridge-sticker-grid-v2.3'
         ..title = '小易冰箱 WebGL 三维模型'
         ..setAttribute('allowtransparency', 'true')
         ..style.border = '0'
@@ -48,13 +54,6 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
         ..style.overflow = 'hidden';
       iframe.style.pointerEvents = widget.interactive ? 'auto' : 'none';
       iframe.setAttribute('data-input-enabled', widget.interactive.toString());
-      iframe.onLoad.listen((_) {
-        if (!mounted) return;
-        _ready = true;
-        _sendInputState();
-        _sendInventory();
-        if (widget.zone != FridgeZoneId.fresh) _sendFocus(widget.zone);
-      });
       _iframe = iframe;
       return iframe;
     });
@@ -69,14 +68,7 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     _iframe?.setAttribute('data-input-enabled', widget.interactive.toString());
     if (oldWidget.interactive != widget.interactive) _sendInputState();
     if (oldWidget.foods != widget.foods) _sendInventory();
-    if (oldWidget.zone != widget.zone) {
-      if (_sceneDrivenZone == widget.zone) {
-        _sceneDrivenZone = null;
-        return;
-      }
-      _sceneDrivenZone = null;
-      _sendFocus(widget.zone);
-    }
+    if (oldWidget.focus != widget.focus) _sendFocus();
   }
 
   @override
@@ -123,16 +115,26 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
       _ready = true;
       _sendInputState();
       _sendInventory();
-      if (widget.zone != FridgeZoneId.fresh) _sendFocus(widget.zone);
-      return;
-    }
-    if (payload['type'] != 'zone-selected') {
+      if (widget.focus != null) _sendFocus();
       return;
     }
     if (!widget.interactive) return;
+    if (payload['type'] == 'food-selected') {
+      final foodId = payload['foodId'];
+      if (foodId is! String || payload['revision'] != _inventoryRevision) {
+        return;
+      }
+      final food = widget.foods
+          .where((food) => food.id == foodId && food.quantity > 0)
+          .firstOrNull;
+      if (food != null) widget.onFoodSelected?.call(food);
+      return;
+    }
+    if (payload['type'] != 'zone-selected' || payload['fromFlutter'] == true) {
+      return;
+    }
     final zone = _zoneFromWire(payload['zone']);
     if (zone != null) {
-      _sceneDrivenZone = zone != widget.zone ? zone : null;
       widget.onZoneSelected(zone);
     }
   }
@@ -151,18 +153,23 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
 
   void _sendInventory() {
     if (!_ready) return;
+    final stacks = groupFridgeStickers(widget.foods);
     _iframe?.contentWindow?.postMessage(
       jsonEncode({
         'type': 'smart-fridge-command',
         'action': 'inventory',
+        'revision': ++_inventoryRevision,
         'foods': [
-          for (final food in widget.foods)
+          for (final stack in stacks)
             {
-              'id': food.id,
-              'name': food.name,
-              'category': food.category,
-              'quantity': food.quantity,
-              'zone': food.zone.name,
+              'id': stack.food.id,
+              'name': stack.food.name,
+              'artwork': stickerForFood(stack.food)?.imageName,
+              'emoji': stack.food.emoji,
+              'quantity': stack.food.quantity,
+              'zone': stack.food.zone.name,
+              'layers': stack.layers,
+              'portions': stack.portionCount,
             },
         ],
       }).toJS,
@@ -170,15 +177,15 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
     );
   }
 
-  void _sendFocus(FridgeZoneId zone) {
+  void _sendFocus() {
     if (!_ready) {
       return;
     }
+    final focus = widget.focus;
     final message = jsonEncode({
       'type': 'smart-fridge-command',
-      'action': 'focusZone',
-      'zone': zone.name,
-      'openPanel': true,
+      'action': focus == null ? 'resetView' : 'focusZone',
+      if (focus != null) 'zone': focus.zone.name,
     });
     _iframe?.contentWindow?.postMessage(
       message.toJS,
@@ -191,7 +198,6 @@ class _WebGLFridgeViewState extends State<WebGLFridgeView> {
       'fresh' => FridgeZoneId.fresh,
       'variable' => FridgeZoneId.variable,
       'freezer' => FridgeZoneId.freezer,
-      'pantry' => FridgeZoneId.pantry,
       _ => null,
     };
   }

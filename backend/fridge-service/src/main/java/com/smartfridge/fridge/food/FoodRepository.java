@@ -45,6 +45,29 @@ public class FoodRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    Optional<CatalogBatch> findCatalogBatch(long fridgeId, long userId, String requestId) {
+        return jdbcTemplate.query(
+            """
+                SELECT payload_hash, item_count FROM food_catalog_batch
+                WHERE fridge_id = ? AND actor_user_id = ? AND request_id = ?
+                """,
+            (rs, rowNum) -> new CatalogBatch(rs.getString("payload_hash"), rs.getInt("item_count")),
+            fridgeId, userId, requestId
+        ).stream().findFirst();
+    }
+
+    void insertCatalogBatch(long fridgeId, long userId, String requestId, String hash, int itemCount) {
+        jdbcTemplate.update(
+            """
+                INSERT INTO food_catalog_batch (fridge_id, actor_user_id, request_id, payload_hash, item_count)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+            fridgeId, userId, requestId, hash, itemCount
+        );
+    }
+
+    record CatalogBatch(String payloadHash, int itemCount) {}
+
     public FoodView create(CreateFoodRequest request, long userId) {
         KeyHolder keys = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {

@@ -239,14 +239,6 @@ class HomeShell extends ConsumerWidget {
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
-                              const SizedBox(width: 18),
-                              const Text(
-                                AppBrand.tagline,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.muted,
-                                ),
-                              ),
                               const Spacer(),
                               if (isDemo)
                                 const Padding(

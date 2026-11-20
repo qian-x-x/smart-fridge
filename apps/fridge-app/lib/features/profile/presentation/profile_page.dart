@@ -35,21 +35,7 @@ class ProfilePage extends ConsumerWidget {
             32,
           ),
           children: [
-            const Text(
-              'BETTER TOGETHER',
-              style: TextStyle(
-                color: AppColors.muted,
-                fontSize: 11,
-                letterSpacing: 2,
-              ),
-            ),
-            const SizedBox(height: 9),
             Text('家庭协作', style: Theme.of(context).textTheme.headlineMedium),
-            const SizedBox(height: 9),
-            const Text(
-              '家人共享，日常各自有序。',
-              style: TextStyle(fontSize: 13, color: AppColors.muted),
-            ),
             const SizedBox(height: 26),
             Row(
               children: [
@@ -113,14 +99,6 @@ class ProfilePage extends ConsumerWidget {
                 ),
                 icon: const Icon(Icons.logout_rounded),
                 label: const Text('退出当前账号'),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '小易冰箱 · 查食材，看菜谱，都容易',
-              style: TextStyle(
-                color: AppColors.cocoa.withValues(alpha: 0.38),
-                fontSize: 11,
               ),
             ),
           ],

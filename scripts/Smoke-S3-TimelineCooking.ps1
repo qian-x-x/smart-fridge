@@ -95,7 +95,7 @@ $fridge = Invoke-Call -Method POST -Path '/api/v1/fridges' -Headers (Auth $owner
 $fridgeId = $fridge.Body.data.id
 $zoneId = $fridge.Body.data.zones[0].id
 $containerId = $fridge.Body.data.zones[0].containers[0].id
-Check 'create-fridge-with-zones' ($fridge.Status -eq 201 -and $fridge.Body.data.zones.Count -eq 4) "status=$($fridge.Status) zones=$($fridge.Body.data.zones.Count)"
+Check 'create-fridge-with-zones' ($fridge.Status -eq 201 -and ($fridge.Body.data.zones.code -join ',') -eq 'FRESH,VARIABLE,FREEZER') "status=$($fridge.Status) zones=$($fridge.Body.data.zones.Count)"
 
 $today = (Get-Date).Date
 $production = $today.AddDays(-2).ToString('yyyy-MM-dd')

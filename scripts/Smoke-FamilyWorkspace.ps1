@@ -35,7 +35,7 @@ $members = Request 'list members' GET "/families/$($shared.id)/members" $owner $
 Assert ($members.Count -eq 2) 'repeat join does not duplicate members'
 $null = Request 'viewer cannot create fridge' POST '/fridges' $member @{familyId=$shared.id;name='禁止创建'} 403
 $fridge = Request 'owner creates fridge' POST '/fridges' $owner @{familyId=$shared.id;name='工作区验收冰箱'} 201
-Assert ($fridge.zones.Count -eq 4) 'default fridge has four zones'
+Assert (($fridge.zones.code -join ',') -eq 'FRESH,VARIABLE,FREEZER') 'default fridge has three zones'
 $null = Request 'duplicate fridge rejected' POST '/fridges' $owner @{familyId=$shared.id;name='重复冰箱'} 409
 $zone = $fridge.zones[0]
 $foodBody = @{fridgeId=$fridge.id;zoneId=$zone.id;containerId=$zone.containers[0].id;name='验收牛奶';category='蛋奶';quantity=2;unit='盒';productionDate=(Get-Date).AddDays(-1).ToString('yyyy-MM-dd');expiresOn=(Get-Date).AddDays(2).ToString('yyyy-MM-dd');tags=@('早餐')}

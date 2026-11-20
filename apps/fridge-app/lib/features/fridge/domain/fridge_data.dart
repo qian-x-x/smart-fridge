@@ -1,4 +1,4 @@
-enum FridgeZoneId { fresh, variable, freezer, pantry }
+enum FridgeZoneId { fresh, variable, freezer }
 
 class FridgeContainer {
   const FridgeContainer({
@@ -72,36 +72,30 @@ class FridgeFood {
   final String? modelKey;
 
   bool get isExpiring => expiresInDays <= 3;
+  bool get isStickerFood => modelKey?.startsWith('sticker:') ?? false;
 }
 
 const demoZones = [
   FridgeZone(
     id: FridgeZoneId.fresh,
     name: '冷藏',
-    description: '蔬果 · 饮品 · 熟食',
+    description: '蔬果 · 饮品 · 奶制品',
     temperature: '4°C',
     emoji: '🥬',
   ),
   FridgeZone(
     id: FridgeZoneId.variable,
     name: '变温',
-    description: '鲜肉 · 海鲜',
+    description: '调味品 · 干货 · 短期肉类和海鲜',
     temperature: '0°C',
     emoji: '🥩',
   ),
   FridgeZone(
     id: FridgeZoneId.freezer,
     name: '冷冻',
-    description: '速冻 · 备餐',
+    description: '速冻 · 长期肉类和海鲜',
     temperature: '-18°C',
     emoji: '🧊',
-  ),
-  FridgeZone(
-    id: FridgeZoneId.pantry,
-    name: '常温',
-    description: '调料 · 干货',
-    temperature: '室温',
-    emoji: '🧺',
   ),
 ];
 
@@ -209,7 +203,7 @@ const demoFoods = [
     quantity: 2.4,
     unit: '千克',
     expiresInDays: 120,
-    zone: FridgeZoneId.pantry,
+    zone: FridgeZoneId.fresh,
     category: '主食',
     owner: '阿成',
     tilt: 0.05,
@@ -221,7 +215,7 @@ const demoFoods = [
     quantity: 1,
     unit: '瓶',
     expiresInDays: 180,
-    zone: FridgeZoneId.pantry,
+    zone: FridgeZoneId.fresh,
     category: '调料',
     owner: '小满',
     tilt: -0.04,

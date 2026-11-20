@@ -4,7 +4,9 @@ import 'package:smart_fridge_app/shared/widgets/form_exit_guard.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
+import 'package:smart_fridge_app/features/fridge/domain/ingredient_stickers.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_category_options.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/ingredient_sticker_image.dart';
 
 Future<void> showFoodDetails(
   BuildContext context,
@@ -50,26 +52,6 @@ Future<void> showTablePreview(
   );
 }
 
-Future<void> showAddFoodPreview(
-  BuildContext context, {
-  required List<FridgeZone> zones,
-  required bool canEdit,
-  required Future<void> Function(NewFoodInput input) onSave,
-}) {
-  return showModalBottomSheet<void>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: AppColors.paper,
-    enableDrag: false,
-    builder: (context) =>
-        _FoodFormSheet(zones: zones, canEdit: canEdit, onSave: onSave),
-  );
-}
-
-/// Opens the same form pre-filled with an existing item so a wrong category,
-/// unit or date can be corrected instead of re-adding the food.
 Future<bool?> showEditFood(
   BuildContext context, {
   required List<FridgeZone> zones,
@@ -187,15 +169,10 @@ class _FoodDetailsSheetState extends State<_FoodDetailsSheet> {
           const SizedBox(height: 22),
           Row(
             children: [
-              Container(
-                width: 78,
-                height: 78,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: AppColors.paper,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(food.emoji, style: const TextStyle(fontSize: 43)),
+              IngredientStickerImage(
+                sticker: stickerForFood(food),
+                size: 78,
+                emoji: food.emoji,
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -275,8 +252,8 @@ class _FoodDetailsSheetState extends State<_FoodDetailsSheet> {
                     controller: _amount,
                     enabled: !_busy && food.quantity >= .001,
                     textAlign: TextAlign.center,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+                    keyboardType: TextInputType.numberWithOptions(
+                      decimal: !food.isStickerFood,
                     ),
                     decoration: InputDecoration(
                       isDense: true,
@@ -396,6 +373,10 @@ class _FoodDetailsSheetState extends State<_FoodDetailsSheet> {
       setState(() => _error = '用量至少 0.001，最多为当前库存，且最多 3 位小数。');
       return;
     }
+    if (food.isStickerFood && quantity % 1 != 0) {
+      setState(() => _error = '份量必须为正整数');
+      return;
+    }
     await _run(() => widget.onConsume(_consumeQuantity), '已记录使用');
   }
 
@@ -471,7 +452,6 @@ class _FoodDetailsSheetState extends State<_FoodDetailsSheet> {
       FridgeZoneId.fresh => '冷藏',
       FridgeZoneId.variable => '变温',
       FridgeZoneId.freezer => '冷冻',
-      FridgeZoneId.pantry => '常温',
     };
   }
 }
@@ -529,21 +509,14 @@ class _FoodFormSheet extends StatefulWidget {
   const _FoodFormSheet({
     required this.zones,
     required this.canEdit,
-    this.onSave,
-    this.editing,
-    this.onUpdate,
-  }) : assert(
-         onSave != null || onUpdate != null,
-         'a food form needs either onSave or onUpdate',
-       );
+    required this.editing,
+    required this.onUpdate,
+  });
 
   final List<FridgeZone> zones;
   final bool canEdit;
-  final Future<void> Function(NewFoodInput input)? onSave;
-  final FridgeFood? editing;
-  final Future<void> Function(FoodEditInput input)? onUpdate;
-
-  bool get isEditing => editing != null;
+  final FridgeFood editing;
+  final Future<void> Function(FoodEditInput input) onUpdate;
 
   @override
   State<_FoodFormSheet> createState() => _FoodFormSheetState();
@@ -583,23 +556,18 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
   void initState() {
     super.initState();
     final editing = widget.editing;
-    if (editing != null) {
-      _nameController.text = editing.name;
-      _quantityController.text = _formatQuantity(editing.quantity);
-      _unitController.text = editing.unit;
-      _category = foodCategoryOptions.contains(editing.category)
-          ? editing.category
-          : '其他';
-      _zone =
-          widget.zones.where((zone) => zone.id == editing.zone).firstOrNull ??
-          widget.zones.firstOrNull;
-      _containerId = editing.containerId;
-      _productionDate =
-          _parseDate(editing.productionDate) ?? _productionDate;
-      _expiresOn = _parseDate(editing.expiresOn) ?? _productionDate;
-    } else {
-      _zone = widget.zones.firstOrNull;
-    }
+    _nameController.text = editing.name;
+    _quantityController.text = _formatQuantity(editing.quantity);
+    _unitController.text = editing.unit;
+    _category = foodCategoryOptions.contains(editing.category)
+        ? editing.category
+        : '其他';
+    _zone =
+        widget.zones.where((zone) => zone.id == editing.zone).firstOrNull ??
+        widget.zones.firstOrNull;
+    _containerId = editing.containerId;
+    _productionDate = _parseDate(editing.productionDate) ?? _productionDate;
+    _expiresOn = _parseDate(editing.expiresOn) ?? _productionDate;
     _initialName = _nameController.text;
     _initialQuantity = _quantityController.text;
     _initialUnit = _unitController.text;
@@ -619,7 +587,7 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.isEditing;
+    final stickerFood = widget.editing.isStickerFood;
     return FormExitGuard(
       hasChanges: () => _hasChanges,
       busy: () => _saving,
@@ -640,12 +608,12 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
               children: [
                 Expanded(
                   child: Text(
-                    isEditing ? '修改食材信息' : '放进一份新食材',
+                    '修改食材信息',
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                 ),
                 IconButton(
-                  tooltip: isEditing ? '关闭修改' : '关闭新增',
+                  tooltip: '关闭修改',
                   onPressed: _saving
                       ? null
                       : () => Navigator.of(context).maybePop(),
@@ -656,9 +624,9 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
             const SizedBox(height: 6),
             Text(
               widget.canEdit
-                  ? isEditing
-                        ? '分类、数量、单位和日期都可以改，保存后立即同步到家庭冰箱。'
-                        : '保存后会同步到家庭冰箱，并记录当前操作人。'
+                  ? stickerFood
+                        ? '可修改份量、存放区域和日期。'
+                        : '分类、数量、单位和日期都可以改，保存后立即同步到家庭冰箱。'
                   : '当前账号为只读成员或演示账号，不能写入真实冰箱。',
               style: TextStyle(
                 color: widget.canEdit
@@ -671,7 +639,7 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
               TextField(
                 key: const ValueKey('food-name-input'),
                 controller: _nameController,
-                enabled: widget.canEdit && !_saving,
+                enabled: widget.canEdit && !_saving && !stickerFood,
                 decoration: const InputDecoration(
                   labelText: '食材名称',
                   hintText: '例如：西兰花',
@@ -686,39 +654,44 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
                       key: const ValueKey('food-quantity-input'),
                       controller: _quantityController,
                       enabled: widget.canEdit && !_saving,
-                      keyboardType: const TextInputType.numberWithOptions(
-                        decimal: true,
+                      keyboardType: TextInputType.numberWithOptions(
+                        decimal: !stickerFood,
                       ),
-                      decoration: const InputDecoration(labelText: '数量'),
+                      decoration: InputDecoration(
+                        labelText: '数量',
+                        suffixText: stickerFood ? '份' : null,
+                      ),
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: TextField(
-                      key: const ValueKey('food-unit-input'),
-                      controller: _unitController,
-                      enabled: widget.canEdit && !_saving,
-                      decoration: const InputDecoration(labelText: '单位'),
+                  if (!stickerFood) const SizedBox(width: 10),
+                  if (!stickerFood)
+                    Expanded(
+                      child: TextField(
+                        key: const ValueKey('food-unit-input'),
+                        controller: _unitController,
+                        enabled: widget.canEdit && !_saving,
+                        decoration: const InputDecoration(labelText: '单位'),
+                      ),
                     ),
-                  ),
                 ],
               ),
-              const SizedBox(height: 12),
-              DropdownButtonFormField<String>(
-                key: const ValueKey('food-category-input'),
-                initialValue: _category,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: '分类'),
-                items: [
-                  for (final category in foodCategoryOptions)
-                    DropdownMenuItem(value: category, child: Text(category)),
-                ],
-                onChanged: widget.canEdit && !_saving
-                    ? (value) {
-                        if (value != null) setState(() => _category = value);
-                      }
-                    : null,
-              ),
+              if (!stickerFood) const SizedBox(height: 12),
+              if (!stickerFood)
+                DropdownButtonFormField<String>(
+                  key: const ValueKey('food-category-input'),
+                  initialValue: _category,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: '分类'),
+                  items: [
+                    for (final category in foodCategoryOptions)
+                      DropdownMenuItem(value: category, child: Text(category)),
+                  ],
+                  onChanged: widget.canEdit && !_saving
+                      ? (value) {
+                          if (value != null) setState(() => _category = value);
+                        }
+                      : null,
+                ),
               const SizedBox(height: 12),
               DropdownButtonFormField<FridgeZone>(
                 initialValue: _zone,
@@ -779,14 +752,8 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
                           color: Colors.white,
                         ),
                       )
-                    : Icon(
-                        isEditing ? Icons.save_outlined : Icons.add_rounded,
-                      ),
-                label: Text(
-                  _saving
-                      ? (isEditing ? '正在保存' : '正在保存')
-                      : (isEditing ? '保存修改' : '保存食材'),
-                ),
+                    : const Icon(Icons.save_outlined),
+                label: Text(_saving ? '正在保存' : '保存修改'),
               ),
             ] else
               const Padding(
@@ -836,6 +803,10 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
       setState(() => _error = '名称最多 80 字、单位最多 20 字');
       return;
     }
+    if (widget.editing.isStickerFood && quantity % 1 != 0) {
+      setState(() => _error = '份量必须为正整数');
+      return;
+    }
     if (_expiresOn.isBefore(_productionDate)) {
       setState(() => _error = '到期日期不能早于生产日期');
       return;
@@ -852,42 +823,26 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
     });
     try {
       final editing = widget.editing;
-      if (editing != null) {
-        await widget.onUpdate!(
-          FoodEditInput(
-            foodId: editing.serverId!,
-            version: editing.version,
-            zone: zone,
-            containerId: containerId,
-            name: _nameController.text.trim(),
-            category: _category,
-            quantity: quantity,
-            unit: _unitController.text.trim(),
-            productionDate: _productionDate,
-            expiresOn: _expiresOn,
-            tags: editing.tags,
-            modelKey: editing.modelKey,
-          ),
-        );
-      } else {
-        await widget.onSave!(
-          NewFoodInput(
-            zone: zone,
-            name: _nameController.text.trim(),
-            category: _category,
-            quantity: quantity,
-            unit: _unitController.text.trim(),
-            productionDate: _productionDate,
-            expiresOn: _expiresOn,
-          ),
-        );
-      }
+      await widget.onUpdate(
+        FoodEditInput(
+          foodId: editing.serverId!,
+          version: editing.version,
+          zone: zone,
+          containerId: containerId,
+          name: _nameController.text.trim(),
+          category: editing.isStickerFood ? editing.category : _category,
+          quantity: quantity,
+          unit: _unitController.text.trim(),
+          productionDate: _productionDate,
+          expiresOn: _expiresOn,
+          tags: editing.tags,
+          modelKey: editing.modelKey,
+        ),
+      );
       if (mounted) {
         final messenger = ScaffoldMessenger.of(context);
         Navigator.of(context).pop(true);
-        messenger.showSnackBar(
-          SnackBar(content: Text(editing != null ? '食材信息已更新' : '食材已保存')),
-        );
+        messenger.showSnackBar(const SnackBar(content: Text('食材信息已更新')));
       }
     } on Object catch (error) {
       if (mounted) {
@@ -901,9 +856,7 @@ class _FoodFormSheetState extends State<_FoodFormSheet> {
 
   static String _formatQuantity(double value) {
     if (value % 1 == 0) return value.toInt().toString();
-    return value
-        .toStringAsFixed(3)
-        .replaceFirst(RegExp(r'\.?0+$'), '');
+    return value.toStringAsFixed(3).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 
   static DateTime? _parseDate(String? value) {
@@ -991,9 +944,10 @@ class _TablePreviewSheet extends StatelessWidget {
                       padding: const EdgeInsets.all(13),
                       child: Row(
                         children: [
-                          Text(
-                            food.emoji,
-                            style: const TextStyle(fontSize: 27),
+                          IngredientStickerImage(
+                            sticker: stickerForFood(food),
+                            size: 38,
+                            emoji: food.emoji,
                           ),
                           const SizedBox(width: 11),
                           Expanded(
@@ -1096,9 +1050,7 @@ class _ExpiredCleanupSheet extends StatelessWidget {
             const SizedBox(height: 4),
             Text(
               '将丢弃 ${expired.length} 份已过期食材。清理会写入操作记录，需要时可以逐条撤销。',
-              style: TextStyle(
-                color: AppColors.cocoa.withValues(alpha: 0.62),
-              ),
+              style: TextStyle(color: AppColors.cocoa.withValues(alpha: 0.62)),
             ),
             const SizedBox(height: 16),
             Container(
@@ -1114,7 +1066,10 @@ class _ExpiredCleanupSheet extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 8),
                       child: Row(
                         children: [
-                          Text(food.emoji, style: const TextStyle(fontSize: 20)),
+                          Text(
+                            food.emoji,
+                            style: const TextStyle(fontSize: 20),
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Column(
@@ -1174,8 +1129,6 @@ class _ExpiredCleanupSheet extends StatelessWidget {
 
   static String _quantityLabel(double value) {
     if (value % 1 == 0) return value.toInt().toString();
-    return value
-        .toStringAsFixed(3)
-        .replaceFirst(RegExp(r'\.?0+$'), '');
+    return value.toStringAsFixed(3).replaceFirst(RegExp(r'\.?0+$'), '');
   }
 }

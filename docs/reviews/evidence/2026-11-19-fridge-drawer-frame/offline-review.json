@@ -1,0 +1,702 @@
+{
+  "date": "2026-11-19",
+  "scope": "Standalone HTML file://, Edge headless, desktop/mobile viewport emulation; no production API or physical-device acceptance.",
+  "checks": [
+    {
+      "name": "inline-script-parses",
+      "passed": true
+    },
+    {
+      "name": "six-embedded-photos-and-no-external-assets",
+      "passed": true
+    },
+    {
+      "name": "file-protocol-renders-twelve-foods",
+      "passed": true
+    },
+    {
+      "name": "three-storage-zones-and-400ms-transition",
+      "passed": true
+    },
+    {
+      "name": "variable-control-reaches-the-full-outline-after-an-intermediate-pose",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-1",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-2",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-3",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-4",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-5",
+      "passed": true
+    },
+    {
+      "name": "desktop-drawer-control-step-6",
+      "passed": true
+    },
+    {
+      "name": "desktop-variable-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "desktop-freezer-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-1",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-2",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-3",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-4",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-5",
+      "passed": true
+    },
+    {
+      "name": "mobile-drawer-control-step-6",
+      "passed": true
+    },
+    {
+      "name": "mobile-variable-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "mobile-freezer-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-1",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-2",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-3",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-4",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-5",
+      "passed": true
+    },
+    {
+      "name": "narrow-drawer-control-step-6",
+      "passed": true
+    },
+    {
+      "name": "narrow-variable-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "narrow-freezer-all-four-edges-visible",
+      "passed": true
+    },
+    {
+      "name": "live-name-search",
+      "passed": true
+    },
+    {
+      "name": "combined-filter-empty-state",
+      "passed": true
+    },
+    {
+      "name": "zone-filter-one-frozen-food",
+      "passed": true
+    },
+    {
+      "name": "zone-filter-one-variable-food",
+      "passed": true
+    },
+    {
+      "name": "category-filter",
+      "passed": true
+    },
+    {
+      "name": "quantity-sort",
+      "passed": true
+    },
+    {
+      "name": "required-name-validation",
+      "passed": true
+    },
+    {
+      "name": "negative-quantity-native-validation",
+      "passed": true
+    },
+    {
+      "name": "invalid-chronology-retains-form",
+      "passed": true
+    },
+    {
+      "name": "draft-discard-confirmation",
+      "passed": true
+    },
+    {
+      "name": "draft-cancel-retains-value",
+      "passed": true
+    },
+    {
+      "name": "failed-save-preserves-draft-and-no-write",
+      "passed": true
+    },
+    {
+      "name": "retry-add-succeeds-once",
+      "passed": true
+    },
+    {
+      "name": "file-reload-preserves-data",
+      "passed": true
+    },
+    {
+      "name": "user-content-escaped",
+      "passed": true
+    },
+    {
+      "name": "use-food-decrements-exactly",
+      "passed": true
+    },
+    {
+      "name": "move-preserves-quantity",
+      "passed": true
+    },
+    {
+      "name": "discard-cancel-no-write",
+      "passed": true
+    },
+    {
+      "name": "discard-removes-food",
+      "passed": true
+    },
+    {
+      "name": "undo-restores-discard",
+      "passed": true
+    },
+    {
+      "name": "redo-reapplies-discard",
+      "passed": true
+    },
+    {
+      "name": "six-offline-photos-load",
+      "passed": true
+    },
+    {
+      "name": "favorite-filter",
+      "passed": true
+    },
+    {
+      "name": "servings-updates-ingredients",
+      "passed": true
+    },
+    {
+      "name": "failed-cook-atomic-and-retryable",
+      "passed": true
+    },
+    {
+      "name": "cook-atomic-multi-food-deduction",
+      "passed": true
+    },
+    {
+      "name": "expired-stock-not-cookable",
+      "passed": true
+    },
+    {
+      "name": "missing-food-form-prefill",
+      "passed": true
+    },
+    {
+      "name": "cooking-excludes-expired-batch",
+      "passed": true
+    },
+    {
+      "name": "duplicate-batch-first-expiry-first-out",
+      "passed": true
+    },
+    {
+      "name": "missing-recipe-shows-disabled-action",
+      "passed": true
+    },
+    {
+      "name": "expiry-cleanup-preserves-today",
+      "passed": true
+    },
+    {
+      "name": "cleanup-undo-restores-expired",
+      "passed": true
+    },
+    {
+      "name": "stale-undo-actions-disabled",
+      "passed": true
+    },
+    {
+      "name": "add-local-member",
+      "passed": true
+    },
+    {
+      "name": "invitation-copy-or-manual-fallback",
+      "passed": true
+    },
+    {
+      "name": "change-member-role",
+      "passed": true
+    },
+    {
+      "name": "remove-local-member",
+      "passed": true
+    },
+    {
+      "name": "family-isolation-empty-workspace",
+      "passed": true
+    },
+    {
+      "name": "empty-workspace-add-action",
+      "passed": true
+    },
+    {
+      "name": "family-switch-restores-original-data",
+      "passed": true
+    },
+    {
+      "name": "invalid-invite-feedback",
+      "passed": true
+    },
+    {
+      "name": "join-demo-readonly-family",
+      "passed": true
+    },
+    {
+      "name": "viewer-disabled-write-controls",
+      "passed": true
+    },
+    {
+      "name": "write-handler-rechecks-role",
+      "passed": true
+    },
+    {
+      "name": "readonly-preview-disables-writes",
+      "passed": true
+    },
+    {
+      "name": "reduce-motion-setting",
+      "passed": true
+    },
+    {
+      "name": "create-isolated-family",
+      "passed": true
+    },
+    {
+      "name": "export-contains-current-family-only",
+      "passed": true
+    },
+    {
+      "name": "reset-cancel-preserves-data",
+      "passed": true
+    },
+    {
+      "name": "reset-restores-initial-sample",
+      "passed": true
+    },
+    {
+      "name": "desktop-home-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop-foods-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop-recipes-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop-family-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop-records-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "desktop-add-food-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 442.5,
+        "right": 982.5,
+        "top": 220.15582275390625,
+        "bottom": 783.9214477539062,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-notifications-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 442.5,
+        "right": 982.5,
+        "top": 214.7051544189453,
+        "bottom": 789.0957794189453,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-settings-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 442.5,
+        "right": 982.5,
+        "top": 180.01922607421875,
+        "bottom": 824.3473510742188,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-help-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 442.5,
+        "right": 982.5,
+        "top": 242.13015747070312,
+        "bottom": 758.4582824707031,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-switch-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 442.5,
+        "right": 982.5,
+        "top": 279.2051696777344,
+        "bottom": 724.5958251953125,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-create-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 450,
+        "right": 990,
+        "top": 359.1861267089844,
+        "bottom": 645.1705322265625,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "desktop-recipe-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 385,
+        "right": 1055,
+        "top": 139.9911651611328,
+        "bottom": 863.5380401611328,
+        "width": 1440,
+        "height": 1000,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-home-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile-foods-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile-recipes-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile-family-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile-records-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "mobile-add-food-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 149.6252899169922,
+        "bottom": 698.1877899169922,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-notifications-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 176.10939025878906,
+        "bottom": 672.2343902587891,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-settings-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 112.89090728759766,
+        "bottom": 735.2034072875977,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-help-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 155.69178771972656,
+        "bottom": 689.3792877197266,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-switch-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 208.59532165527344,
+        "bottom": 639.7828216552734,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-create-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 289.09765625,
+        "bottom": 559.28515625,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "mobile-recipe-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 376,
+        "top": 88.30138397216797,
+        "bottom": 759.238883972168,
+        "width": 390,
+        "height": 844,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-home-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "narrow-foods-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "narrow-recipes-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "narrow-family-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "narrow-records-no-horizontal-overflow",
+      "passed": true
+    },
+    {
+      "name": "narrow-add-food-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 97.3689956665039,
+        "bottom": 645.9314956665039,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-notifications-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 115.33296203613281,
+        "bottom": 629.0517120361328,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-settings-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 22.338451385498047,
+        "bottom": 722.338451385498,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-help-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 86.18820190429688,
+        "bottom": 655.0632019042969,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-switch-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 156.31007385253906,
+        "bottom": 587.4975738525391,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-create-family-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 236.8133087158203,
+        "bottom": 507.0008087158203,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "narrow-recipe-dialog-fits",
+      "passed": true,
+      "detail": {
+        "left": 14,
+        "right": 306,
+        "top": 22.049148559570312,
+        "bottom": 722.0491485595703,
+        "width": 320,
+        "height": 740,
+        "overflow": false
+      }
+    },
+    {
+      "name": "keyboard-shortcut-focuses-search",
+      "passed": true
+    },
+    {
+      "name": "escape-guards-draft",
+      "passed": true
+    },
+    {
+      "name": "cross-tab-update-blocks-stale-writes",
+      "passed": true
+    },
+    {
+      "name": "cross-tab-preferences-cannot-overwrite-new-data",
+      "passed": true
+    },
+    {
+      "name": "cross-tab-reload-loads-latest",
+      "passed": true
+    },
+    {
+      "name": "legacy-zone-loads-with-food-and-undo-snapshots",
+      "passed": true
+    },
+    {
+      "name": "corrupt-storage-recovers-to-seed",
+      "passed": true
+    },
+    {
+      "name": "storage-failure-keeps-interaction-and-explains-limit",
+      "passed": true
+    },
+    {
+      "name": "no-runtime-exceptions",
+      "passed": true,
+      "detail": []
+    },
+    {
+      "name": "offline-page-never-calls-http-or-backend",
+      "passed": true
+    }
+  ],
+  "passed": 126,
+  "failed": 0
+}

@@ -1,0 +1,8 @@
+{
+  "build": "Android debug",
+  "bytes": 191267000,
+  "sha256": "a624f11cd2b8a0a1a3c07c45bc44648c3734a70ccfe6738a76f1203c0547dac6",
+  "stickerAssets": 151,
+  "apkZipIntegrity": "passed",
+  "signatureVerified": "Android Debug"
+}

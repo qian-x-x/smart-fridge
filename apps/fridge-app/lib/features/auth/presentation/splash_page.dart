@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:smart_fridge_app/core/config/app_brand.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/presentation/widgets/auth_scaffold.dart';
 
@@ -22,12 +21,7 @@ class SplashPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const BrandMark(),
-              const SizedBox(height: 16),
-              const Text(
-                AppBrand.tagline,
-                style: TextStyle(color: AppColors.muted, fontSize: 13),
-              ),
-              const SizedBox(height: 28),
+              const SizedBox(height: 22),
               SizedBox(
                 width: 152,
                 child: LinearProgressIndicator(

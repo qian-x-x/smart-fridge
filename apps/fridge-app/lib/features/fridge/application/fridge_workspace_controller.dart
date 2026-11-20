@@ -14,6 +14,15 @@ final fridgeWorkspaceProvider =
       FridgeWorkspaceController.new,
     );
 
+String newInventoryRequestId(String action) {
+  final random = Random.secure();
+  final salt = List.generate(
+    4,
+    (_) => random.nextInt(0x1000000).toRadixString(16).padLeft(6, '0'),
+  ).join();
+  return '$action-$salt';
+}
+
 class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
   FridgeDataSource get _source => ref.read(fridgeDataSourceProvider);
 
@@ -43,6 +52,24 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
     final session = await _requireEditableSession();
     final workspace = state.requireValue;
     await _mutate(() => _source.addFood(session, workspace, input));
+  }
+
+  Future<void> addCatalogFoods(
+    FridgeWorkspaceData expected,
+    List<CatalogFoodInput> items,
+    String requestId,
+  ) async {
+    final session = await _session();
+    final workspace = _requireCurrentWorkspace(
+      expected.familyId,
+      expected.fridgeId,
+    );
+    if (session.isDemo || !workspace.canEdit) {
+      throw StateError('当前家庭成员没有编辑权限');
+    }
+    await _mutate(
+      () => _source.addCatalogFoods(session, workspace, items, requestId),
+    );
   }
 
   Future<void> createFridge(String name) async {
@@ -116,8 +143,15 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
     required String recipeName,
     required int servings,
     required List<CookItemInput> items,
+    int? familyId,
+    String? requestId,
   }) async {
     final session = await _requireEditableSession();
+    if (familyId != null) {
+      _requireCurrentWorkspace(familyId, fridgeId);
+    } else if (state.requireValue.fridgeId != fridgeId) {
+      throw StateError('当前冰箱已切换，请重新打开');
+    }
     if (items.isEmpty) {
       throw StateError('请至少选择一种要扣减的食材');
     }
@@ -128,15 +162,9 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
       recipeName: recipeName,
       servings: servings,
       items: items,
-      requestId: _cookRequestId(),
+      requestId: requestId ?? newInventoryRequestId('cook'),
     );
     ref.invalidateSelf();
-  }
-
-  String _cookRequestId() {
-    final stamp = DateTime.now().microsecondsSinceEpoch;
-    final salt = Random().nextInt(0xFFFFFF).toRadixString(16).padLeft(6, '0');
-    return 'cook-$stamp-$salt';
   }
 
   Future<FridgeWorkspaceData> _load(
@@ -187,5 +215,21 @@ class FridgeWorkspaceController extends AsyncNotifier<FridgeWorkspaceData> {
       throw StateError('当前家庭成员没有编辑权限');
     }
     return session;
+  }
+
+  FridgeWorkspaceData _requireCurrentWorkspace(int familyId, int fridgeId) {
+    final workspace = state.value;
+    final selectedFamily = ref
+        .read(familyControllerProvider)
+        .value
+        ?.selectedFamily;
+    if (workspace == null ||
+        !workspace.hasFridge ||
+        workspace.familyId != familyId ||
+        workspace.fridgeId != fridgeId ||
+        selectedFamily?.id != familyId) {
+      throw StateError('当前冰箱已切换，请重新打开');
+    }
+    return workspace;
   }
 }

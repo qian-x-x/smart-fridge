@@ -1,0 +1,81 @@
+[
+  {
+    "name": "login copy simplified",
+    "passed": true
+  },
+  {
+    "name": "overview initially visible",
+    "passed": true
+  },
+  {
+    "name": "desktop cold-storage click animates even when already selected",
+    "passed": true,
+    "detail": {
+      "steps": 3,
+      "elapsed": 444
+    }
+  },
+  {
+    "name": "desktop freezer transition",
+    "passed": true,
+    "detail": {
+      "steps": 4,
+      "elapsed": 469
+    }
+  },
+  {
+    "name": "desktop countertop transition",
+    "passed": true,
+    "detail": {
+      "steps": 3,
+      "elapsed": 628
+    }
+  },
+  {
+    "name": "390px canvas and controls fit",
+    "passed": true,
+    "detail": {
+      "controls": 5,
+      "fit": true,
+      "canvas": 352,
+      "sceneBottom": 648,
+      "height": 844
+    }
+  },
+  {
+    "name": "390px first cold-storage animation",
+    "passed": true,
+    "detail": {
+      "steps": 6,
+      "elapsed": 432
+    }
+  },
+  {
+    "name": "390px freezer animation",
+    "passed": true,
+    "detail": {
+      "steps": 5,
+      "elapsed": 411
+    }
+  },
+  {
+    "name": "390px countertop animation",
+    "passed": true,
+    "detail": {
+      "steps": 6,
+      "elapsed": 455
+    }
+  },
+  {
+    "name": "320px controls fit",
+    "passed": true
+  },
+  {
+    "name": "removed copy and retired zone absent",
+    "passed": true
+  },
+  {
+    "name": "no browser exceptions",
+    "passed": true
+  }
+]

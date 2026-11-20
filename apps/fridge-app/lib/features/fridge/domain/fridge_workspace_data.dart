@@ -94,6 +94,7 @@ class FridgeWorkspaceData {
   }) {
     final zones = _asList(fridgeData['zones'])
         .map((value) => _zoneFromApi(_asMap(value)))
+        .whereType<FridgeZone>()
         .toList(growable: false);
     final zoneById = {
       for (final zone in zones)
@@ -115,8 +116,9 @@ class FridgeWorkspaceData {
     );
   }
 
-  static FridgeZone _zoneFromApi(Map<String, dynamic> json) {
+  static FridgeZone? _zoneFromApi(Map<String, dynamic> json) {
     final id = _zoneId(json['code'] as String?);
+    if (id == null) return null;
     return FridgeZone(
       id: id,
       serverId: (json['id'] as num).toInt(),
@@ -143,8 +145,7 @@ class FridgeWorkspaceData {
     Map<int, FridgeZoneId> zoneById,
   ) {
     final serverId = (json['id'] as num).toInt();
-    final zoneId =
-        zoneById[(json['zoneId'] as num).toInt()] ?? FridgeZoneId.fresh;
+    final zoneId = zoneById[(json['zoneId'] as num).toInt()];
     final name = json['name'] as String;
     final category = json['category'] as String;
     final modelKey = json['modelKey'] as String?;
@@ -153,13 +154,15 @@ class FridgeWorkspaceData {
     return FridgeFood(
       id: serverId.toString(),
       serverId: serverId,
-      containerId: (json['containerId'] as num?)?.toInt(),
+      containerId: zoneId == null
+          ? null
+          : (json['containerId'] as num?)?.toInt(),
       name: name,
       emoji: _foodEmoji(name: name, category: category, modelKey: modelKey),
       quantity: (json['quantity'] as num).toDouble(),
       unit: json['unit'] as String,
       expiresInDays: (json['remainingDays'] as num).toInt(),
-      zone: zoneId,
+      zone: zoneId ?? FridgeZoneId.fresh,
       category: category,
       owner: createdBy == currentUser.id
           ? currentUser.displayName
@@ -181,21 +184,20 @@ class FridgeWorkspaceData {
     return value is Map ? value.cast<String, dynamic>() : <String, dynamic>{};
   }
 
-  static FridgeZoneId _zoneId(String? code) {
+  static FridgeZoneId? _zoneId(String? code) {
     return switch (code) {
+      'FRESH' => FridgeZoneId.fresh,
       'VARIABLE' => FridgeZoneId.variable,
       'FREEZER' => FridgeZoneId.freezer,
-      'PANTRY' => FridgeZoneId.pantry,
-      _ => FridgeZoneId.fresh,
+      _ => null,
     };
   }
 
   static String _zoneDescription(FridgeZoneId id) {
     return switch (id) {
-      FridgeZoneId.fresh => '蔬果 · 饮品 · 熟食',
-      FridgeZoneId.variable => '鲜肉 · 海鲜',
-      FridgeZoneId.freezer => '速冻 · 备餐',
-      FridgeZoneId.pantry => '调料 · 干货',
+      FridgeZoneId.fresh => '蔬果 · 饮品 · 奶制品',
+      FridgeZoneId.variable => '调味品 · 干货 · 短期肉类和海鲜',
+      FridgeZoneId.freezer => '速冻 · 长期肉类和海鲜',
     };
   }
 
@@ -204,13 +206,12 @@ class FridgeWorkspaceData {
       FridgeZoneId.fresh => '🥬',
       FridgeZoneId.variable => '🥩',
       FridgeZoneId.freezer => '🧊',
-      FridgeZoneId.pantry => '🧺',
     };
   }
 
   static String _temperatureLabel(num? value) {
     if (value == null) {
-      return '室温';
+      return '';
     }
     final formatted = value % 1 == 0
         ? value.toInt().toString()

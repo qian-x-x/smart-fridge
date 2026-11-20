@@ -25,4 +25,7 @@ public record FoodRecord(
     Instant createdAt,
     Instant updatedAt
 ) {
+    public static boolean isStickerModel(String modelKey) {
+        return modelKey != null && modelKey.trim().startsWith("sticker:");
+    }
 }

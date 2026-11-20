@@ -108,7 +108,7 @@ $null=Request 'invalid fridge payload' POST '/api/v1/fridges' $owner @{familyId=
 $null=Request 'viewer cannot create fridge' POST '/api/v1/fridges' $member @{familyId=$family.id;name='viewer'} 403
 $fridge=Request 'create fridge' POST '/api/v1/fridges' $owner @{familyId=$family.id;name='接口审查冰箱'} 201
 if(!$fridge){throw 'Cannot establish fridge fixture'}
-Assert ($fridge.zones.Count -eq 4) 'four default zones'
+Assert (($fridge.zones.code -join ',') -eq 'FRESH,VARIABLE,FREEZER') 'three default zones'
 $null=Request 'get fridge by family' GET "/api/v1/fridges?familyId=$($family.id)" $owner $null
 $null=Request 'get fridge by id' GET "/api/v1/fridges/$($fridge.id)" $owner $null
 $null=Request 'fridge isolation' GET "/api/v1/fridges/$($fridge.id)" $stranger $null 404

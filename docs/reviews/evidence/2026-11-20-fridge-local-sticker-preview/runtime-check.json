@@ -1,0 +1,13 @@
+{
+  "previewUrl": "http://127.0.0.1:18134",
+  "mainMigration": 4,
+  "previewMigration": 6,
+  "sourceAccountHashesMatched": true,
+  "sourceFoodRecordsMatched": true,
+  "mainCatalogTablePresent": false,
+  "servedWebBuildMatches": [
+    "main.dart.js",
+    "fridge3d/index.html",
+    "fridge3d/sticker-inventory.js"
+  ]
+}

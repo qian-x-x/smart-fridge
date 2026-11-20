@@ -3,6 +3,7 @@ import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
 import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
+import 'package:smart_fridge_app/features/fridge/domain/ingredient_stickers.dart';
 
 final fridgeDataSourceProvider = Provider<FridgeDataSource>((ref) {
   return ApiFridgeRepository(ref.watch(apiClientProvider));
@@ -17,6 +18,13 @@ abstract interface class FridgeDataSource {
     AuthSession session,
     FridgeWorkspaceData workspace,
     NewFoodInput input,
+  );
+
+  Future<void> addCatalogFoods(
+    AuthSession session,
+    FridgeWorkspaceData workspace,
+    List<CatalogFoodInput> items,
+    String requestId,
   );
 
   Future<void> moveFood(
@@ -77,6 +85,18 @@ class NewFoodInput {
   final DateTime expiresOn;
   final List<String> tags;
   final String? modelKey;
+}
+
+class CatalogFoodInput {
+  const CatalogFoodInput({
+    required this.sticker,
+    required this.zone,
+    required this.portions,
+  });
+
+  final IngredientSticker sticker;
+  final FridgeZoneId zone;
+  final int portions;
 }
 
 /// Fields the edit sheet sends back for an existing item.
@@ -188,6 +208,36 @@ class ApiFridgeRepository implements FridgeDataSource {
   }
 
   @override
+  Future<void> addCatalogFoods(
+    AuthSession session,
+    FridgeWorkspaceData workspace,
+    List<CatalogFoodInput> items,
+    String requestId,
+  ) async {
+    _requireRealSession(session);
+    final zoneIds = {
+      for (final zone in workspace.zones)
+        if (zone.serverId != null) zone.id: zone.serverId!,
+    };
+    if (items.any((item) => !zoneIds.containsKey(item.zone))) {
+      throw StateError('当前冰箱缺少所选的存放分区');
+    }
+    await _api.post('/api/v1/foods/catalog-batch', {
+      'fridgeId': workspace.fridgeId,
+      'requestId': requestId,
+      'items': [
+        for (final item in items)
+          {
+            'zoneId': zoneIds[item.zone],
+            'name': item.sticker.name,
+            'category': item.sticker.category,
+            'portions': item.portions,
+          },
+      ],
+    }, accessToken: session.accessToken);
+  }
+
+  @override
   Future<void> moveFood(
     AuthSession session,
     FridgeFood food,
@@ -269,7 +319,10 @@ class ApiFridgeRepository implements FridgeDataSource {
   }
 
   @override
-  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {
+  Future<void> undoOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {
     _requireRealSession(session);
     await _api.post(
       '/api/v1/foods/${operation.foodItemId}/operations/${operation.id}/undo',

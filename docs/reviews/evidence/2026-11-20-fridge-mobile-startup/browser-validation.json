@@ -1,0 +1,191 @@
+{
+  "date": "2026-11-20",
+  "release": "apps/fridge-app/build/lan-web",
+  "browser": "Edge Chromium with CDP",
+  "passed": 6,
+  "cases": [
+    {
+      "mode": "mobile",
+      "origin": "http://10.66.46.139:18110",
+      "page": {
+        "firstFrame": 1452.0999999642372,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 390
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "pass": true
+    },
+    {
+      "mode": "software",
+      "origin": "http://10.66.46.139:18110",
+      "page": {
+        "firstFrame": 776.6999999880791,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 320
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "pass": true
+    },
+    {
+      "mode": "renderer-failure",
+      "origin": "http://10.66.46.139:18110",
+      "failure": {
+        "firstFrame": null,
+        "path": "",
+        "startup": true,
+        "status": "页面加载失败。",
+        "retry": true,
+        "width": 390
+      },
+      "page": {
+        "firstFrame": 980.6000000238419,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 390
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "pass": true
+    },
+    {
+      "mode": "entrypoint-timeout",
+      "origin": "http://10.66.46.139:18110",
+      "failure": {
+        "firstFrame": null,
+        "path": "",
+        "startup": true,
+        "status": "加载时间较长，请稍候。",
+        "retry": true,
+        "width": 390
+      },
+      "page": {
+        "firstFrame": 1012.8999999761581,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 390
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "pass": true
+    },
+    {
+      "mode": "login",
+      "origin": "http://10.66.46.139:18110",
+      "page": {
+        "firstFrame": 966.5,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 390
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "loginStatus": 200,
+      "home": true,
+      "familiesStatus": 200,
+      "pass": true,
+      "logoutStatus": 200,
+      "revokedStatus": 401
+    },
+    {
+      "mode": "desktop",
+      "origin": "http://127.0.0.1:18110",
+      "page": {
+        "firstFrame": 1804.9000000357628,
+        "path": "#/login",
+        "startup": false,
+        "status": "",
+        "retry": false,
+        "width": 1440
+      },
+      "form": true,
+      "engine": [
+        [
+          "/canvaskit/chromium/canvaskit.wasm",
+          200
+        ],
+        [
+          "/canvaskit/chromium/canvaskit.js",
+          200
+        ]
+      ],
+      "external": [],
+      "pass": true
+    }
+  ]
+}

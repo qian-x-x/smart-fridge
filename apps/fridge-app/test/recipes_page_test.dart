@@ -225,6 +225,14 @@ class _RecipeFridgeSource implements FridgeDataSource {
   }
 
   @override
+  Future<void> addCatalogFoods(
+    AuthSession session,
+    FridgeWorkspaceData workspace,
+    List<CatalogFoodInput> items,
+    String requestId,
+  ) async => throw UnimplementedError();
+
+  @override
   Future<void> addFood(
     AuthSession session,
     FridgeWorkspaceData workspace,

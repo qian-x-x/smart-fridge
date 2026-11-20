@@ -186,7 +186,7 @@ paths:
       tags: [Family]
       summary: 创建家庭并初始化默认冰箱
       description: |
-        用户端创建家庭入口。auth_db 的家庭/OWNER 成员与 fridge_db 的冰箱/四区/默认容器
+        用户端创建家庭入口。auth_db 的家庭/OWNER 成员与 fridge_db 的冰箱/三区/默认容器
         在一个 Seata 全局事务内创建。requestId 按当前用户隔离，失败重试复用；
         同一标识的名称不同或原请求仍在处理时返回 409。仅已提交的请求可作为成功重放。
         旧 POST /families 保留独立创建语义。
@@ -434,7 +434,7 @@ paths:
           $ref: '#/components/responses/NotFound'
     post:
       tags: [Fridge]
-      summary: 为家庭创建冰箱及默认四区结构
+      summary: 为家庭创建冰箱及默认三区结构
       description: 仅家庭 OWNER 可调用；每个家庭只能有一个冰箱。
       security:
         - bearerAuth: []
@@ -566,6 +566,40 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/v1/foods/catalog-batch:
+    post:
+      tags: [Food]
+      summary: 勾选贴纸食材并按整份入库
+      description: 同一冰箱和操作人重复提交同一请求返回原结果。全部入库和 ADD 流水在同一事务内写入。
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogFoodBatchRequest'
+      responses:
+        '201':
+          description: 本批食材已入库
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogFoodBatchResponse'
+        '200':
+          description: 返回已入库的同一批次
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogFoodBatchResponse'
+        '400':
+          description: 食材清单或份量无效
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          description: 分区不属于当前冰箱，或同一请求标识带有不同清单
   /api/v1/foods/{foodId}:
     get:
       tags: [Food]
@@ -1431,7 +1465,7 @@ components:
           type: string
         type:
           type: string
-          enum: [SHELF, DRAWER, BASKET]
+          enum: [SHELF, DRAWER]
         sortOrder:
           type: integer
     FridgeZone:
@@ -1442,7 +1476,7 @@ components:
           format: int64
         code:
           type: string
-          enum: [FRESH, VARIABLE, FREEZER, PANTRY]
+          enum: [FRESH, VARIABLE, FREEZER]
         name:
           type: string
         temperatureC:
@@ -1563,6 +1597,34 @@ components:
           $ref: '#/components/schemas/Food'
         traceId:
           type: string
+    CatalogFoodBatchRequest:
+      type: object
+      required: [fridgeId, requestId, items]
+      properties:
+        fridgeId: {type: integer, format: int64, minimum: 1}
+        requestId: {type: string, minLength: 8, maxLength: 64, pattern: '^[A-Za-z0-9_-]+$'}
+        items:
+          type: array
+          minItems: 1
+          maxItems: 200
+          items:
+            type: object
+            required: [zoneId, name, category, portions]
+            properties:
+              zoneId: {type: integer, format: int64, minimum: 1}
+              name: {type: string, minLength: 1, maxLength: 72}
+              category: {type: string, minLength: 1, maxLength: 40}
+              portions: {type: integer, minimum: 1, maximum: 999999999}
+    CatalogFoodBatchResponse:
+      type: object
+      properties:
+        code: {type: string, example: OK}
+        message: {type: string}
+        data:
+          type: object
+          properties:
+            added: {type: integer, example: 2}
+        traceId: {type: string}
     CreateFoodRequest:
       type: object
       required:
@@ -1828,6 +1890,7 @@ components:
           nullable: true
     CookRequest:
       type: object
+      description: 每道菜对同一种贴纸食材扣减一份。并发或重复发送同一请求会返回原记录，过期库存不能用于扣减。
       required: [recipeId, recipeName, servings, requestId, items]
       properties:
         recipeId:

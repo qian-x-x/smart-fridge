@@ -3,16 +3,19 @@
 // Set PREVIEW_HOST=0.0.0.0 to expose it on the LAN (Docker Desktop on Windows
 // publishes container ports on loopback only, so a LAN entry needs a host-side
 // listener); set PREVIEW_API/PREVIEW_PORT to point at another gateway/port.
+// Set PREVIEW_BUILD_DIR to serve a release built with a custom --output path.
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const build=path.join(root,'apps/fridge-app/build/web');
+const build=process.env.PREVIEW_BUILD_DIR
+  ?path.resolve(process.env.PREVIEW_BUILD_DIR)
+  :path.join(root,'apps/fridge-app/build/web');
 const port=Number(process.env.PREVIEW_PORT||18000);
 const host=process.env.PREVIEW_HOST||'127.0.0.1';
 const api=new URL(process.env.PREVIEW_API||'http://127.0.0.1:18080');
-const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.svg':'image/svg+xml','.wasm':'application/wasm','.ttf':'font/ttf','.otf':'font/otf'};
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.png':'image/png','.jpg':'image/jpeg','.webp':'image/webp','.svg':'image/svg+xml','.wasm':'application/wasm','.ttf':'font/ttf','.otf':'font/otf'};
 const server=http.createServer((req,res)=>{
   const url=new URL(req.url,'http://local');
   if(url.pathname.startsWith('/api/')) {

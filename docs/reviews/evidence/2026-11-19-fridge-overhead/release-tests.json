@@ -1,0 +1,114 @@
+[
+  {
+    "name": "login copy simplified",
+    "passed": true
+  },
+  {
+    "name": "overview initially visible",
+    "passed": true
+  },
+  {
+    "name": "desktop cold-storage click animates even when already selected",
+    "passed": true,
+    "detail": {
+      "steps": 4,
+      "elapsed": 550,
+      "open": "leftDoor,rightDoor"
+    }
+  },
+  {
+    "name": "desktop freezer transition",
+    "passed": true,
+    "detail": {
+      "steps": 3,
+      "elapsed": 500,
+      "open": "freezerDrawer"
+    }
+  },
+  {
+    "name": "desktop variable-drawer transition",
+    "passed": true,
+    "detail": {
+      "steps": 5,
+      "elapsed": 516,
+      "open": "middleDrawer"
+    }
+  },
+  {
+    "name": "the overview control still shows all the original parts",
+    "passed": true
+  },
+  {
+    "name": "variable scene control opens only its drawer",
+    "passed": true
+  },
+  {
+    "name": "clicking the 3D freezer front also selects only its drawer",
+    "passed": true
+  },
+  {
+    "name": "rapid reselect from an intermediate frame finishes on the variable drawer",
+    "passed": true,
+    "detail": {
+      "freezerIntermediate": true,
+      "variableFrames": [
+        0,
+        0.24724999999999908,
+        0.51125,
+        0.8304999999999996,
+        1
+      ],
+      "open": "middleDrawer"
+    }
+  },
+  {
+    "name": "390px canvas and controls fit",
+    "passed": true,
+    "detail": {
+      "controls": 6,
+      "fit": true,
+      "canvas": 352,
+      "sceneBottom": 648,
+      "height": 844
+    }
+  },
+  {
+    "name": "390px first cold-storage animation",
+    "passed": true,
+    "detail": {
+      "steps": 8,
+      "elapsed": 462,
+      "open": "leftDoor,rightDoor"
+    }
+  },
+  {
+    "name": "390px freezer animation",
+    "passed": true,
+    "detail": {
+      "steps": 7,
+      "elapsed": 441,
+      "open": "freezerDrawer"
+    }
+  },
+  {
+    "name": "390px variable-drawer animation",
+    "passed": true,
+    "detail": {
+      "steps": 12,
+      "elapsed": 409,
+      "open": "middleDrawer"
+    }
+  },
+  {
+    "name": "320px controls fit",
+    "passed": true
+  },
+  {
+    "name": "removed copy and retired zone absent",
+    "passed": true
+  },
+  {
+    "name": "no browser exceptions",
+    "passed": true
+  }
+]

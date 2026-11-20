@@ -1,0 +1,126 @@
+{
+  "preview": "http://127.0.0.1:18134",
+  "desktop": "1440×1000",
+  "mobile": "390×844",
+  "fridgeDate": "2026-11-20",
+  "sixMonthCutoff": "2027-05-20",
+  "passed": 23,
+  "failed": false,
+  "results": [
+    {
+      "name": "无成员关系的请求仍被网关拒绝",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "真实库存包含过期、当天、日界限及半年界限",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "已有起止日期查询仍按闭区间执行",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "桌面清单显示筛选列和结果列",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "已移除手填起止日与应用按钮",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "实际 Web 已加载油、酱油、番茄、牛奶与饺子贴纸",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "选择分类立即变成 3 条蔬菜",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "冷冻区与蔬菜分类立即取交集",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "选择新鲜立即筛除 3 日到期项",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "选择临期立即找回端点 3 日到期的番茄",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "一键重置恢复默认条件",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "3日内 使用预期边界",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "7日内 使用预期边界",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "30日内 使用预期边界",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "半年内 使用预期边界",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "长期 使用预期边界",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "切换五个预设未产生额外查询",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "中文逗号标签输入自动查询且两项同时满足",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "食材名称自动取交集并显示空结果",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "选择排序自动重排并显示最晚到期项",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "390 像素视口可用同一套筛选和结果",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "筛选只读且库存快照保持一致",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "本轮浏览器无脚本异常",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

@@ -4,26 +4,38 @@ import 'package:smart_fridge_app/features/fridge/domain/fridge_data.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/webgl_fridge_view.dart';
 import 'package:smart_fridge_app/shared/layout/scene_input_scope.dart';
 
-class FridgeScene extends StatelessWidget {
+class FridgeScene extends StatefulWidget {
   const FridgeScene({
     required this.zones,
     required this.selectedZone,
     required this.onZoneSelected,
+    this.onFoodSelected,
     this.foods = const [],
     super.key,
   });
   final List<FridgeZone> zones;
   final FridgeZoneId selectedZone;
   final ValueChanged<FridgeZoneId> onZoneSelected;
+  final ValueChanged<FridgeFood>? onFoodSelected;
   final List<FridgeFood> foods;
+
+  @override
+  State<FridgeScene> createState() => _FridgeSceneState();
+}
+
+class _FridgeSceneState extends State<FridgeScene> {
+  ({FridgeZoneId zone, int request})? _focus;
+
+  void _selectZone(FridgeZoneId zone) {
+    setState(() => _focus = (zone: zone, request: (_focus?.request ?? 0) + 1));
+    widget.onZoneSelected(zone);
+  }
 
   @override
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final compact = constraints.maxWidth < 600;
-      final selected = zones
-          .where((zone) => zone.id == selectedZone)
-          .firstOrNull;
+      final zones = widget.zones;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -36,21 +48,25 @@ class FridgeScene extends StatelessWidget {
               separatorBuilder: (_, _) => const SizedBox(width: 8),
               itemBuilder: (context, index) {
                 final zone = zones[index];
-                final active = zone.id == selectedZone;
+                final temperature = zone.temperature;
+                final active = zone.id == widget.selectedZone;
                 return Semantics(
                   selected: active,
                   button: true,
-                  label: '${zone.name}区，${zone.temperature}',
+                  label: temperature.isEmpty
+                      ? '${zone.name}区'
+                      : '${zone.name}区，$temperature',
                   child: Material(
                     color: active ? AppColors.terracotta : AppColors.paper,
                     borderRadius: BorderRadius.circular(10),
                     child: InkWell(
-                      onTap: () => onZoneSelected(zone.id),
+                      onTap: () => _selectZone(zone.id),
                       borderRadius: BorderRadius.circular(10),
                       child: Container(
                         width: compact
-                            ? ((constraints.maxWidth - 24) / 4)
-                                  .clamp(76, 112)
+                            ? ((constraints.maxWidth - (zones.length - 1) * 8) /
+                                      zones.length)
+                                  .clamp(70, 120)
                                   .toDouble()
                             : 112,
                         padding: EdgeInsets.symmetric(
@@ -73,7 +89,6 @@ class FridgeScene extends StatelessWidget {
                                 FridgeZoneId.variable =>
                                   Icons.thermostat_outlined,
                                 FridgeZoneId.freezer => Icons.ac_unit,
-                                FridgeZoneId.pantry => Icons.shelves,
                               },
                               color: active ? Colors.white : AppColors.muted,
                               size: 18,
@@ -96,17 +111,18 @@ class FridgeScene extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
-                                  Text(
-                                    zone.temperature,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: active
-                                          ? Colors.white70
-                                          : AppColors.muted,
-                                      fontSize: 10,
+                                  if (temperature.isNotEmpty)
+                                    Text(
+                                      temperature,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        color: active
+                                            ? Colors.white70
+                                            : AppColors.muted,
+                                        fontSize: 10,
+                                      ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -123,39 +139,18 @@ class FridgeScene extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(14),
             child: SizedBox(
-              height: compact ? 380 : 500,
+              height: compact ? 420 : 570,
               child: WebGLFridgeView(
-                zone: selectedZone,
-                onZoneSelected: onZoneSelected,
-                foods: foods,
+                focus: _focus,
+                onOverview: () => setState(() => _focus = null),
+                onZoneSelected: widget.onZoneSelected,
+                onFoodSelected: widget.onFoodSelected,
+                foods: widget.foods,
                 interactive:
                     (ModalRoute.isCurrentOf(context) ?? true) &&
                     SceneInputScope.isEnabled(context),
               ),
             ),
-          ),
-          const SizedBox(height: 10),
-          Wrap(
-            alignment: WrapAlignment.spaceBetween,
-            spacing: 12,
-            runSpacing: 5,
-            children: [
-              Text(
-                selected == null
-                    ? '暂无储存分区'
-                    : '${selected.name} ${selected.temperature}',
-                style: const TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                selectedZone == FridgeZoneId.pantry
-                    ? '常温储物位于厨房柜台'
-                    : '拖动查看 · 点击门或抽屉开合',
-                style: const TextStyle(fontSize: 11, color: AppColors.muted),
-              ),
-            ],
           ),
         ],
       );

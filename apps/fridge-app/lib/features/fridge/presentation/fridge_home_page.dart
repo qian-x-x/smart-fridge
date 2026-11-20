@@ -1,7 +1,8 @@
+import 'dart:async';
+
 import 'package:smart_fridge_app/shared/widgets/action_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/family/application/family_controller.dart';
 import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
@@ -11,6 +12,8 @@ import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_she
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/fridge_setup_panel.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_search_sheet.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/food_timeline_sheet.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/ingredient_picker_sheet.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/ingredient_recipes_sheet.dart';
 
 class FridgeHomePage extends ConsumerStatefulWidget {
   const FridgeHomePage({super.key});
@@ -20,6 +23,7 @@ class FridgeHomePage extends ConsumerStatefulWidget {
 
 class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
   FridgeZoneId _selectedZone = FridgeZoneId.fresh;
+  bool _ingredientRecipesOpen = false;
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +91,15 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final desktop = constraints.maxWidth >= 900;
+        final stats = _InventoryStats(
+          count: workspace.foods.length,
+          expiring: expiring,
+          expired: expired,
+        );
         final add = AppFilledButton.icon(
           onPressed: writable ? () => _openAddFood(context, workspace) : null,
           icon: const Icon(Icons.add, size: 19),
-          label: const Text('新增食材'),
+          label: const Text('添加食材'),
         );
         final stock = _StockPanel(
           workspace: workspace,
@@ -101,10 +110,16 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           onCleanExpired: () => _openExpiredCleanup(context, workspace),
         );
         final scene = FridgeScene(
-          key: const ValueKey('family-fridge-scene'),
+          key: ValueKey((
+            workspace.familyId,
+            workspace.fridgeId,
+            workspace.isDemo,
+          )),
           zones: workspace.zones,
           selectedZone: selected,
           foods: workspace.foods,
+          onFoodSelected: (food) =>
+              _openIngredientRecipes(context, workspace, food),
           onZoneSelected: (zone) {
             if (mounted) setState(() => _selectedZone = zone);
           },
@@ -130,26 +145,11 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'MY KITCHEN',
-                              style: TextStyle(
-                                fontSize: 11,
-                                letterSpacing: 2.4,
-                                color: AppColors.muted,
-                              ),
-                            ),
-                            const SizedBox(height: 9),
-                            Text(
-                              '让新鲜，各就其位。',
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            const SizedBox(height: 9),
                             Text(
                               workspace.fridgeName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 13,
-                              ),
+                              style: Theme.of(context).textTheme.headlineMedium,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -190,14 +190,10 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                         ),
                     ],
                   ),
-                  const SizedBox(height: 22),
-                  _InventoryStats(
-                    count: workspace.foods.length,
-                    expiring: expiring,
-                    expired: expired,
-                  ),
-                  const SizedBox(height: 22),
-                  if (desktop)
+                  if (desktop) ...[
+                    const SizedBox(height: 22),
+                    stats,
+                    const SizedBox(height: 22),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -205,60 +201,15 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
                         const SizedBox(width: 24),
                         SizedBox(width: 310, child: stock),
                       ],
-                    )
-                  else ...[
+                    ),
+                  ] else ...[
+                    const SizedBox(height: 16),
                     scene,
+                    const SizedBox(height: 18),
+                    stats,
                     const SizedBox(height: 18),
                     stock,
                   ],
-                  const SizedBox(height: 22),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.paper,
-                      border: Border.all(color: AppColors.border),
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.restaurant_menu_outlined, size: 24),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '今晚，做点冰箱里现有的。',
-                                style: TextStyle(fontWeight: FontWeight.w600),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                expiring > 0
-                                    ? '$expiring 份即将到期，先安排新鲜食材。'
-                                    : '按已有食材找菜谱，也看看还缺什么。',
-                                style: const TextStyle(
-                                  color: AppColors.muted,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () => context.go('/recipes'),
-                          child: Text(desktop ? '去看菜谱 →' : '看菜谱'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  const Text(
-                    '温度为储存参考，非传感器实测',
-                    style: TextStyle(fontSize: 12, color: AppColors.muted),
-                  ),
                 ],
               ),
             ),
@@ -305,12 +256,12 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
   Future<void> _openAddFood(
     BuildContext context,
     FridgeWorkspaceData workspace,
-  ) => showAddFoodPreview(
+  ) => showIngredientPicker(
     context,
     zones: workspace.zones,
-    canEdit: workspace.canEdit && !workspace.isDemo,
-    onSave: (input) =>
-        ref.read(fridgeWorkspaceProvider.notifier).addFood(input),
+    onSave: (items, requestId) => ref
+        .read(fridgeWorkspaceProvider.notifier)
+        .addCatalogFoods(workspace, items, requestId),
   );
 
   Future<void> _openFoodDetails(
@@ -336,6 +287,37 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
           ref.read(fridgeWorkspaceProvider.notifier).updateFood(input),
     ),
   );
+
+  Future<void> _openIngredientRecipes(
+    BuildContext context,
+    FridgeWorkspaceData workspace,
+    FridgeFood food,
+  ) async {
+    if (_ingredientRecipesOpen) return;
+    _ingredientRecipesOpen = true;
+    try {
+      final current = ref.read(fridgeWorkspaceProvider).asData?.value;
+      // A searched record can be newer than the full inventory snapshot.
+      if (!workspace.isDemo &&
+          current != null &&
+          current.familyId == workspace.familyId &&
+          current.fridgeId == workspace.fridgeId &&
+          !current.foods.any(
+            (item) => item.id == food.id && item.version >= food.version,
+          )) {
+        unawaited(ref.read(fridgeWorkspaceProvider.notifier).refresh());
+      }
+      await showIngredientRecipes(
+        context,
+        workspace: workspace,
+        food: food,
+        onInventoryDetails: (current, item) =>
+            _openFoodDetails(context, current, item),
+      );
+    } finally {
+      _ingredientRecipesOpen = false;
+    }
+  }
 
   /// Bulk cleanup. Confirmation lives in a sheet so the user sees exactly what
   /// will leave the fridge before it happens.
@@ -414,6 +396,9 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
   }
 
   Future<void> _openTable(BuildContext context, FridgeWorkspaceData workspace) {
+    void openFood(FridgeFood food) =>
+        _openIngredientRecipes(context, workspace, food);
+
     if (!workspace.isDemo) {
       return showModalBottomSheet<void>(
         context: context,
@@ -421,17 +406,11 @@ class _FridgeHomePageState extends ConsumerState<FridgeHomePage> {
         constraints: const BoxConstraints(maxWidth: 960),
         isScrollControlled: true,
         useSafeArea: true,
-        builder: (context) => FoodSearchSheet(
-          workspace: workspace,
-          onFoodTap: (food) => _openFoodDetails(context, workspace, food),
-        ),
+        builder: (context) =>
+            FoodSearchSheet(workspace: workspace, onFoodTap: openFood),
       );
     }
-    return showTablePreview(
-      context,
-      workspace.foods,
-      onFoodTap: (food) => _openFoodDetails(context, workspace, food),
-    );
+    return showTablePreview(context, workspace.foods, onFoodTap: openFood);
   }
 }
 
@@ -460,16 +439,16 @@ class _InventoryStats extends StatelessWidget {
     child: Row(
       children: [
         for (final item in [
-          (count, '份在库食材'),
-          (expiring, '份即将到期'),
-          (expired, '份已过期 · 待检查'),
+          (count, '项在库食材'),
+          (expiring, '项即将到期'),
+          (expired, '项已过期'),
         ])
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.$1.toString().padLeft(2, '0'),
+                  item.$1.toString(),
                   style: const TextStyle(
                     fontSize: 26,
                     fontWeight: FontWeight.w600,
@@ -526,10 +505,13 @@ class _StockPanel extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
-                  '库存概览',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  zone == null ? '库存' : '${zone.name}库存',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
               Text(
@@ -566,11 +548,6 @@ class _StockPanel extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 7),
-          Text(
-            '${zone?.name ?? '当前分区'} · 按到期时间排列',
-            style: const TextStyle(fontSize: 11, color: AppColors.muted),
           ),
           const SizedBox(height: 16),
           if (foods.isEmpty)

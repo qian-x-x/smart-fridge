@@ -1,0 +1,110 @@
+{
+  "scope": "Built Flutter release · Edge software WebGL · isolated MySQL auth and fridge · real local gateway and recipe catalog",
+  "checks": [
+    {
+      "name": "隔离数据库创建真实家庭和三区",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "真实菜谱接口返回18道菜",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "其他家庭无法向此冰箱添加食材",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "家庭只读成员无法批量添加食材",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "登录后关闭的门内不显示食材",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "界面勾选多种食材并保持份量与分区",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "同一批次重放不重复入库",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "同一批次拒绝异载荷",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "真实构建可从同源加载透明贴纸",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "长期海鲜出现于冷冻抽屉",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "调味品贴纸正确显示在变温抽屉",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "切换抽屉不泄漏其他分区贴纸",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "打开左门后展示该分区带白边的贴纸",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "悬停后贴纸抬高并显示名称",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "从贴纸打开相关菜谱并一键扣减一份",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "重复制作请求返回原记录且不重复扣减",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "做饭写入库存流水",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机视口可用贴纸清单添加食材",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机视口显示其他原料和缺少状态",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "缺食材时不会发送扣减",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "浏览器未捕获页面异常",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

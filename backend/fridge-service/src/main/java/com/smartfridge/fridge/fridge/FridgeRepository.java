@@ -21,9 +21,7 @@ public class FridgeRepository {
         new ZoneSeed("VARIABLE", "变温", new BigDecimal("0.0"), 20,
             List.of(new ContainerSeed("变温上层", "SHELF"), new ContainerSeed("变温抽屉", "DRAWER"))),
         new ZoneSeed("FREEZER", "冷冻", new BigDecimal("-18.0"), 30,
-            List.of(new ContainerSeed("冷冻抽屉", "DRAWER"))),
-        new ZoneSeed("PANTRY", "常温", null, 40,
-            List.of(new ContainerSeed("常温储物筐", "BASKET")))
+            List.of(new ContainerSeed("冷冻抽屉", "DRAWER")))
     );
 
     private final JdbcTemplate jdbcTemplate;

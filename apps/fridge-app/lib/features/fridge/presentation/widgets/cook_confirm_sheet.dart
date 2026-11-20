@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:smart_fridge_app/core/network/api_client.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
 import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
@@ -18,6 +19,8 @@ class CookConfirmSheet extends ConsumerStatefulWidget {
     required this.recipeName,
     required this.servings,
     required this.candidates,
+    this.plan,
+    this.familyId,
   });
 
   final int fridgeId;
@@ -26,6 +29,8 @@ class CookConfirmSheet extends ConsumerStatefulWidget {
   final String recipeName;
   final int servings;
   final List<FridgeFood> candidates;
+  final List<CookItemInput>? plan;
+  final int? familyId;
 
   @override
   ConsumerState<CookConfirmSheet> createState() => _CookConfirmSheetState();
@@ -36,13 +41,19 @@ class _CookConfirmSheetState extends ConsumerState<CookConfirmSheet> {
   final Set<int> _selected = {};
   bool _saving = false;
   String? _error;
+  String? _pendingRequestId;
 
   @override
   void initState() {
     super.initState();
     for (final food in widget.candidates) {
       _selected.add(food.serverId!);
-      _quantities[food.serverId!] = food.quantity >= 1 ? 1 : food.quantity;
+      _quantities[food.serverId!] =
+          widget.plan
+              ?.where((item) => item.foodItemId == food.serverId)
+              .firstOrNull
+              ?.quantity ??
+          (food.quantity >= 1 ? 1 : food.quantity);
     }
   }
 
@@ -52,27 +63,32 @@ class _CookConfirmSheetState extends ConsumerState<CookConfirmSheet> {
   }
 
   void _step(FridgeFood food, double delta) {
-    final next = (_quantityOf(food) + delta).clamp(0.1, food.quantity);
+    final next = (_quantityOf(food) + delta).clamp(0.001, food.quantity);
     setState(() {
-      _quantities[food.serverId!] = (next * 10).round() / 10;
+      _quantities[food.serverId!] = (next * 1000).round() / 1000;
     });
   }
 
   Future<void> _submit() async {
-    final items = [
-      for (final food in widget.candidates)
-        if (_selected.contains(food.serverId!))
-          CookItemInput(
-            foodItemId: food.serverId!,
-            quantity: _quantityOf(food),
-            version: food.version,
-          ),
-    ];
+    if (_saving) return;
+    final items =
+        widget.plan ??
+        [
+          for (final food in widget.candidates)
+            if (_selected.contains(food.serverId!))
+              CookItemInput(
+                foodItemId: food.serverId!,
+                quantity: _quantityOf(food),
+                version: food.version,
+              ),
+        ];
     if (items.isEmpty) {
       setState(() => _error = '请至少选择一种要扣减的食材');
       return;
     }
+    final requestId = _pendingRequestId ?? newInventoryRequestId('cook');
     setState(() {
+      _pendingRequestId = requestId;
       _saving = true;
       _error = null;
     });
@@ -81,16 +97,21 @@ class _CookConfirmSheetState extends ConsumerState<CookConfirmSheet> {
           .read(fridgeWorkspaceProvider.notifier)
           .cook(
             fridgeId: widget.fridgeId,
+            familyId: widget.familyId,
             recipeId: widget.recipeId,
             recipeName: widget.recipeName,
             servings: widget.servings,
             items: items,
+            requestId: requestId,
           );
       if (!mounted) return;
       Navigator.of(context).pop(true);
     } on Object catch (error) {
       if (!mounted) return;
       setState(() {
+        if (error is! ApiFailure || !error.writeOutcomeUncertain) {
+          _pendingRequestId = null;
+        }
         _saving = false;
         _error = '扣减失败：$error';
       });
@@ -158,7 +179,11 @@ class _CookConfirmSheetState extends ConsumerState<CookConfirmSheet> {
                           food: food,
                           selected: _selected.contains(food.serverId!),
                           quantity: _quantityOf(food),
-                          enabled: editable && !_saving,
+                          enabled:
+                              editable &&
+                              !_saving &&
+                              widget.plan == null &&
+                              _pendingRequestId == null,
                           onToggle: (value) => setState(() {
                             if (value) {
                               _selected.add(food.serverId!);
@@ -206,6 +231,8 @@ class _CookConfirmSheetState extends ConsumerState<CookConfirmSheet> {
                         label: Text(
                           _saving
                               ? '正在扣减…'
+                              : _pendingRequestId != null
+                              ? '重试本次制作'
                               : widget.canEdit
                               ? '确认做饭并扣减'
                               : '当前账号没有编辑权限',
@@ -276,7 +303,9 @@ class _CookRow extends StatelessWidget {
           ),
           _StepButton(
             icon: Icons.remove,
-            onPressed: enabled && selected && quantity > 0.1 ? onDecrease : null,
+            onPressed: enabled && selected && quantity > 0.1
+                ? onDecrease
+                : null,
           ),
           SizedBox(
             width: 52,

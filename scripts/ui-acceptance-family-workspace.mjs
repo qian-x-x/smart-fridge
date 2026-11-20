@@ -156,7 +156,7 @@ async function main() {
     console.log('NAV home');
     const loaded = await until(() => responses('/fridges?familyId=' + result.family.id).find(e => e.params.response.status === 200));
     const fridge = (await body(loaded)).data;
-    check('new-fridge-loaded-from-ui', fridge.id === result.fridgeId && fridge.zones.length === 4);
+    check('new-fridge-loaded-from-ui', fridge.id === result.fridgeId && fridge.zones.map((zone) => zone.code).join(',') === 'FRESH,VARIABLE,FREEZER');
     check('desktop-scene-ready', await sceneReady());
     await cdp.shot('ui-05-new-fridge-desktop');
     const beforeReload = events.length;

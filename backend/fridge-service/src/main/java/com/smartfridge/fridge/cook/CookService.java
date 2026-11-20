@@ -12,6 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,17 +29,20 @@ public class CookService {
     private final FoodRepository foodRepository;
     private final FridgeAccessGuard accessGuard;
     private final TransactionTemplate transactionTemplate;
+    private final Clock clock;
 
     public CookService(
         CookRepository cookRepository,
         FoodRepository foodRepository,
         FridgeAccessGuard accessGuard,
-        TransactionTemplate transactionTemplate
+        TransactionTemplate transactionTemplate,
+        Clock clock
     ) {
         this.cookRepository = cookRepository;
         this.foodRepository = foodRepository;
         this.accessGuard = accessGuard;
         this.transactionTemplate = transactionTemplate;
+        this.clock = clock;
     }
 
     /**
@@ -52,7 +59,7 @@ public class CookService {
 
         var replay = cookRepository.findByRequestId(fridgeId, request.requestId());
         if (replay.isPresent()) {
-            return new CookResult(replay.get(), false);
+            return replay(replay.get(), user, request);
         }
 
         try {
@@ -63,7 +70,7 @@ public class CookService {
         } catch (DuplicateKeyException duplicate) {
             // A concurrent request with the same id won the unique constraint.
             return cookRepository.findByRequestId(fridgeId, request.requestId())
-                .map(record -> new CookResult(record, false))
+                .map(record -> replay(record, user, request))
                 .orElseThrow(() -> BusinessException.conflict("重复的做饭请求，请刷新后重试"));
         }
     }
@@ -75,7 +82,16 @@ public class CookService {
     }
 
     private CookRecordView write(FridgeView fridge, CurrentUser user, CookRequest request) {
+        // Reserve the request before checking versions. A concurrent replay may
+        // see stock already deducted, but still gets the original record.
+        long cookRecordId = cookRepository.insert(
+            fridge.id(), request.recipeId(), request.recipeName().trim(), user.id(),
+            request.servings(), request.requestId(), trimToNull(request.note())
+        );
+
+        LocalDate today = LocalDate.now(clock.withZone(ZoneId.of(fridge.timezone())));
         List<FoodRecord> foods = new ArrayList<>(request.items().size());
+        Set<String> portionNames = new HashSet<>();
         Set<Long> seen = new HashSet<>();
         for (CookItemRequest item : request.items()) {
             if (!seen.add(item.foodItemId())) {
@@ -84,6 +100,13 @@ public class CookService {
             FoodRecord food = foodRepository.findRecordById(item.foodItemId())
                 .filter(record -> record.fridgeId() == fridge.id())
                 .orElseThrow(() -> BusinessException.notFound("食材不存在或已丢弃"));
+            if (food.expiresOn().isBefore(today)) {
+                throw BusinessException.conflict("「" + food.name() + "」已过期，不能用于制作");
+            }
+            if (FoodRecord.isStickerModel(food.modelKey()) &&
+                (item.quantity().compareTo(BigDecimal.ONE) != 0 || !portionNames.add(food.name()))) {
+                throw validation("每道菜对同一种食材只扣减一份");
+            }
             if (food.quantity().compareTo(item.quantity()) < 0) {
                 throw BusinessException.conflict("「" + food.name() + "」库存不足，请调整扣减数量");
             }
@@ -92,16 +115,6 @@ public class CookService {
             }
             foods.add(food);
         }
-
-        long cookRecordId = cookRepository.insert(
-            fridge.id(),
-            request.recipeId(),
-            request.recipeName().trim(),
-            user.id(),
-            request.servings(),
-            request.requestId(),
-            trimToNull(request.note())
-        );
 
         String operationNote = "做饭：" + request.recipeName().trim();
         for (int index = 0; index < foods.size(); index++) {
@@ -128,6 +141,26 @@ public class CookService {
 
         return cookRepository.findById(cookRecordId, fridge.id())
             .orElseThrow(() -> new IllegalStateException("Cook record was not persisted"));
+    }
+
+    private CookResult replay(CookRecordView record, CurrentUser user, CookRequest request) {
+        if (record.actorUserId() != user.id() ||
+            record.recipeId() != request.recipeId() ||
+            !record.recipeName().equals(request.recipeName().trim()) ||
+            record.servings() != request.servings() ||
+            !Objects.equals(record.note(), trimToNull(request.note())) ||
+            record.items().size() != request.items().size()) {
+            throw BusinessException.conflict("这次制作的请求标识已被使用");
+        }
+        for (int index = 0; index < record.items().size(); index++) {
+            var saved = record.items().get(index);
+            var sent = request.items().get(index);
+            if (saved.foodItemId() != sent.foodItemId() ||
+                saved.quantity().compareTo(sent.quantity()) != 0) {
+                throw BusinessException.conflict("这次制作的请求标识已被使用");
+            }
+        }
+        return new CookResult(record, false);
     }
 
     private BusinessException validation(String message) {

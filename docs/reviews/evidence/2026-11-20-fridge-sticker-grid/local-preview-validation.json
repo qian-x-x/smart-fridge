@@ -1,0 +1,10 @@
+{
+  "preview": "http://127.0.0.1:18134/?v=sticker-grid-v23",
+  "backend": "UP",
+  "servedWebContentSha256": {
+    "main.dart.js": "a3eb0f976683365cdc11967904e46e5b4d273f32556bcdbe9a0e747f32c4720e",
+    "fridge3d/index.html": "d41bb846314e04cb148ebd0d5e47cf1176cf809ccafe786a24349681a53968db",
+    "fridge3d/sticker-inventory.js": "83d51ca1afd7ab4c6b839fec23943b795310df72eb7e54dc8c9e2fd809ba4e41",
+    "fridge3d/sticker-layout.js": "17197fdde75f7f276203d33d1f687951efc1a2c75abd49e387d62c852be24882"
+  }
+}

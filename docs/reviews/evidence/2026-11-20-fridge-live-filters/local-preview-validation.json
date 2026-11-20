@@ -1,0 +1,15 @@
+{
+  "preview": "http://127.0.0.1:18134/?v=live-filters",
+  "checkedCandidate": "http://127.0.0.1:18135",
+  "candidateBrowserChecks": 23,
+  "currentWebProcess": 68780,
+  "gateway": "UP",
+  "previousBuild": "sticker-web-before-live-filters-20261120-124101",
+  "previousMainSha256": "a3eb0f976683365cdc11967904e46e5b4d273f32556bcdbe9a0e747f32c4720e",
+  "verifiedLiveSha256": {
+    "index.html": "8af96b8e41c69ad9d186abce278dd48e86c4140de3790b646fa83a00e94511e5",
+    "main.dart.js": "13d37612435507bb526ea7f6da72e4ff6dd21095a1c6ea021aea50e938799599",
+    "fridge3d/index.html": "d41bb846314e04cb148ebd0d5e47cf1176cf809ccafe786a24349681a53968db",
+    "assets/assets/images/ingredient-stickers/%E9%A3%9F%E7%94%A8%E6%B2%B9.webp": "ad8d3b9378ab8b5da340c4947c7e94b8990dc5b6057620e952b56a488a35117e"
+  }
+}

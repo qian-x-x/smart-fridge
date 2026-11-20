@@ -52,6 +52,19 @@ public class FoodController {
         return ApiResponse.success(foodService.search(fridgeId, filter, authorization));
     }
 
+    @PostMapping("/catalog-batch")
+    public ResponseEntity<ApiResponse<CatalogBatchView>> createCatalogBatch(
+        @RequestAttribute(GatewayUserInterceptor.CURRENT_USER_ATTRIBUTE) CurrentUser user,
+        @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization,
+        @Valid @RequestBody CatalogFoodBatchRequest request
+    ) {
+        var result = foodService.createCatalogBatch(user, authorization, request);
+        var response = ApiResponse.success(new CatalogBatchView(result.added()));
+        return result.created() ? ResponseEntity.status(201).body(response) : ResponseEntity.ok(response);
+    }
+
+    public record CatalogBatchView(int added) {}
+
     @GetMapping("/{foodId}")
     public ApiResponse<FoodView> get(
         @PathVariable long foodId,

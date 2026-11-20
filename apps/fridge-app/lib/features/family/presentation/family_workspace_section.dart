@@ -16,11 +16,8 @@ class FamilyWorkspaceSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final state = ref.watch(familyControllerProvider);
     return state.when(
-      loading: () => const _StateCard(
-        icon: Icons.sync_rounded,
-        title: '正在同步家庭',
-        subtitle: '从 Gateway 读取家庭权限和邀请码',
-      ),
+      loading: () =>
+          const _StateCard(icon: Icons.sync_rounded, title: '正在同步家庭'),
       error: (error, stackTrace) => _StateCard(
         icon: Icons.cloud_off_rounded,
         title: '家庭信息加载失败',
@@ -257,13 +254,13 @@ class _StateCard extends StatelessWidget {
   const _StateCard({
     required this.icon,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
     this.action,
   });
 
   final IconData icon;
   final String title;
-  final String subtitle;
+  final String? subtitle;
   final Widget? action;
 
   @override
@@ -286,7 +283,7 @@ class _StateCard extends StatelessWidget {
                   title,
                   style: const TextStyle(fontWeight: FontWeight.w800),
                 ),
-                Text(subtitle),
+                if (subtitle case final detail?) Text(detail),
               ],
             ),
           ),

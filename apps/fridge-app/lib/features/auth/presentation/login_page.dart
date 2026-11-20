@@ -33,7 +33,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: '欢迎回家',
-      subtitle: '管理食材与菜谱，和家人共享同一份库存。',
       child: Form(
         key: _formKey,
         child: Column(

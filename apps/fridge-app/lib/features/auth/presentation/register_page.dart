@@ -38,7 +38,6 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
   Widget build(BuildContext context) {
     return AuthScaffold(
       title: '创建家庭账号',
-      subtitle: '一个账号，就可以把食材、菜谱和家人的协作放在一起。',
       child: Form(
         key: _formKey,
         child: Column(

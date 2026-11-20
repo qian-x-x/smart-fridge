@@ -121,6 +121,10 @@ class CookApiIntegrationTest {
         Number secondId = JsonPath.read(second, "$.data.id");
 
         assertEquals(firstId.longValue(), secondId.longValue());
+        cook(fridge, "cook-replay-0001", 1, "牛奶燕麦", items, "613")
+            .andExpect(status().isConflict());
+        cook(fridge, "cook-replay-0001", 1, "牛奶燕麦", items.replace("quantity\": 2", "quantity\": 1"), "612")
+            .andExpect(status().isConflict());
         assertEquals(3.0, quantityOf(milkId));
 
         Integer records = jdbcTemplate.queryForObject(
@@ -129,6 +133,60 @@ class CookApiIntegrationTest {
             fridge.fridgeId()
         );
         assertEquals(1, records);
+    }
+
+    @Test
+    void freshPortionStockUsesOnePortionPerDishAndRollsBackAnExpiredBatch() throws Exception {
+        FridgeFixture fridge = createFridge(957, "671");
+        long pumpkin = addFood(fridge, "南瓜", 2, "672");
+        long other = addFood(fridge, "南瓜", 2, "672");
+        jdbcTemplate.update("UPDATE food_item SET model_key = 'sticker:南瓜' WHERE id IN (?, ?)", pumpkin, other);
+        String item = """
+            [{"foodItemId": %d, "quantity": %s, "version": 0}]
+            """;
+        cook(fridge, "cook-portions-0001", 18, "清蒸南瓜", item.formatted(pumpkin, "0.5"), "672")
+            .andExpect(status().isBadRequest());
+        cook(fridge, "cook-portions-0001", 18, "清蒸南瓜", item.formatted(pumpkin, "2"), "672")
+            .andExpect(status().isBadRequest());
+        cook(fridge, "cook-portions-0001", 18, "清蒸南瓜",
+            """
+                [{"foodItemId": %d, "quantity": 1}, {"foodItemId": %d, "quantity": 1}]
+                """.formatted(pumpkin, other), "672")
+            .andExpect(status().isBadRequest());
+
+        jdbcTemplate.update("UPDATE food_item SET expires_on = '2025-10-26' WHERE id = ?", pumpkin);
+        cook(fridge, "cook-portions-0001", 18, "清蒸南瓜", item.formatted(pumpkin, "1"), "672")
+            .andExpect(status().isConflict());
+        assertEquals(2.0, quantityOf(pumpkin));
+        cook(fridge, "cook-portions-0001", 18, "清蒸南瓜", item.formatted(other, "1"), "672")
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.data.items[0].unit").value("份"));
+        assertEquals(1.0, quantityOf(other));
+    }
+
+    @Test
+    void concurrentReplaysOfTheLastPortionReturnOneRecord() throws Exception {
+        FridgeFixture fridge = createFridge(958, "681");
+        long pumpkin = addFood(fridge, "并发南瓜", 1, "682");
+        jdbcTemplate.update("UPDATE food_item SET model_key = 'sticker:并发南瓜' WHERE id = ?", pumpkin);
+        var executor = java.util.concurrent.Executors.newFixedThreadPool(2);
+        var start = new java.util.concurrent.CyclicBarrier(2);
+        java.util.concurrent.Callable<Integer> submit = () -> {
+            start.await(10, java.util.concurrent.TimeUnit.SECONDS);
+            return cook(fridge, "cook-portions-race", 18, "清蒸南瓜",
+                "[{\"foodItemId\":" + pumpkin + ",\"quantity\":1,\"version\":0}]", "682")
+                .andReturn().getResponse().getStatus();
+        };
+        try {
+            var first = executor.submit(submit);
+            var second = executor.submit(submit);
+            assertEquals(java.util.Set.of(200, 201), java.util.Set.of(
+                first.get(12, java.util.concurrent.TimeUnit.SECONDS),
+                second.get(12, java.util.concurrent.TimeUnit.SECONDS)));
+            assertEquals(0.0, quantityOf(pumpkin));
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     @Test

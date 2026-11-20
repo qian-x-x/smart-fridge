@@ -171,6 +171,14 @@ class _FakeFridgeDataSource implements FridgeDataSource {
   }
 
   @override
+  Future<void> addCatalogFoods(
+    AuthSession session,
+    FridgeWorkspaceData workspace,
+    List<CatalogFoodInput> items,
+    String requestId,
+  ) async => throw UnimplementedError();
+
+  @override
   Future<void> addFood(
     AuthSession session,
     FridgeWorkspaceData workspace,
@@ -204,7 +212,10 @@ class _FakeFridgeDataSource implements FridgeDataSource {
   }) async => const <FoodOperation>[];
 
   @override
-  Future<void> undoOperation(AuthSession session, FoodOperation operation) async {}
+  Future<void> undoOperation(
+    AuthSession session,
+    FoodOperation operation,
+  ) async {}
 
   @override
   Future<void> restoreOperation(

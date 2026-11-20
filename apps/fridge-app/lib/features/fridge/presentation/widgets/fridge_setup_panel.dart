@@ -60,15 +60,10 @@ class _FridgeSetupPanelState extends ConsumerState<FridgeSetupPanel> {
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
-              const SizedBox(height: 12),
-              Text(
-                family == null
-                    ? '在家庭页创建家庭，或使用邀请码加入家人的家庭。'
-                    : canCreate
-                    ? '为冰箱起个名字，系统会自动创建冷藏、变温、冷冻和常温四个区域。'
-                    : '请联系家庭拥有者创建冰箱，创建后刷新即可查看。',
-                textAlign: TextAlign.center,
-              ),
+              if (family != null && !canCreate) ...[
+                const SizedBox(height: 12),
+                const Text('请联系家庭拥有者创建冰箱', textAlign: TextAlign.center),
+              ],
               const SizedBox(height: 20),
               if (canCreate) ...[
                 TextField(

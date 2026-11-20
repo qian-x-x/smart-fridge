@@ -67,7 +67,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/data/home-recipes-v2.json
-    - assets/images/kitchen-gray-white-v2.0.1.png
+    - assets/images/kitchen-focus-closed.jpg
+    - assets/images/kitchen-focus-open.jpg
+    - assets/images/kitchen-variable-drawer.jpg
+    - assets/images/kitchen-freezer-drawer.jpg
     - assets/images/fridge-kitchen-v1.png
     - assets/images/kitchen-harvest.jpg
     - assets/images/recipe-tomato-eggs.jpg
@@ -75,8 +78,14 @@ flutter:
     - assets/images/recipe-pumpkin.jpg
     - assets/images/recipe-steamed-eggs.jpg
     - assets/images/quiet-white-v2/
+    - assets/images/ingredient-stickers/
     - assets/fonts/OFL.txt
+    - assets/fonts/Roboto-LICENSE.txt
   fonts:
+    # CanvasKit loads its default fallback font before rendering the first frame.
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
     - family: XiaoyiUI
       fonts:
         - asset: assets/fonts/XiaoyiUI-Regular.ttf

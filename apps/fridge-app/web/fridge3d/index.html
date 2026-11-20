@@ -10,7 +10,9 @@
     html, body, #scene { width:100%; height:100%; margin:0; overflow:hidden; background:#f4f6f7; }
     body { font:12px "Microsoft YaHei UI", "PingFang SC", sans-serif; color:#171a1d; }
     #scene { position:relative; display:grid; grid-template-rows:minmax(0,1fr) auto; }
+    .scene-view { position:relative; min-height:0; overflow:hidden; }
     #fridge-canvas { display:block; width:100%; height:100%; min-height:0; cursor:grab; touch-action:none; }
+    #scene:is([data-focus="variable"],[data-focus="freezer"]) #fridge-canvas { cursor:default; }
     #fridge-canvas:focus-visible { outline:2px solid #344f66; outline-offset:-3px; }
     .controls { display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; padding:6px; margin:0 10px 10px; background:#fff; border:1px solid #dce2e6; border-radius:12px; }
     button { appearance:none; border:1px solid #85919b; border-radius:8px; background:#fff; color:#171a1d; font:inherit; min-height:44px; padding:6px; cursor:pointer; white-space:nowrap; }
@@ -21,23 +23,67 @@
     .fallback { position:absolute; inset:0; display:none; place-content:center; padding:24px; background:#f4f6f7; text-align:center; z-index:2; }
     .fallback.is-visible { display:grid; } .fallback strong { font-size:18px; margin-bottom:10px; } .fallback span { max-width:300px; line-height:1.7; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
-    @media(max-width:480px) { .controls { grid-template-columns:repeat(3,minmax(0,1fr)); } button { font-size:12px; } }
-    @media(prefers-reduced-motion:reduce) { button { transition:none; } button:active { transform:none; } }
+    #sticker-layer { position:absolute; inset:0; pointer-events:none; }
+    button.inventory-sticker { position:absolute; transform:translate(-50%,-50%); padding:0;
+      width:var(--sticker-size); height:var(--sticker-size); min-height:0; min-width:0;
+      border:0; border-radius:10px; background:none; pointer-events:auto; touch-action:manipulation; }
+    .sticker-picture { display:block; position:absolute; inset:0; overflow:hidden;
+      animation:sticker-float 3.4s ease-in-out var(--phase) infinite;
+      pointer-events:none; }
+    .sticker-artwork { display:block; position:absolute; left:7%; top:7%; width:86%; height:86%;
+      object-fit:contain; filter:drop-shadow(0 2px 2px #18253340); }
+    .sticker-underlay { opacity:.68; transform:translate(calc(var(--layer) * -4%),calc(var(--layer) * 4%))
+      rotate(calc(var(--layer) * -5deg)); }
+    .sticker-emoji { position:absolute; inset:0; text-align:center; line-height:var(--sticker-size);
+      font-size:calc(var(--sticker-size) * .63); }
+    .sticker-portions { position:absolute; right:1px; bottom:1px; border:1px solid white; border-radius:10px;
+      padding:1px 3px; background:#25313a; color:white; font-size:clamp(7px,calc(var(--sticker-size) * .18),11px);
+      font-weight:600; line-height:1; }
+    .sticker-name { position:absolute; left:50%; bottom:calc(100% + 8px); transform:translateX(-50%);
+      opacity:0; border-radius:5px; padding:4px 7px; background:#171a1d; color:white;
+      font-size:12px; line-height:1.4; pointer-events:none; }
+    .inventory-sticker:is(:hover,:focus-visible) { z-index:1; }
+    .inventory-sticker:is(:hover,:focus-visible) .sticker-picture {
+      animation:none; transform:translateY(calc(var(--sticker-size) * -.1)) scale(1.04); }
+    .inventory-sticker:is(:hover,:focus-visible) .sticker-name { opacity:1; }
+    @keyframes sticker-float {
+      0%,100% { transform:translateY(0) rotate(-2deg); }
+      50% { transform:translateY(calc(var(--sticker-size) * -.05)) rotate(2deg); }
+    }
+    #sticker-pager { position:absolute; left:10px; bottom:8px; display:flex; align-items:center;
+      padding:3px; gap:6px; background:#fffffff5; border:1px solid #dce2e6; border-radius:9px; }
+    #sticker-pager[hidden] { display:none; }
+    #sticker-pager button { min-height:36px; min-width:36px; padding:0; font-size:18px; }
+    #sticker-pager button:disabled { opacity:.42; cursor:default; }
+    #scene[data-active="false"] .sticker-picture { animation-play-state:paused; }
+    @media(max-width:480px) { .controls { margin-inline:5px; gap:4px; } button { font-size:11px; padding-inline:2px; } }
+    @media(prefers-reduced-motion:reduce) {
+      button { transition:none; } button:active { transform:none; }
+      .sticker-picture { animation:none; }
+    }
   </style>
 </head>
 <body>
   <main id="scene" aria-label="灰白黑厨房中的哑光灰白冰箱三维场景">
-    <canvas id="fridge-canvas" tabindex="0" aria-label="可交互冰箱。拖动查看；数字1到4选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
+    <div class="scene-view">
+      <canvas id="fridge-canvas" tabindex="0" aria-label="三维冰箱。拖动旋转；数字1到3选择分区，0恢复概览，Escape关闭冰箱。"></canvas>
+      <div id="sticker-layer" role="group" aria-label="当前分区食材"></div>
+      <div id="sticker-pager" role="group" aria-label="分区食材分页" hidden>
+        <button id="sticker-previous" type="button" aria-label="上一组食材">‹</button>
+        <span id="sticker-page" aria-live="polite"></span>
+        <button id="sticker-next" type="button" aria-label="下一组食材">›</button>
+      </div>
+    </div>
     <div class="controls" role="group" aria-label="冰箱结构控制">
-      <button id="overview" type="button">展开概览</button>
+      <button id="overview" type="button">概览</button>
       <button id="left-door" type="button" data-part="leftDoor" aria-pressed="false">左门</button>
       <button id="right-door" type="button" data-part="rightDoor" aria-pressed="false">右门</button>
-      <button id="variable-drawer" type="button" data-part="middleDrawer" aria-pressed="false">变温</button>
+      <button id="variable-drawer" type="button" data-part="middleDrawer" aria-pressed="false" aria-label="变温抽屉">变温</button>
       <button id="freezer-drawer" type="button" data-part="freezerDrawer" aria-pressed="false">冷冻</button>
-      <button id="close-all" type="button">全部关闭</button>
+      <button id="close-all" type="button" aria-label="关闭所有门和抽屉">关闭</button>
     </div>
-    <div id="fallback" class="fallback" role="status"><strong>三维厨房暂不可用</strong><span>请打开浏览器硬件加速或重新加载。食材仍可通过页面的冰箱清单查看和管理。</span></div>
-    <div id="loading" class="loading" role="status">正在打开厨房场景…</div>
+    <div id="fallback" class="fallback" role="status"><strong>三维场景暂不可用</strong><span>请重新加载或打开食材清单。</span></div>
+    <div id="loading" class="loading" role="status">正在加载…</div>
     <output id="live-status" class="sr-only" aria-live="polite"></output>
   </main>
   <script>
@@ -46,6 +92,6 @@
     window.addEventListener('unhandledrejection', showLoadError);
   </script>
   <script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
-  <script type="module" src="./fridge3d.js?rev=quiet-white-v2.0.1"></script>
+  <script type="module" src="./fridge3d.js?rev=fridge-sticker-grid-v2.3"></script>
 </body>
 </html>

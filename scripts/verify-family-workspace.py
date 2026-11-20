@@ -116,7 +116,8 @@ def main():
         status, fridge, _ = call("/api/v1/fridges?familyId=" + str(family_id), access)
         zones = fridge.get("data", {}).get("zones", [])
         check(f"usable-fridge-{index}", status == 200 and fridge["data"]["id"] == fridge_id
-            and len(zones) == 4 and sum(len(zone["containers"]) for zone in zones) == 6,
+            and [zone["code"] for zone in zones] == ["FRESH", "VARIABLE", "FREEZER"]
+            and [len(zone["containers"]) for zone in zones] == [2, 2, 1],
             f"fridge={fridge_id}, zones={len(zones)}")
         if index == 1:
             owner_workspace = data

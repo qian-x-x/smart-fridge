@@ -1,7 +1,11 @@
 import * as THREE from '../vendor/three.module.min.js';
+import { DRAWERS, DRAWER_FRONT, TRAY } from './fridge-state.js?rev=fridge-sticker-grid-v2.3';
 
-export const SIZE = Object.freeze({ width: 2.12, height: 4.36, depth: 1.68, doorAngle: 1.75,
-  variableTravel: 0.78, freezerTravel: 1.06, freshBottom: 1.78 });
+export const SIZE = Object.freeze({ width: 2.12, height: 4.36, depth: 1.68, doorAngle: 1.75 });
+const FREEZER_BASKETS = [
+  { name: 'upper-sliding-basket', height: 0.22, depth: 0.64, y: 0.16, z: -0.355 },
+  { name: 'lower-freezer-basket', height: 0.42, depth: TRAY.depth, y: -0.24, z: TRAY.z },
+];
 
 export function box(parent, name, size, position, material, radius = 0) {
   let geometry;
@@ -42,7 +46,6 @@ export function createMaterials(textures = {}) {
     wood: new THREE.MeshStandardMaterial({ color: 0xffffff, map: textures.wood ?? null, roughness: 0.85, envMapIntensity: 0.2 }),
     stone: new THREE.MeshStandardMaterial({ color: 0x3d4750, map: textures.stone ?? null, roughness: 0.78, envMapIntensity: 0.2 }),
     floor: new THREE.MeshStandardMaterial({ color: 0x7e8992, map: textures.stone ?? null, roughness: 0.9, envMapIntensity: 0.2 }),
-    upperCabinet: new THREE.MeshStandardMaterial({ color: 0x929da6, roughness: 0.8, envMapIntensity: 0.2 }),
     wall: new THREE.MeshStandardMaterial({ color: 0x9ea8b0, roughness: 0.95, envMapIntensity: 0.2 }),
   };
 }
@@ -107,24 +110,33 @@ function basket(parent, name, width, height, depth, y, z, materials) {
 }
 
 function createDrawer(kind, materials, hitTargets) {
-  const variable = kind === 'variable';
+  const { part, y, height } = DRAWERS[kind];
   const group = new THREE.Group();
-  group.name = variable ? 'middleDrawer' : 'freezerDrawer';
-  group.userData.part = group.name;
+  group.name = part;
+  group.userData.part = part;
   group.userData.zone = kind;
-  group.position.y = variable ? 1.47 : 0.68;
-  const height = variable ? 0.51 : 0.98;
-  const face = box(group, 'drawer-insulated-front', [2.09, height, 0.18], [0, 0, 0.86], materials.steel, 0.025);
+  group.position.y = y;
+  const front = DRAWER_FRONT;
+  const face = box(group, 'drawer-insulated-front', [front.width, height, front.depth], [0, 0, front.z], materials.steel, 0.025);
   hitTargets.push(face);
   box(group, 'drawer-liner', [1.89, height - 0.06, 0.05], [0, 0, 0.735], materials.white);
-  box(group, 'drawer-handle-recess', [1.5, 0.045, 0.045], [0, height / 2 - 0.045, 0.963], materials.dark, 0.012);
-  if (variable) {
-    box(group, 'variable-tray-floor', [1.87, 0.035, 1.28], [0, -0.18, 0.04], materials.white);
-    for (const x of [-0.94, 0, 0.94]) box(group, 'variable-tray-divider', [0.025, 0.3, 1.28], [x, -0.02, 0.04], materials.glass);
-    box(group, 'variable-tray-back', [1.9, 0.3, 0.025], [0, -0.02, -0.6], materials.white);
+  box(group, 'drawer-handle-recess', [1.5, 0.045, front.handleDepth], [0, height / 2 - 0.045, front.handleZ], materials.dark, 0.012);
+  if (kind === 'variable') {
+    const { width, depth, z, floorY, rimDepth } = TRAY;
+    box(group, 'tray-floor', [width, 0.035, depth], [0, floorY, z], materials.white);
+    for (const sign of [-1, 1]) {
+      box(group, 'tray-side', [0.044, 0.31, depth], [sign * width / 2, -0.015, z], materials.white);
+      box(group, 'tray-end', [width, 0.31, rimDepth], [0, -0.015, z + sign * depth / 2], materials.white);
+    }
+    box(group, 'tray-divider', [0.024, 0.23, depth - 0.08], [0, -0.06, z], materials.glass);
   } else {
-    basket(group, 'lower-freezer-basket', 1.86, 0.42, 1.28, -0.22, 0.02, materials);
-    basket(group, 'upper-sliding-basket', 1.8, 0.24, 0.8, 0.19, -0.15, materials);
+    for (const sign of [-1, 1]) {
+      box(group, 'freezer-liner-side', [0.04, 0.64, TRAY.depth],
+        [sign * (TRAY.width / 2 + 0.035), -0.155, TRAY.z], materials.white);
+    }
+    for (const { name, height, depth, y, z } of FREEZER_BASKETS) {
+      basket(group, name, TRAY.width, height, depth, y, z, materials);
+    }
   }
   for (const x of [-1, 1]) {
     box(group, 'telescopic-inner-rail', [0.032, 0.075, 1.28], [x, -height / 2 + 0.08, 0.05], materials.side);
@@ -174,76 +186,22 @@ export function buildFridge(materials) {
   }
   parts.leftDoor = createDoor('left', materials, hitTargets);
   parts.rightDoor = createDoor('right', materials, hitTargets);
-  parts.middleDrawer = createDrawer('variable', materials, hitTargets);
-  parts.freezerDrawer = createDrawer('freezer', materials, hitTargets);
   Object.values(parts).forEach((part) => root.add(part));
-  for (const y of [0.3, 1.31]) for (const x of [-1, 1]) box(root, 'fixed-outer-rail', [0.04, 0.07, 1.4], [x, y, 0], materials.side);
-  const foodGroups = {};
-  for (const zone of ['fresh', 'variable', 'freezer', 'pantry']) { foodGroups[zone] = new THREE.Group(); foodGroups[zone].name = `${zone}-foods`; }
-  root.add(foodGroups.fresh);
-  parts.middleDrawer.add(foodGroups.variable);
-  parts.freezerDrawer.add(foodGroups.freezer);
-  return { root, parts, hitTargets, foodGroups };
+  for (const [zone, { part, y, height }] of Object.entries(DRAWERS)) {
+    const drawer = createDrawer(zone, materials, hitTargets);
+    parts[part] = drawer;
+    root.add(drawer);
+    for (const x of [-1, 1]) {
+      box(root, 'fixed-outer-rail', [0.04, 0.07, 1.4], [x, y - height / 2 + 0.08, 0], materials.side);
+    }
+  }
+  return { root, parts, hitTargets };
 }
 
 export function poseFridge(parts, state) {
   parts.leftDoor.rotation.y = -SIZE.doorAngle * state.leftDoor;
   parts.rightDoor.rotation.y = SIZE.doorAngle * state.rightDoor;
-  parts.middleDrawer.position.z = SIZE.variableTravel * state.middleDrawer;
-  parts.freezerDrawer.position.z = SIZE.freezerTravel * state.freezerDrawer;
-}
-
-export function makeFood(food) {
-  const group = new THREE.Group();
-  group.name = 'inventory-item'; group.userData.foodId = food.id;
-  const key = `${food.name}${food.category}`.toLowerCase();
-  const color = /奶|milk/.test(key) ? 0xf5f3e9 : /肉|虾|鱼|meat/.test(key) ? 0xd88669 : /番茄|tomato/.test(key) ? 0xc64e39 : 0x679144;
-  const material = new THREE.MeshStandardMaterial({ color, roughness: 0.5 });
-  if (/奶|饮|milk|juice/.test(key)) {
-    const body = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.088, 0.31, 16), material);
-    body.position.y = 0.17; body.castShadow = true; group.add(body);
-    box(group, 'bottle-neck', [0.075, 0.08, 0.075], [0, 0.355, 0], material, 0.025);
-    box(group, 'bottle-cap', [0.08, 0.025, 0.08], [0, 0.405, 0], new THREE.MeshStandardMaterial({ color: 0xadb7b1 }), 0.015);
-  } else if (/蛋|egg/.test(key)) {
-    box(group, 'egg-carton', [0.37, 0.045, 0.24], [0, 0.025, 0], new THREE.MeshStandardMaterial({ color: 0xc7bda4 }), 0.015);
-    for (let i = 0; i < 6; i++) {
-      const egg = new THREE.Mesh(new THREE.SphereGeometry(0.046, 12, 8), new THREE.MeshStandardMaterial({ color: 0xe6d6bb, roughness: 0.7 }));
-      egg.scale.y = 1.35; egg.position.set(-0.12 + i % 3 * 0.12, 0.09, -0.065 + Math.floor(i / 3) * 0.13); group.add(egg);
-    }
-  } else if (/肉|虾|鱼|冻|meat/.test(key)) {
-    box(group, 'food-container', [0.35, 0.045, 0.26], [0, 0.025, 0], new THREE.MeshStandardMaterial({ color: 0xe6e7e2 }), 0.02);
-    box(group, 'wrapped-food', [0.29, 0.08, 0.2], [0, 0.085, 0], material, 0.035);
-  } else if (/调|酱|米|油|salt/.test(key)) {
-    box(group, 'pantry-jar', [0.16, 0.26, 0.16], [0, 0.14, 0], new THREE.MeshStandardMaterial({ color: 0xaea17e, roughness: 0.35 }), 0.025);
-    box(group, 'jar-lid', [0.17, 0.03, 0.17], [0, 0.29, 0], new THREE.MeshStandardMaterial({ color: 0x343e35 }), 0.02);
-  } else {
-    for (let i = 0; i < 3; i++) {
-      const produce = new THREE.Mesh(new THREE.SphereGeometry(0.085, 14, 10), material);
-      produce.scale.set(1, 0.85 + i * 0.12, 1); produce.position.set(-0.08 + i * 0.08, 0.1, (i % 2) * 0.1); produce.castShadow = true; group.add(produce);
-    }
-  }
-  return group;
-}
-
-export function replaceInventory(foodGroups, foods) {
-  for (const group of Object.values(foodGroups)) {
-    for (const child of [...group.children]) {
-      child.traverse((mesh) => { mesh.geometry?.dispose(); if (mesh.material) mesh.material.dispose(); });
-      group.remove(child);
-    }
-  }
-  for (const zone of Object.keys(foodGroups)) {
-    const items = foods.filter((food) => food.zone === zone).slice(0, 12);
-    items.forEach((food, index) => {
-      const mesh = makeFood(food);
-      if (zone === 'fresh') {
-        if (/蔬|菜|水果/.test(food.category)) mesh.position.set(index % 2 === 0 ? -0.48 : 0.48, 1.86, 0.13);
-        else mesh.position.set(-0.64 + index % 4 * 0.42, [2.36, 3.0, 3.65][Math.floor(index / 4)], -0.12);
-      }
-      else if (zone === 'variable') mesh.position.set(-0.61 + index % 4 * 0.4, -0.15, -0.29 + Math.floor(index / 4) * 0.32);
-      else if (zone === 'freezer') { mesh.scale.setScalar(0.8); mesh.position.set(-0.61 + index % 4 * 0.4, Math.floor(index / 4) > 1 ? -0.4 : 0.11, -0.34 + index % 2 * 0.35); }
-      else { mesh.position.set(-0.55 + index % 4 * 0.35, 0, -0.3 + Math.floor(index / 4) * 0.32); }
-      foodGroups[zone].add(mesh);
-    });
+  for (const { part, travel } of Object.values(DRAWERS)) {
+    parts[part].position.z = travel * state[part];
   }
 }

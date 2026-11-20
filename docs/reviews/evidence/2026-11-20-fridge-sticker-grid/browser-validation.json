@@ -1,0 +1,116 @@
+{
+  "scope": "Flutter release, Edge software WebGL, local V6 preview through real Gateway",
+  "checks": [
+    {
+      "name": "旧版复现瓶装贴纸高度超过格位",
+      "pass": true,
+      "detail": "[{\"name\":\"食用油\",\"slot\":78,\"image\":246},{\"name\":\"生抽\",\"slot\":78,\"image\":215},{\"name\":\"老抽\",\"slot\":78,\"image\":215}]"
+    },
+    {
+      "name": "真实库存有十六种和一批同名补货",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "第十六种保持十六格且同种库存叠在一起",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "五份食用油共占一格且按份计数",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "共用图片的生抽和老抽各自占格",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "油和酱油按长宽比限制在一个方格内",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "界面添加第十七种后自动扩展到三十二格",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "切换到三十二格后原贴纸缩小",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "变温抽屉三十二种满格时图片不相碰",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "窄屏三十二格仍各自容纳完整图片",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "小格悬停仍抬高并显示名称",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "堆叠贴纸保留相关菜谱入口",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "超过三十二种后在同一密度翻页",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "第二页仍可见第三十三种库存",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "冷冻抽屉采用同样的扩容规则",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "双开门四层共二十四格",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "两侧各十二格且开启单侧时没有重排",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "新版场景入口和页面无运行异常",
+      "pass": true,
+      "detail": ""
+    }
+  ],
+  "gridFacts": {
+    "oldImageSizes": [
+      {
+        "name": "食用油",
+        "slot": 78,
+        "image": 246
+      },
+      {
+        "name": "生抽",
+        "slot": 78,
+        "image": 215
+      },
+      {
+        "name": "老抽",
+        "slot": 78,
+        "image": 215
+      }
+    ],
+    "defaultStickerWidth": 63.5,
+    "expandedStickerWidth": 44.296875
+  }
+}

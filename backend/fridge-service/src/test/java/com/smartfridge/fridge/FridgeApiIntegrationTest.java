@@ -3,6 +3,7 @@ package com.smartfridge.fridge;
 import com.sun.net.httpserver.HttpServer;
 import com.jayway.jsonpath.JsonPath;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -75,9 +76,14 @@ class FridgeApiIntegrationTest {
             .andExpect(jsonPath("$.code").value("OK"))
             .andExpect(jsonPath("$.data.familyId").value(42))
             .andExpect(jsonPath("$.data.name").value("主冰箱"))
-            .andExpect(jsonPath("$.data.zones.length()").value(4))
+            .andExpect(jsonPath("$.data.zones.length()").value(3))
             .andExpect(jsonPath("$.data.zones[0].code").value("FRESH"))
-            .andExpect(jsonPath("$.data.zones[0].containers.length()").value(2));
+            .andExpect(jsonPath("$.data.zones[1].code").value("VARIABLE"))
+            .andExpect(jsonPath("$.data.zones[2].code").value("FREEZER"))
+            .andExpect(jsonPath("$.data.zones[0].containers.length()").value(2))
+            .andExpect(jsonPath("$.data.zones[1].containers.length()").value(2))
+            .andExpect(jsonPath("$.data.zones[1].containers[1].type").value("DRAWER"))
+            .andExpect(jsonPath("$.data.zones[2].containers.length()").value(1));
     }
 
     @Test
@@ -125,7 +131,7 @@ class FridgeApiIntegrationTest {
                 .header("Authorization", "Bearer viewer-token"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.familyId").value(familyId))
-            .andExpect(jsonPath("$.data.zones.length()").value(4));
+            .andExpect(jsonPath("$.data.zones.length()").value(3));
     }
 
     @Test
@@ -423,7 +429,7 @@ class FridgeApiIntegrationTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.id").value(fridge.fridgeId()))
             .andExpect(jsonPath("$.data.familyId").value(54))
-            .andExpect(jsonPath("$.data.zones.length()").value(4));
+            .andExpect(jsonPath("$.data.zones.length()").value(3));
     }
 
     @Test
@@ -538,6 +544,76 @@ class FridgeApiIntegrationTest {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM food_item WHERE fridge_id = ?",
             Integer.class, fridge.fridgeId());
         org.assertj.core.api.Assertions.assertThat(count).isZero();
+    }
+
+    @Test
+    void catalogBatchWritesWholePortionsAndReplaysOnlyTheSamePayload() throws Exception {
+        FridgeFixture fridge = createFridge(802, "7");
+        String items = """
+            [{"zoneId": %d, "name": "西红柿", "category":"蔬菜","portions":2},
+             {"zoneId": %d, "name": "三文鱼", "category":"海鲜","portions":1}]
+            """.formatted(fridge.zoneId(), fridge.variableZoneId());
+        mockMvc.perform(catalogRequest(fridge, "catalog-valid-802", items))
+            .andExpect(status().isCreated()).andExpect(jsonPath("$.data.added").value(2));
+        mockMvc.perform(catalogRequest(fridge, "catalog-valid-802", items))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.data.added").value(2));
+        mockMvc.perform(catalogRequest(fridge, "catalog-valid-802", items.replace("\"portions\":2", "\"portions\":3")))
+            .andExpect(status().isConflict());
+        mockMvc.perform(searchRequest(fridge).param("query", "西红柿"))
+            .andExpect(jsonPath("$.data.length()").value(1))
+            .andExpect(jsonPath("$.data[0].quantity").value(2))
+            .andExpect(jsonPath("$.data[0].unit").value("份"))
+            .andExpect(jsonPath("$.data[0].modelKey").value("sticker:西红柿"))
+            .andExpect(jsonPath("$.data[0].containerId").value(fridge.containerId()));
+        mockMvc.perform(searchRequest(fridge).param("zoneId", "" + fridge.variableZoneId()))
+            .andExpect(jsonPath("$.data[0].name").value("三文鱼"))
+            .andExpect(jsonPath("$.data[0].remainingDays").value(1));
+        assertEquals(2, jdbcTemplate.queryForObject("""
+            SELECT COUNT(*) FROM food_operation WHERE fridge_id = ? AND action = 'ADD'
+            """, Integer.class, fridge.fridgeId()));
+    }
+
+    @Test
+    void catalogBatchRollsBackTheFirstItemIfAnotherZoneIsForeign() throws Exception {
+        FridgeFixture fridge = createFridge(803, "7");
+        FridgeFixture other = createFridge(804, "7");
+        String items = """
+            [{"zoneId": %d, "name": "鸡蛋","category":"蛋奶豆制品","portions":1},
+             {"zoneId": %d, "name": "豆腐","category":"蛋奶豆制品","portions":1}]
+            """.formatted(fridge.zoneId(), other.variableZoneId());
+        mockMvc.perform(catalogRequest(fridge, "catalog-rollback-803", items)).andExpect(status().isConflict());
+        mockMvc.perform(searchRequest(fridge)).andExpect(jsonPath("$.data.length()").value(0));
+        mockMvc.perform(searchRequest(other)).andExpect(jsonPath("$.data.length()").value(0));
+        assertEquals(0, jdbcTemplate.queryForObject(
+            "SELECT COUNT(*) FROM food_operation WHERE fridge_id = ?", Integer.class, fridge.fridgeId()));
+        mockMvc.perform(catalogRequest(fridge, "catalog-rollback-803",
+            items.replace("\"zoneId\": " + other.variableZoneId(), "\"zoneId\": " + fridge.variableZoneId())))
+            .andExpect(status().isCreated());
+    }
+
+    @Test
+    void catalogBatchRejectsFractionalPortionsAndReadOnlyWriters() throws Exception {
+        FridgeFixture fridge = createFridge(805, "7");
+        String item = """
+            [{"zoneId": %d, "name": "牛奶", "category":"奶制品","portions":1.5}]
+            """.formatted(fridge.zoneId());
+        mockMvc.perform(catalogRequest(fridge, "catalog-whole-805", item)).andExpect(status().isBadRequest());
+        currentFamilyRole = "VIEWER";
+        mockMvc.perform(catalogRequest(fridge, "catalog-whole-805", item.replace("1.5", "1")))
+            .andExpect(status().isForbidden());
+        mockMvc.perform(searchRequest(fridge)).andExpect(jsonPath("$.data.length()").value(0));
+    }
+
+    private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder catalogRequest(
+        FridgeFixture fridge, String requestId, String items
+    ) {
+        return post("/api/v1/foods/catalog-batch")
+            .header("X-User-Id", "7")
+            .header("Authorization", "Bearer owner-token")
+            .contentType("application/json")
+            .content("""
+                {"fridgeId":%d,"requestId":"%s","items":%s}
+                """.formatted(fridge.fridgeId(), requestId, items));
     }
 
     private org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder searchRequest(FridgeFixture fridge) {

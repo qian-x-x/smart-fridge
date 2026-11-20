@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
+import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/cook_confirm_sheet.dart';
 import 'package:smart_fridge_app/features/recipe/application/recipe_controller.dart';
@@ -69,59 +70,19 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
-                      'COOK WITH WHAT YOU HAVE',
-                      style: TextStyle(
-                        color: AppColors.muted,
-                        letterSpacing: 2,
-                        fontSize: 11,
-                      ),
-                    ),
-                    const SizedBox(height: 9),
-                    Text(
-                      '下一餐，就从冰箱开始。',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 9),
-                    Text(
-                      '${matches.length} 道家常菜，按冰箱里的现有食材寻找下一餐。',
-                      style: const TextStyle(
-                        fontSize: 13,
-                        color: AppColors.muted,
-                        height: 1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 13,
-                        horizontal: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.cool,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.eco_outlined,
-                            size: 20,
-                            color: AppColors.muted,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            '家常菜谱',
+                            style: Theme.of(context).textTheme.headlineMedium,
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: Text(
-                              matches.any((m) => m.expiringMatches > 0)
-                                  ? '有菜谱能用上临期食材，切换“临期优先”看看。'
-                                  : '先看看已有原料，再补齐缺少的食材。',
-                              style: const TextStyle(
-                                color: AppColors.muted,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                        Text(
+                          '${filtered.length} 道',
+                          style: const TextStyle(color: AppColors.muted),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 20),
                     Wrap(
@@ -222,6 +183,7 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
 
   Future<void> _showDetails(RecipeMatch match) {
     final workspace = _workspaceOrNull();
+    final hasPortions = match.matchedFoods.any((food) => food.unit == '份');
     return showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
@@ -235,6 +197,7 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
             workspace.hasFridge &&
             workspace.canEdit &&
             !workspace.isDemo &&
+            (!hasPortions || match.complete) &&
             match.matchedFoods.isNotEmpty,
         onCook: () => _openCook(match, ModalRoute.of(sheetContext)),
       ),
@@ -250,6 +213,17 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
       _notify('还没有可用的冰箱');
       return;
     }
+    final current = RecipeMatcher.match(match.recipe, workspace.foods);
+    final portionBased = current.matchedFoods.any((food) => food.unit == '份');
+    if (current.matchedFoods.isEmpty ||
+        (portionBased &&
+            (!current.complete ||
+                current.deductions.any(
+                  (item) => item.food.serverId == null,
+                )))) {
+      _notify('库存已变化，请核对所需食材');
+      return;
+    }
     final cooked = await showModalBottomSheet<bool>(
       context: context,
       useRootNavigator: true,
@@ -258,14 +232,25 @@ class _RecipesPageState extends ConsumerState<RecipesPage> {
       backgroundColor: AppColors.paper,
       builder: (context) => CookConfirmSheet(
         fridgeId: workspace.fridgeId,
+        familyId: workspace.familyId,
         canEdit: workspace.canEdit && !workspace.isDemo,
         recipeId: match.recipe.id,
         recipeName: match.recipe.name,
         servings: match.recipe.servings,
         candidates: [
-          for (final food in match.matchedFoods)
+          for (final food in current.matchedFoods)
             if (food.serverId != null) food,
         ],
+        plan: portionBased
+            ? [
+                for (final item in current.deductions)
+                  CookItemInput(
+                    foodItemId: item.food.serverId!,
+                    quantity: item.quantity,
+                    version: item.food.version,
+                  ),
+              ]
+            : null,
       ),
     );
     if (cooked != true || !mounted) {

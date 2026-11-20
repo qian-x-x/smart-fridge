@@ -62,8 +62,16 @@ async function main(){
  await cdp.shot('ui-home-desktop');
  for(const [width,height,label]of [[1440,1000,'desktop'],[390,844,'mobile']]){
    await viewport(width,height);await sceneReady();await sceneClick('close-all');
-   const ids=['left-door','right-door','variable-drawer','freezer-drawer'],parts=['leftDoor','rightDoor','middleDrawer','freezerDrawer'];let mask=0;
-   for(let i=0;i<16;i++){const next=i^(i>>1);for(let bit=0;bit<4;bit++)if((next^mask)&(1<<bit))await sceneClick(ids[bit]);mask=next;scene=await sceneState();const expected=parts.filter((_,bit)=>mask&(1<<bit)).sort();check(`${label}-door-combination-${mask}`,JSON.stringify(scene.open)===JSON.stringify(expected));}
+   const drawerSteps = [
+     ['left-door',['leftDoor']], ['right-door',['leftDoor','rightDoor']],
+     ['freezer-drawer',['freezerDrawer']], ['variable-drawer',['middleDrawer']],
+     ['overview',['freezerDrawer','leftDoor','middleDrawer','rightDoor']],
+     ['variable-drawer',['middleDrawer']], ['variable-drawer',[]],
+   ];
+   for (const [index,[id,expected]] of drawerSteps.entries()) {
+     await sceneClick(id); scene=await sceneState();
+     check(`${label}-drawer-control-step-${index+1}`,JSON.stringify(scene.open)===JSON.stringify(expected));
+   }
    await sceneClick('close-all');scene=await sceneState();check(`${label}-scene-control-layout`,scene.noOverlap&&scene.buttons);
    if(label==='mobile')await cdp.shot('ui-home-mobile');
  }
@@ -84,7 +92,7 @@ async function main(){
  const records=await api('/api/v1/fridges/'+fixture.workspace.id+'/cook-records',{token:fixture.token});check('new-ui-cook-recorded-once',records.length===1&&records[0].recipeId===1);
  await cdp.label('家庭设置');await cdp.label('退出当前账号',true);await cdp.label('退出');await until(()=>cdp.eval("location.href.includes('/login')"));
  await cdp.label('用户名或手机号');await cdp.send('Input.insertText',{text:fixture.viewerUsername});await cdp.label('密码');await cdp.send('Input.insertText',{text:fixture.password});await cdp.label('进入我的冰箱');await until(()=>cdp.eval("location.href.includes('/home')"));await sceneReady();
- check('real-viewer-ui-disables-add-food',await cdp.eval("[...document.querySelectorAll('[aria-disabled=\"true\"]')].some(e=>(e.getAttribute('aria-label')||e.textContent||'').includes('新增食材'))"));await cdp.shot('ui-home-viewer');
+ check('real-viewer-ui-disables-add-food',await cdp.eval("[...document.querySelectorAll('[aria-disabled=\"true\"]')].some(e=>(e.getAttribute('aria-label')||e.textContent||'').includes('添加食材'))"));await cdp.shot('ui-home-viewer');
  const exceptions=events.filter(e=>e.method==='Runtime.exceptionThrown');check('no-browser-runtime-exceptions',exceptions.length===0);
  const failedAssets=events.filter(e=>e.method==='Network.responseReceived'&&e.params.response.url.includes('/assets/')&&e.params.response.status>=400);check('no-failed-assets',failedAssets.length===0);
  await viewport(1800,1400);await cdp.send('Page.navigate',{url:APP+'/docs/design/ui-redesign-2026-11-10/recipe-gallery.html'});await until(()=>cdp.eval('document.images.length===18&&[...document.images].every(i=>i.complete&&i.naturalWidth>0)'));await cdp.eval('document.fonts.ready.then(()=>true)');await cdp.shot('recipe-gallery');

@@ -1,0 +1,100 @@
+{
+  "preview": "http://127.0.0.1:18134",
+  "desktop": "1440×1000",
+  "mobile": "390×844",
+  "consumedIngredients": 4,
+  "passed": 18,
+  "failed": false,
+  "results": [
+    {
+      "name": "兼容接口仍能按标签查询旧库存别名",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "筛选区无标签框，分类与分区仍可用",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "自动筛选仅显示番茄，且本次查询未发送标签",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "点选筛选结果直接看到白边贴纸、库存和相关菜谱",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "相关菜谱核对全冰箱，准确显示已备与缺少",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "缺料阶段没有扣减请求",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "库存详情保有份量操作和编辑入口",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "四种原料入库各为两份",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "清单选中新入库原料时自动同步了全冰箱库存",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "原料齐备后可从清单详情直接制作",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "一次制作只提交一次扣减并包含全部四种食材",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "实际库存每种扣一份且版本各自递增",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "制作写入四条对应库存流水",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "返回清单保留名称条件并看到扣减后的份量",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "手机视口入口展示菜谱，完整库存的只读成员只能查看",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "只读库存详情没有编辑操作",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "服务器拒绝只读制作且扣减保持一次",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "本轮浏览器无脚本异常",
+      "pass": true,
+      "detail": ""
+    }
+  ]
+}

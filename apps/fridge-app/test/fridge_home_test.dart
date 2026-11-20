@@ -11,64 +11,171 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:smart_fridge_app/core/session/session_store.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 import 'package:smart_fridge_app/features/auth/domain/auth_session.dart';
+import 'package:smart_fridge_app/features/fridge/application/food_search_provider.dart';
+import 'package:smart_fridge_app/features/fridge/application/fridge_workspace_controller.dart';
 import 'package:smart_fridge_app/features/fridge/data/api_fridge_repository.dart';
 import 'package:smart_fridge_app/features/fridge/domain/food_operation.dart';
 import 'package:smart_fridge_app/features/fridge/domain/fridge_workspace_data.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/fridge_home_page.dart';
+import 'package:smart_fridge_app/features/fridge/presentation/widgets/ingredient_sticker_image.dart';
 import 'package:smart_fridge_app/features/fridge/presentation/widgets/webgl_fridge_view.dart';
+import 'package:smart_fridge_app/features/recipe/data/home_recipe_catalog.dart';
+import 'package:smart_fridge_app/features/recipe/data/recipe_repository.dart';
+import 'package:smart_fridge_app/features/recipe/domain/recipe.dart';
 
 void main() {
   testWidgets(
-    'changing only the selected category protects the unsaved draft',
+    'sticker recipes show missing ingredients and deduct complete stock once',
     (tester) async {
       await tester.binding.setSurfaceSize(const Size(390, 844));
       addTearDown(() => tester.binding.setSurfaceSize(null));
-      final source = _RemoteFridgeSource();
-      await tester.pumpWidget(_realApp(source));
+      final ingredients = _tomatoEggStock('西红柿');
+      final source = _RemoteFridgeSource()..foodsOverride = ingredients;
+      await tester.pumpWidget(_realApp(source, recipes: _HomeRecipeSource()));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('新增食材'));
+      final view = tester.widget<WebGLFridgeView>(find.byType(WebGLFridgeView));
+      view.onFoodSelected!(ingredients.first);
       await tester.pumpAndSettle();
-      final field = find.byKey(const ValueKey('food-category-input'));
-      await tester.ensureVisible(field);
-      await tester.tap(field);
+      expect(find.text('番茄滑蛋'), findsOneWidget);
+      expect(find.text('清蒸南瓜'), findsNothing);
+      expect(find.text('鸡蛋 · 已备'), findsOneWidget);
+      expect(find.text('盐 · 已备'), findsOneWidget);
+      final cook = find.byKey(const ValueKey('cook-recipe-1'));
+      source.loseCookResponse = true;
+      await tester.tap(cook);
       await tester.pumpAndSettle();
-      for (final category in ['肉类', '奶制品', '蔬菜', '水果', '调味品']) {
-        expect(find.text(category), findsWidgets);
-      }
-      await tester.tap(find.text('奶制品').last);
+      expect(find.text('重试本次制作'), findsOneWidget);
+      await tester.tap(find.text('重试本次制作'));
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byTooltip('关闭新增'));
-      await tester.tap(find.byTooltip('关闭新增'));
-      await tester.pumpAndSettle();
-      expect(find.text('放弃未保存的内容？'), findsOneWidget);
-      await tester.tap(find.text('继续编辑'));
-      await tester.pumpAndSettle();
-      expect(find.text('奶制品'), findsOneWidget);
-      expect(source.addedFood, isNull);
+      expect(source.cookRequests.toSet().length, 1);
+      expect(source.cookRequests.length, 2);
+      expect(source.cookItems.last.map((item) => item.foodItemId), [
+        100,
+        101,
+        102,
+        103,
+      ]);
+      expect(source.cookItems.last.every((item) => item.quantity == 1), isTrue);
+      expect(find.textContaining('已制作「番茄滑蛋」'), findsOneWidget);
+      expect(find.text('鸡蛋 · 缺少'), findsOneWidget);
+      expect(find.text('食材未齐'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
 
-  testWidgets(
-    'focusing an unchanged food field does not create a dirty draft',
-    (tester) async {
-      await tester.binding.setSurfaceSize(const Size(390, 844));
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.pumpWidget(_realApp(_RemoteFridgeSource()));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text('新增食材'));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const ValueKey('food-name-input')));
-      await tester.pump();
-      await tester.tap(find.byTooltip('关闭新增'));
-      await tester.pumpAndSettle();
-      expect(find.byType(AlertDialog), findsNothing);
-      expect(find.byKey(const ValueKey('food-name-input')), findsNothing);
-      expect(tester.takeException(), isNull);
-    },
-  );
+  testWidgets('filtered list opens sticker, inventory details and cooking', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1366, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final source = _RemoteFridgeSource()..foodsOverride = _tomatoEggStock('番茄');
+    await tester.pumpWidget(_realApp(source, recipes: _HomeRecipeSource()));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('食材清单'));
+    await tester.pumpAndSettle();
+    final query = find.widgetWithText(TextField, '食材名称');
+    await tester.enterText(query, '番茄');
+    await tester.pump(const Duration(milliseconds: 250));
+    await tester.pumpAndSettle();
+    expect(find.text('找到 1 份食材'), findsOneWidget);
+    await tester.tap(find.widgetWithText(ListTile, '番茄'));
+    await tester.pumpAndSettle();
+    final sticker = find.byWidgetPredicate(
+      (widget) =>
+          widget is IngredientStickerImage &&
+          widget.size == 58 &&
+          widget.sticker?.imageName == '西红柿',
+    );
+    expect(sticker, findsOneWidget);
+    expect(find.text('相关菜谱'), findsOneWidget);
+    expect(find.text('1 份 · 冷藏'), findsOneWidget);
+    expect(find.text('鸡蛋 · 已备'), findsOneWidget);
+    expect(find.text('清蒸南瓜'), findsNothing);
 
-  testWidgets('unsaved food can be kept or explicitly discarded on close', (
+    await tester.tap(find.text('库存详情'));
+    await tester.pumpAndSettle();
+    expect(
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is IngredientStickerImage &&
+            widget.size == 78 &&
+            widget.sticker?.imageName == '西红柿',
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('edit-food-button')), findsOneWidget);
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byKey(const ValueKey('cook-recipe-1')));
+    await tester.pumpAndSettle();
+    expect(source.cookRequests, hasLength(1));
+    expect(source.cookItems.single.map((item) => item.foodItemId), [
+      100,
+      101,
+      102,
+      103,
+    ]);
+    expect(source.cookItems.single.every((item) => item.quantity == 1), isTrue);
+    expect(find.textContaining('已制作「番茄滑蛋」'), findsOneWidget);
+    expect(find.text('食材未齐'), findsOneWidget);
+    await tester.tap(find.byTooltip('关闭菜谱'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextField>(query).controller!.text, '番茄');
+    expect(find.text('找到 0 份食材'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('read-only members can open list recipes and stock details', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(390, 844));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final source = _RemoteFridgeSource()..foodsOverride = _tomatoEggStock('番茄');
+    await tester.pumpWidget(
+      _realApp(source, recipes: _HomeRecipeSource(), role: 'VIEWER'),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('冰箱清单'));
+    await tester.pumpAndSettle();
+    final row = find.widgetWithText(ListTile, '番茄');
+    await tester.ensureVisible(row);
+    await tester.tap(row);
+    await tester.pumpAndSettle();
+    expect(find.text('番茄滑蛋'), findsOneWidget);
+    expect(find.text('当前仅可查看菜谱'), findsWidgets);
+    expect(find.text('立即制作'), findsNothing);
+    await tester.tap(find.text('库存详情'));
+    await tester.pumpAndSettle();
+    expect(find.text('当前账号只有查看权限'), findsOneWidget);
+    expect(find.byKey(const ValueKey('edit-food-button')), findsNothing);
+    expect(source.cookRequests, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a newer list result refreshes the stock used by recipes', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1366, 900));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    final stock = _tomatoEggStock('番茄');
+    final source = _RemoteFridgeSource()
+      ..foodsOverride = stock.take(3).toList();
+    await tester.pumpWidget(_realApp(source, recipes: _HomeRecipeSource()));
+    await tester.pumpAndSettle();
+
+    source.foodsOverride = stock;
+    await tester.tap(find.text('食材清单'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(ListTile, '食盐'));
+    await tester.pumpAndSettle();
+    expect(find.text('库存详情'), findsOneWidget);
+    expect(find.text('番茄滑蛋'), findsOneWidget);
+    expect(find.text('立即制作'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('selects multiple stickers, whole portions and storage', (
     tester,
   ) async {
     await tester.binding.setSurfaceSize(const Size(390, 844));
@@ -76,26 +183,69 @@ void main() {
     final source = _RemoteFridgeSource();
     await tester.pumpWidget(_realApp(source));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('新增食材'));
+    await tester.tap(find.text('添加食材'));
     await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('food-name-input')),
-      '未保存的牛奶',
+    final query = find.byKey(const ValueKey('ingredient-picker-search'));
+    expect(find.byKey(const ValueKey('food-name-input')), findsNothing);
+
+    await tester.enterText(query, '西红柿');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('ingredient-西红柿')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('增加西红柿份量'));
+    await tester.enterText(query, '三文鱼');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('ingredient-三文鱼')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('长期 · 冷冻'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('save-catalog-foods')));
+    await tester.pumpAndSettle();
+
+    expect(source.catalogSelections.single.map((input) => input.sticker.name), [
+      '西红柿',
+      '三文鱼',
+    ]);
+    expect(source.catalogSelections.single.map((input) => input.portions), [
+      2,
+      1,
+    ]);
+    expect(source.catalogSelections.single.map((input) => input.zone), [
+      FridgeZoneId.fresh,
+      FridgeZoneId.freezer,
+    ]);
+    expect(
+      find.byKey(const ValueKey('ingredient-picker-search')),
+      findsNothing,
     );
-    await tester.tap(find.byTooltip('关闭新增'));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('protects a selected but unsaved sticker list on close', (
+    tester,
+  ) async {
+    final source = _RemoteFridgeSource();
+    await tester.pumpWidget(_realApp(source));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('添加食材'));
+    await tester.pumpAndSettle();
+    final query = find.byKey(const ValueKey('ingredient-picker-search'));
+    await tester.enterText(query, '红茶');
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('ingredient-红茶')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('关闭添加'));
     await tester.pumpAndSettle();
     expect(find.text('放弃未保存的内容？'), findsOneWidget);
     await tester.tap(find.text('继续编辑'));
     await tester.pumpAndSettle();
-    expect(find.text('未保存的牛奶'), findsOneWidget);
-    expect(source.addedFood, isNull);
-    await tester.tap(find.byTooltip('关闭新增'));
+    expect(find.textContaining('共 1 份'), findsOneWidget);
+    await tester.tap(find.byTooltip('关闭添加'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('放弃填写'));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('food-name-input')), findsNothing);
-    expect(source.addedFood, isNull);
-    expect(tester.takeException(), isNull);
+    expect(source.catalogSelections, isEmpty);
+    expect(query, findsNothing);
   });
 
   testWidgets(
@@ -145,8 +295,8 @@ void main() {
       tester.widget<WebGLFridgeView>(find.byType(WebGLFridgeView)).interactive,
       isTrue,
     );
-    await tester.ensureVisible(find.text('新增食材'));
-    await tester.tap(find.text('新增食材'));
+    await tester.ensureVisible(find.text('添加食材'));
+    await tester.tap(find.text('添加食材'));
     await tester.pumpAndSettle();
     expect(
       tester.widget<WebGLFridgeView>(find.byType(WebGLFridgeView)).interactive,
@@ -161,41 +311,41 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('add form rejects nonfinite and excessive precision quantities', (
+  testWidgets('retries the same catalog request after a lost response', (
     tester,
   ) async {
-    await tester.binding.setSurfaceSize(const Size(1366, 900));
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    final source = _RemoteFridgeSource();
+    final source = _RemoteFridgeSource()..loseCatalogResponse = true;
     await tester.pumpWidget(_realApp(source));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.text('新增食材'));
-    await tester.tap(find.text('新增食材'));
+    await tester.tap(find.text('添加食材'));
     await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const ValueKey('food-name-input')),
-      '测试食材',
-    );
-    for (final value in ['NaN', 'Infinity', '1.2345', '1000000000', '0.0001']) {
-      await tester.enterText(
-        find.byKey(const ValueKey('food-quantity-input')),
-        value,
-      );
-      await tester.ensureVisible(
-        find.byKey(const ValueKey('save-food-button')),
-      );
-      await tester.tap(find.byKey(const ValueKey('save-food-button')));
-      await tester.pumpAndSettle();
-      expect(source.addedFood, isNull);
-      expect(find.textContaining('数量至少 0.001'), findsOneWidget);
-    }
-    await tester.enterText(
-      find.byKey(const ValueKey('food-quantity-input')),
-      '0.001',
-    );
-    await tester.tap(find.byKey(const ValueKey('save-food-button')));
+    final save = find.byKey(const ValueKey('save-catalog-foods'));
+    final query = find.byKey(const ValueKey('ingredient-picker-search'));
+    await tester.enterText(query, '豆浆');
     await tester.pumpAndSettle();
-    expect(source.addedFood?.quantity, 0.001);
+    await tester.tap(find.byKey(const ValueKey('ingredient-豆浆')));
+    await tester.pumpAndSettle();
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+    expect(find.text('重试本次添加'), findsOneWidget);
+    final increment = find.byWidgetPredicate(
+      (widget) => widget is IconButton && widget.tooltip == '增加豆浆份量',
+    );
+    expect(tester.widget<IconButton>(increment).onPressed, isNull);
+    await tester.tap(save);
+    await tester.pumpAndSettle();
+
+    expect(source.catalogRequests.length, 2);
+    expect(source.catalogRequests.toSet().length, 1);
+    expect(source.catalogSelections.map((inputs) => inputs.single.portions), [
+      1,
+      1,
+    ]);
+    expect(source.catalogSelections.map((inputs) => inputs.single.zone), [
+      FridgeZoneId.variable,
+      FridgeZoneId.variable,
+    ]);
+    expect(query, findsNothing);
   });
   testWidgets('pending fridge creation prevents duplicate submissions', (
     tester,
@@ -303,20 +453,60 @@ void main() {
       expect(find.text('冷藏'), findsOneWidget);
       expect(find.text('变温'), findsOneWidget);
       expect(find.text('冷冻'), findsOneWidget);
+      expect(find.text('常温'), findsNothing);
       expect(find.text('番茄'), findsOneWidget);
 
-      await tester.drag(
-        find.byKey(const ValueKey('fridge-zone-selector')),
-        const Offset(-130, 0),
+      final cameraTransform = find.descendant(
+        of: find.byKey(const ValueKey('fridge-reference-camera')),
+        matching: find.byType(Transform),
       );
-      await tester.pumpAndSettle();
-      expect(find.text('常温'), findsOneWidget);
+      double zoom() =>
+          tester.widget<Transform>(cameraTransform.first).transform.entry(0, 0);
+      double drawerOpacity(FridgeZoneId zone) => tester
+          .widget<FadeTransition>(
+            find.descendant(
+              of: find.byKey(ValueKey(zone)),
+              matching: find.byType(FadeTransition),
+            ),
+          )
+          .opacity
+          .value;
+      for (final zone in [FridgeZoneId.variable, FridgeZoneId.freezer]) {
+        final drawer = tester.widget<Image>(
+          find.descendant(
+            of: find.byKey(ValueKey(zone)),
+            matching: find.byType(Image),
+          ),
+        );
+        expect(drawer.fit, BoxFit.contain);
+      }
+
+      await tester.tap(find.text('冷藏'));
+      await tester.pump();
+      expect(zoom(), closeTo(1, 0.001));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(zoom(), allOf(greaterThan(1), lessThan(1.65)));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(zoom(), closeTo(1.65, 0.001));
+
+      await tester.tap(find.text('变温'));
+      await tester.pump();
+      expect(drawerOpacity(FridgeZoneId.variable), 0);
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(drawerOpacity(FridgeZoneId.variable), inExclusiveRange(0, 1));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(drawerOpacity(FridgeZoneId.variable), 1);
+      expect(drawerOpacity(FridgeZoneId.freezer), 0);
+      expect(find.text('变温库存'), findsOneWidget);
 
       await tester.tap(find.text('冷冻'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('冷冻 -18°C'), findsOneWidget);
-      expect(find.text('拖动查看 · 点击门或抽屉开合'), findsOneWidget);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(drawerOpacity(FridgeZoneId.freezer), inExclusiveRange(0, 1));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(find.text('冷冻库存'), findsOneWidget);
+      expect(drawerOpacity(FridgeZoneId.freezer), 1);
+      expect(drawerOpacity(FridgeZoneId.variable), 0);
     },
   );
 
@@ -339,8 +529,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('库存概览'), findsOneWidget);
-    expect(find.text('拖动查看 · 点击门或抽屉开合'), findsOneWidget);
+    expect(find.text('冷藏库存'), findsOneWidget);
     expect(find.byKey(const ValueKey('webgl-fridge-fallback')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
@@ -402,43 +591,28 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.text('新增食材'),
+      find.text('添加食材'),
       300,
       scrollable: find.byType(Scrollable).first,
     );
-    await tester.tap(find.text('新增食材'));
+    await tester.tap(find.text('添加食材'));
     await tester.pumpAndSettle();
 
     await tester.enterText(
-      find.byKey(const ValueKey('food-name-input')),
+      find.byKey(const ValueKey('ingredient-picker-search')),
       '西兰花',
     );
-    await tester.enterText(
-      find.byKey(const ValueKey('food-quantity-input')),
-      '2',
-    );
-    await tester.enterText(find.byKey(const ValueKey('food-unit-input')), '颗');
-    final categoryField = find.byKey(const ValueKey('food-category-input'));
-    expect(
-      tester.widget(categoryField),
-      isA<DropdownButtonFormField<String>>(),
-    );
-    expect(
-      find.descendant(of: categoryField, matching: find.byType(TextField)),
-      findsNothing,
-    );
-    await tester.ensureVisible(categoryField);
-    await tester.tap(categoryField);
     await tester.pumpAndSettle();
-    await tester.tap(find.text('蔬菜').last);
+    await tester.tap(find.byKey(const ValueKey('ingredient-西兰花')));
     await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const ValueKey('save-food-button')));
-    await tester.tap(find.byKey(const ValueKey('save-food-button')));
+    await tester.tap(find.byTooltip('增加西兰花份量'));
+    await tester.tap(find.byKey(const ValueKey('save-catalog-foods')));
     await tester.pumpAndSettle();
 
-    expect(source.addedFood?.name, '西兰花');
-    expect(source.addedFood?.quantity, 2);
-    expect(source.addedFood?.category, '蔬菜');
+    final added = source.catalogSelections.single.single;
+    expect(added.sticker.name, '西兰花');
+    expect(added.portions, 2);
+    expect(added.sticker.category, '蔬菜');
   });
 
   testWidgets('editor consumes food with its current version', (tester) async {
@@ -567,20 +741,56 @@ void main() {
   });
 }
 
-Widget _realApp(_RemoteFridgeSource source) => ProviderScope(
+Widget _realApp(
+  _RemoteFridgeSource source, {
+  RecipeDataSource? recipes,
+  String role = 'OWNER',
+}) => ProviderScope(
   overrides: [
     sessionStoreProvider.overrideWithValue(_RealSessionStore()),
-    familyDataSourceProvider.overrideWithValue(_FridgeFixtureFamilySource()),
+    familyDataSourceProvider.overrideWithValue(
+      _FridgeFixtureFamilySource(role: role),
+    ),
     familySelectionStoreProvider.overrideWithValue(
       _FridgeFixtureSelectionStore(),
     ),
     fridgeDataSourceProvider.overrideWithValue(source),
+    foodSearchProvider.overrideWith((ref, request) async {
+      final workspace = await ref.watch(fridgeWorkspaceProvider.future);
+      final query = request.filter.query.trim();
+      return (source.foodsOverride ?? workspace.foods)
+          .where((food) => food.name.contains(query))
+          .toList();
+    }),
+    if (recipes != null) recipeDataSourceProvider.overrideWithValue(recipes),
   ],
   child: MaterialApp(
     theme: AppTheme.light,
     home: const Scaffold(body: FridgeHomePage()),
   ),
 );
+
+List<FridgeFood> _tomatoEggStock(String tomatoName) => [
+  for (final (index, name) in [tomatoName, '鸡蛋', '食用油', '食盐'].indexed)
+    FridgeFood(
+      id: '${index + 100}',
+      serverId: index + 100,
+      name: name,
+      emoji: '',
+      quantity: 1,
+      unit: '份',
+      expiresInDays: 4,
+      zone: FridgeZoneId.fresh,
+      category: '其他',
+      owner: '',
+      tilt: 0,
+    ),
+];
+
+class _HomeRecipeSource implements RecipeDataSource {
+  @override
+  Future<List<Recipe>> load(AuthSession session) async => homeRecipes;
+}
 
 class _FakeSessionStore implements SessionStore {
   @override
@@ -625,7 +835,13 @@ class _RemoteFridgeSource implements FridgeDataSource {
     String name,
   ) async {}
 
-  NewFoodInput? addedFood;
+  final catalogSelections = <List<CatalogFoodInput>>[];
+  final catalogRequests = <String>[];
+  bool loseCatalogResponse = false;
+  final cookRequests = <String>[];
+  final cookItems = <List<CookItemInput>>[];
+  bool loseCookResponse = false;
+  List<FridgeFood>? foodsOverride;
   FridgeFood? consumedFood;
   double? consumedQuantity;
   FridgeFood? movedFood;
@@ -658,6 +874,14 @@ class _RemoteFridgeSource implements FridgeDataSource {
         emoji: '🥩',
         containers: [FridgeContainer(id: 22, name: '变温抽屉', type: 'DRAWER')],
       ),
+      FridgeZone(
+        id: FridgeZoneId.freezer,
+        serverId: 13,
+        name: '冷冻',
+        description: '速冻',
+        temperature: '-18°C',
+        emoji: '',
+      ),
     ],
     foods: [
       FridgeFood(
@@ -678,16 +902,42 @@ class _RemoteFridgeSource implements FridgeDataSource {
   );
 
   @override
-  Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async =>
-      workspace;
+  Future<FridgeWorkspaceData> load(AuthSession session, int familyId) async {
+    final foods = foodsOverride;
+    return foods == null
+        ? workspace
+        : FridgeWorkspaceData(
+            familyId: workspace.familyId,
+            familyName: workspace.familyName,
+            role: workspace.role,
+            fridgeId: workspace.fridgeId,
+            fridgeName: workspace.fridgeName,
+            timezone: workspace.timezone,
+            zones: workspace.zones,
+            foods: foods,
+          );
+  }
 
   @override
   Future<void> addFood(
     AuthSession session,
     FridgeWorkspaceData workspace,
     NewFoodInput input,
+  ) async {}
+
+  @override
+  Future<void> addCatalogFoods(
+    AuthSession session,
+    FridgeWorkspaceData workspace,
+    List<CatalogFoodInput> items,
+    String requestId,
   ) async {
-    addedFood = input;
+    catalogSelections.add(items);
+    catalogRequests.add(requestId);
+    if (loseCatalogResponse) {
+      loseCatalogResponse = false;
+      throw const ApiFailure('网络请求失败');
+    }
   }
 
   @override
@@ -749,7 +999,15 @@ class _RemoteFridgeSource implements FridgeDataSource {
     required int servings,
     required List<CookItemInput> items,
     required String requestId,
-  }) async {}
+  }) async {
+    cookRequests.add(requestId);
+    cookItems.add(items);
+    if (loseCookResponse) {
+      loseCookResponse = false;
+      throw const ApiFailure('网络请求失败');
+    }
+    foodsOverride = const [];
+  }
 }
 
 class _FridgeFixtureFamilySource implements FamilyDataSource {

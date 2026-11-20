@@ -3,14 +3,8 @@ import 'package:smart_fridge_app/core/config/app_brand.dart';
 import 'package:smart_fridge_app/core/theme/app_theme.dart';
 
 class AuthScaffold extends StatelessWidget {
-  const AuthScaffold({
-    required this.title,
-    required this.subtitle,
-    required this.child,
-    super.key,
-  });
+  const AuthScaffold({required this.title, required this.child, super.key});
   final String title;
-  final String subtitle;
   final Widget child;
 
   @override
@@ -33,19 +27,9 @@ class AuthScaffold extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const BrandMark(),
-                const SizedBox(height: 10),
-                const Text(
-                  AppBrand.tagline,
-                  style: TextStyle(color: AppColors.muted, fontSize: 12),
-                ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 26),
                 Text(title, style: Theme.of(context).textTheme.headlineMedium),
-                const SizedBox(height: 10),
-                Text(
-                  subtitle,
-                  style: const TextStyle(color: AppColors.muted, height: 1.6),
-                ),
-                const SizedBox(height: 28),
+                const SizedBox(height: 22),
                 child,
               ],
             ),
@@ -56,7 +40,7 @@ class AuthScaffold extends StatelessWidget {
               AppBrand.kitchenImage,
               fit: BoxFit.cover,
               alignment: Alignment.center,
-              semanticLabel: '灰白冰箱、石墨灰柜体与深灰台面的厨房外观参考图',
+              semanticLabel: '冰箱',
             ),
           );
           return SingleChildScrollView(
@@ -108,26 +92,13 @@ class BrandMark extends StatelessWidget {
     children: [
       const Icon(Icons.kitchen_outlined, color: AppColors.terracotta, size: 32),
       const SizedBox(width: 11),
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            AppBrand.name,
-            style: TextStyle(
-              fontSize: compact ? 18 : 22,
-              fontWeight: FontWeight.w600,
-              color: AppColors.ink,
-            ),
-          ),
-          const Text(
-            AppBrand.englishName,
-            style: TextStyle(
-              fontSize: 9,
-              letterSpacing: 2,
-              color: AppColors.muted,
-            ),
-          ),
-        ],
+      Text(
+        AppBrand.name,
+        style: TextStyle(
+          fontSize: compact ? 18 : 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.ink,
+        ),
       ),
     ],
   );

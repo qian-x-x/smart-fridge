@@ -173,6 +173,11 @@ class ApiFailure implements Exception {
   final int? statusCode;
   final String? code;
 
+  bool get writeOutcomeUncertain {
+    final status = statusCode;
+    return status == null || status < 400 || status >= 500;
+  }
+
   @override
   String toString() => message;
 }

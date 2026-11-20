@@ -10,6 +10,9 @@ void main() {
     yield LicenseEntryWithLineBreaks(const [
       'Xiaoyi UI / Noto Sans SC',
     ], await rootBundle.loadString('assets/fonts/OFL.txt'));
+    yield LicenseEntryWithLineBreaks(const [
+      'Roboto',
+    ], await rootBundle.loadString('assets/fonts/Roboto-LICENSE.txt'));
   });
   runApp(const ProviderScope(child: SmartFridgeApp()));
 }

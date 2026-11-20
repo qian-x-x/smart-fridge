@@ -1,0 +1,15 @@
+{
+  "preview": "http://127.0.0.1:18134/?v=list-recipes",
+  "checkedCandidate": "http://127.0.0.1:18135",
+  "candidateBrowserChecks": 18,
+  "currentWebProcess": 68780,
+  "gateway": "UP",
+  "previousBuild": "sticker-web-before-list-recipes-20261120-133002",
+  "previousMainSha256": "13d37612435507bb526ea7f6da72e4ff6dd21095a1c6ea021aea50e938799599",
+  "verifiedLiveSha256": {
+    "index.html": "dc6996fbb002732bb288894c40b734f5dfbdb3f54f7f1d98b058291b90d11f2d",
+    "main.dart.js": "c45b0702032dc6aaf4856703cb127c168cfb8f1f333bbe8bb9e888b4917687f6",
+    "fridge3d/index.html": "d41bb846314e04cb148ebd0d5e47cf1176cf809ccafe786a24349681a53968db",
+    "assets/assets/images/ingredient-stickers/%E8%A5%BF%E7%BA%A2%E6%9F%BF.webp": "4039ca941d3057efd392a4cbb351d87761c7edbc66f74dee56d839fcc6a9a448"
+  }
+}

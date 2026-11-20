@@ -405,12 +405,6 @@
       border-radius:11px;
       background:#f7f8f8;
     }
-    .demo-note p {
-      font-size:10px;
-      color:#9a9fa2;
-      margin:7px 0 8px;
-      line-height:1.8;
-    }
     .demo-note strong {
       font-size:11px;
       font-weight:500;
@@ -553,14 +547,6 @@
     .bottom-nav {
       display:none;
     }
-    .page-footer {
-      margin-top:28px;
-      display:flex;
-      justify-content:space-between;
-      font-size:9px;
-      letter-spacing:.5px;
-      color:#a0a5a8;
-    }
     .stats {
       display:grid;
       grid-template-columns:repeat(4,1fr);
@@ -695,185 +681,111 @@
     }
     /* 03 / CSS kitchen and independent, keyboard-operable fridge doors. */
     .scene {
+      --counter-offset:180px;
       position:relative;
-      height:369px;
+      height:422px;
       isolation:isolate;
-      background:linear-gradient(110deg,#f0f1f0,#e0e3e3 70%,#cdd2d2);
       overflow:hidden;
+      background:#dce1e2;
     }
-    .scene-head {
-      position:absolute;
-      left:22px;
-      top:19px;
-      right:18px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      z-index:8;
-    }
-    .scene-head strong {
-      display:block;
-      font-size:12px;
-      font-weight:500;
-    }
-    .scene-head small {
-      color:#899194;
-      font-size:9px;
-    }
-    .scene-head .icon-btn {
-      background:#ffffff90;
-      border-color:#ffffff80;
-      width:30px;
-      height:30px;
-    }
-    .scene-head .icon {
-      width:15px;
-    }
-    .window-light {
+    .scene-view {
       position:absolute;
       inset:0;
-      background:linear-gradient(113deg,transparent 0 14%,#ffffff77 14.2% 27%,transparent 27.2% 32%,#ffffff55 32.2% 45%,transparent 45.3%);
-      pointer-events:none;
-      opacity:.8;
+      transition:transform 400ms cubic-bezier(.4,0,.2,1),opacity 400ms cubic-bezier(.4,0,.2,1);
     }
-    .kitchen-wall {
+    .scene-view::before {
+      content:"";
       position:absolute;
-      left:0;
-      right:0;
-      top:103px;
-      height:146px;
-      background:repeating-linear-gradient(0deg,transparent 0 35px,#9eaaa91a 35px 36px),repeating-linear-gradient(90deg,#e3e6e400 0 79px,#9eaaa91a 79px 80px);
+      inset:-55% -90%;
+      background:linear-gradient(115deg,#eef0ef,#dce1e2);
     }
-    .upper-cabinets {
+    .scene[data-focus="冷藏"] .scene-view { transform:translateY(21%) scale(1.47); }
+    .scene[data-focus="变温"] .scene-view { transform:translateY(-35%) scale(1.62); }
+    .scene[data-focus="冷冻"] .scene-view { transform:translateY(-57%) scale(1.66); }
+    .scene:is([data-focus="变温"],[data-focus="冷冻"]) .scene-view { opacity:0; }
+    .drawer-overhead {
+      position:absolute;
+      inset:58px clamp(12px,3vw,24px) 20px;
+      max-width:560px;
+      margin-inline:auto;
+      z-index:6;
+      display:grid;
+      grid-template:repeat(3,minmax(0,1fr)) / repeat(4,minmax(0,1fr));
+      place-items:center;
+      padding:clamp(18px,5%,44px);
+      border:clamp(8px,1.4vw,16px) solid #bec9cc;
+      border-radius:9px;
+      background:linear-gradient(135deg,#dbe4e5,#edf1f0 68%,#d7e1e2);
+      box-shadow:0 8px 22px #54666b35,inset 0 0 16px #677a8357;
+      opacity:0;
+      pointer-events:none;
+      transform:perspective(760px) translateY(22%) rotateX(48deg) scale(.62);
+      transition:opacity 400ms cubic-bezier(.4,0,.2,1),transform 400ms cubic-bezier(.4,0,.2,1);
+    }
+    .scene[data-focus="变温"] .drawer-overhead.variable,
+    .scene[data-focus="冷冻"] .drawer-overhead.freezer {
+      opacity:1;
+      transform:perspective(760px) translateY(0) rotateX(0) scale(1);
+    }
+    .drawer-overhead::before {
+      content:"";
       position:absolute;
       top:0;
+      bottom:0;
+      left:50%;
+      width:5px;
+      background:#b6c6c9;
+      box-shadow:2px 1px 5px #64798340;
+    }
+    .drawer-overhead.freezer::before {
+      top:35%;
+      left:0;
       right:0;
-      width:26%;
-      height:111px;
-      background:repeating-linear-gradient(90deg,#bdc3c2 0 50px,#cbd0ce 51px,#b6bdbb 52px);
-      box-shadow:0 4px 8px #71797612;
+      bottom:auto;
+      width:auto;
+      height:8px;
+    }
+    .drawer-overhead .food-art {
+      width:min(100%,82px);
+      height:auto;
+      max-height:82px;
+      filter:drop-shadow(0 4px 4px #52646645);
+    }
+    .scene-overview {
+      position:absolute;
+      z-index:8;
+      right:14px;
+      top:14px;
+      background:#fffffff0;
     }
     .counter {
       position:absolute;
-      left:0;
-      right:0;
-      bottom:60px;
-      height:89px;
-      background:repeating-linear-gradient(90deg,#656e6e 0,#727a79 78px,#515c5c 79px,#7b8382 80px);
-      border-top:9px solid #555f5f;
-      box-shadow:0 -3px 0 #c5cbc8,0 15px 20px #333d3d20;
+      left:calc(50% + var(--counter-offset) - 57px);
+      width:114px;
+      bottom:30px;
+      height:126px;
+      background:linear-gradient(108deg,#687171,#515a60);
+      border-top:9px solid #343d44;
+      box-shadow:0 8px 16px #2733331a;
     }
-    .counter:after {
-      content:"";
-      position:absolute;
-      left:0;
-      right:0;
-      top:18px;
-      height:1px;
-      background:#525d5d;
+    .counter.left {
+      left:auto;
+      right:calc(50% + var(--counter-offset) - 57px);
     }
     .floor {
       position:absolute;
-      left:0;
-      right:0;
-      bottom:0;
-      height:65px;
-      background:linear-gradient(172deg,#c6cbc9,#e0e3e1);
-      border-top:1px solid #bbc2bf;
-    }
-    .floor:after {
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(110deg,transparent 35%,#a7b0ac55 35.3%,transparent 35.7%),linear-gradient(80deg,transparent 75%,#a7b0ac44 75.3%,transparent 75.7%);
-    }
-    .plant {
-      position:absolute;
-      left:10%;
-      bottom:157px;
-      width:40px;
-      height:50px;
-      transform:scale(.85);
-    }
-    .plant:before {
-      content:"";
-      position:absolute;
-      bottom:-7px;
-      left:4px;
-      width:33px;
-      height:28px;
-      background:linear-gradient(90deg,#a7aaa0,#d4d5cc);
-      border-radius:1px 1px 10px 10px;
-    }
-    .plant i {
-      position:absolute;
-      left:18px;
-      bottom:10px;
-      width:14px;
-      height:48px;
-      background:linear-gradient(90deg,#66765e,#8e9c84);
-      border-radius:90% 0 90% 0;
-      transform-origin:bottom;
-    }
-    .plant i:nth-child(1) {
-      transform:rotate(-38deg);
-    }
-    .plant i:nth-child(2) {
-      transform:rotate(34deg);
-      height:55px;
-    }
-    .plant i:nth-child(3) {
-      transform:rotate(7deg);
-      height:59px;
-    }
-    .utensils {
-      position:absolute;
-      right:7%;
-      bottom:159px;
-      width:27px;
-      height:33px;
-      background:linear-gradient(90deg,#babfb8,#d4d7cf);
-      border-radius:2px 2px 8px 8px;
-    }
-    .utensils:before {
-      content:"";
-      position:absolute;
-      width:3px;
-      height:36px;
-      background:#8d9388;
-      left:7px;
-      top:-23px;
-      transform:rotate(-12deg);
-      box-shadow:9px -2px #717c72;
-    }
-    .utensils:after {
-      content:"";
-      position:absolute;
-      left:1px;
-      top:-34px;
-      width:12px;
-      height:16px;
-      border-radius:50%;
-      background:#9b9e90;
-      transform:rotate(-12deg);
-    }
-    .fridge-shadow {
-      position:absolute;
-      width:278px;
-      height:25px;
-      background:#202c2c38;
-      filter:blur(13px);
-      bottom:44px;
-      left:52%;
-      transform:translateX(-50%) skew(-18deg);
+      inset:auto -90% -40%;
+      height:calc(40% + 30px);
+      background:#c6cccd;
     }
     .fridge-wrap {
       position:absolute;
-      bottom:49px;
-      left:52%;
+      bottom:30px;
+      left:50%;
       width:207px;
       height:286px;
-      transform:translateX(-50%);
+      transform:translateX(-50%) scale(1.24);
+      transform-origin:bottom;
       perspective:850px;
       z-index:4;
     }
@@ -980,7 +892,7 @@
     .door:after {
       content:"";
       position:absolute;
-      top:72px;
+      top:55px;
       width:3px;
       height:63px;
       background:linear-gradient(90deg,#929e9f,#e4eaea);
@@ -993,31 +905,11 @@
     .door.right:after {
       left:6px;
     }
-    .door .mini-logo {
-      position:absolute;
-      top:17px;
-      left:18px;
-      font-size:6px;
-      letter-spacing:1px;
-      opacity:.7;
-    }
-    .door .digital {
-      position:absolute;
-      top:51px;
-      left:18px;
-      background:#7b8b8b;
-      width:18px;
-      height:31px;
-      border-radius:2px;
-      color:#e6efec;
-      font:8px/27px monospace;
-      box-shadow:inset 0 0 3px #4f5e5e;
-    }
     .fridge-drawer {
       position:absolute;
       left:5px;
       right:5px;
-      height:48px;
+      height:45px;
       background:linear-gradient(110deg,#c6d0d1,#e0e7e6 45%,#bdc9ca);
       border:1px solid #b0bfc0;
       border-radius:1px;
@@ -1028,10 +920,10 @@
     }
     .fridge-drawer.variable {
       top:176px;
+      height:48px;
     }
     .fridge-drawer.freezer {
       top:231px;
-      height:45px;
     }
     .fridge-drawer:after {
       content:"";
@@ -1061,23 +953,6 @@
     }
     .fridge-drawer.open:before {
       opacity:1;
-    }
-    .scene-caption {
-      position:absolute;
-      left:20px;
-      bottom:14px;
-      color:#717e7d;
-      font-size:8px;
-      z-index:7;
-    }
-    .scene-corner {
-      position:absolute;
-      right:18px;
-      bottom:15px;
-      font-size:8px;
-      letter-spacing:1.3px;
-      color:#8c9693;
-      z-index:7;
     }
     .door-controls {
       padding:14px 17px;
@@ -2030,9 +1905,6 @@
       .stat-value {
         font-size:25px;
       }
-      .scene {
-        height:369px;
-      }
       .priority {
         padding:23px 17px 16px;
       }
@@ -2079,10 +1951,11 @@
         margin-top:10px;
       }
       .scene {
-        height:372px;
+        --counter-offset:159px;
+        height:390px;
       }
       .fridge-wrap {
-        transform:translateX(-50%) scale(1.04);
+        transform:translateX(-50%) scale(1.16);
         transform-origin:bottom;
       }
       .recipe-grid {
@@ -2229,24 +2102,11 @@
         gap:17px;
       }
       .scene {
-        height:342px;
+        --counter-offset:148px;
+        height:358px;
       }
       .fridge-wrap {
-        transform:translateX(-50%) scale(.96);
-      }
-      .scene-head {
-        left:18px;
-        right:15px;
-        top:16px;
-      }
-      .scene-head strong {
-        font-size:11px;
-      }
-      .scene-head small {
-        font-size:8px;
-      }
-      .fridge-shadow {
-        width:200px;
+        transform:translateX(-50%) scale(1.07);
       }
       .door-controls {
         gap:5px;
@@ -2265,16 +2125,6 @@
       }
       .zone-strip b {
         font-size:8px;
-      }
-      .scene-caption {
-        font-size:7px;
-        left:14px;
-        bottom:12px;
-      }
-      .scene-corner {
-        font-size:7px;
-        right:14px;
-        bottom:12px;
       }
       .priority {
         padding:20px 18px 11px;
@@ -2403,13 +2253,6 @@
       }
       .bottom-nav button[aria-current="page"] {
         color:#344b3e;
-      }
-      .page-footer {
-        margin-top:23px;
-        font-size:8px;
-      }
-      .page-footer span:last-child {
-        display:none;
       }
       .toolbar {
         padding:14px;
@@ -2652,7 +2495,7 @@
       <button class="nav-item" data-page="family"><i data-icon="people"></i><span>我的家庭</span></button>
       <button class="nav-item" data-page="records"><i data-icon="clock"></i><span>操作记录</span></button>
     </nav>
-    <div class="sidebar-bottom"><div class="demo-note"><strong class="row" style="gap:7px"><span class="dot" style="color:#8da48b"></span>离线交互演示</strong><p>一份小小的食材清单，<br>装下好好生活的日常。</p><button class="text-btn" data-action="help">探索演示玩法 <i data-icon="arrow"></i></button></div><button class="profile" data-action="settings" aria-label="打开演示设置"><span class="avatar">易</span><div><strong>小易同学</strong><small>查食材，看菜谱，都容易</small></div><i data-icon="settings"></i></button></div>
+    <div class="sidebar-bottom"><div class="demo-note"><strong class="row" style="gap:7px"><span class="dot" style="color:#8da48b"></span>离线交互演示</strong><button class="text-btn" data-action="help">使用指南 <i data-icon="arrow"></i></button></div><button class="profile" data-action="settings" aria-label="打开演示设置"><span class="avatar">易</span><div><strong>小易同学</strong></div><i data-icon="settings"></i></button></div>
   </aside>
   <header class="topbar"><div class="breadcrumb"><span>我的厨房</span><i data-icon="chevron"></i><strong id="breadcrumb-title">我的冰箱</strong></div><div class="top-actions"><span class="badge"><span class="dot"></span>演示模式</span><button class="family-switch" data-action="switch-family" aria-label="切换家庭"><i data-icon="home"></i><span id="top-family-name"></span><i class="down" data-icon="down"></i></button><button class="icon-btn" data-action="notifications" aria-label="查看保鲜提醒"><i data-icon="bell"></i><span class="notification-dot" id="notification-dot"></span></button><button class="icon-btn" data-action="settings" aria-label="演示设置"><i data-icon="settings"></i></button></div></header>
   <main class="main" id="main" tabindex="-1"></main>
@@ -2675,7 +2518,8 @@
     const dayOffset = n => new Date(Date.parse(DEMO_DATE + 'T12:00:00Z') + n * 86400000).toISOString().slice(0, 10);
     const daysLeft = food => Math.round((Date.parse(food.expiry + 'T12:00:00Z') - Date.parse(DEMO_DATE + 'T12:00:00Z')) / 86400000);
     const categories = ['蔬菜','水果','蛋类','奶制品','肉类','水产','豆制品','主食','其他'];
-    const zones = ['冷藏','变温','冷冻','常温'];
+    const zoneDoors = {冷藏:['left','right'],变温:['variable'],冷冻:['freezer']};
+    const zones = Object.keys(zoneDoors);
     const units = ['个','盒','棵','份','根','头','袋','克','毫升'];
     const titles = {home:'我的冰箱',foods:'食材清单',recipes:'今日菜谱',family:'我的家庭',records:'操作记录'};
     const paths = {
@@ -2715,7 +2559,7 @@
     function initialState() {
       return {version:1,activeFamilyId:'forest',favorites:[],readonly:false,reduceMotion:false,families:[
         {id:'forest',name:'林间小家',role:'OWNER',code:'EASY2026',members:[{id:'self',name:'小易同学',role:'OWNER'},{id:'lin',name:'小林',role:'EDITOR'},{id:'chen',name:'小陈',role:'VIEWER'}],foods:[
-          seedFood('tomato','番茄','蔬菜',4,'个','冷藏',2,'tomato'),seedFood('egg','鸡蛋','蛋类',10,'个','冷藏',6,'egg'),seedFood('broccoli','西兰花','蔬菜',2,'棵','冷藏',1,'broccoli'),seedFood('milk','鲜牛奶','奶制品',2,'盒','冷藏',2,'milk'),seedFood('chicken','鸡翅','肉类',8,'个','冷冻',12,'meat'),seedFood('salmon','三文鱼','水产',2,'份','变温',-1,'fish'),seedFood('carrot','胡萝卜','蔬菜',3,'根','冷藏',5,'carrot'),seedFood('tofu','嫩豆腐','豆制品',1,'盒','冷藏',0,'tofu'),seedFood('cucumber','黄瓜','蔬菜',2,'根','冷藏',4,'cucumber'),seedFood('garlic','大蒜','蔬菜',2,'头','常温',20,'garlic'),seedFood('seaweed','紫菜','其他',1,'袋','常温',60,'pantry'),seedFood('lettuce','生菜','蔬菜',1,'棵','冷藏',4,'lettuce')
+          seedFood('tomato','番茄','蔬菜',4,'个','冷藏',2,'tomato'),seedFood('egg','鸡蛋','蛋类',10,'个','冷藏',6,'egg'),seedFood('broccoli','西兰花','蔬菜',2,'棵','冷藏',1,'broccoli'),seedFood('milk','鲜牛奶','奶制品',2,'盒','冷藏',2,'milk'),seedFood('chicken','鸡翅','肉类',8,'个','冷冻',12,'meat'),seedFood('salmon','三文鱼','水产',2,'份','变温',-1,'fish'),seedFood('carrot','胡萝卜','蔬菜',3,'根','冷藏',5,'carrot'),seedFood('tofu','嫩豆腐','豆制品',1,'盒','冷藏',0,'tofu'),seedFood('cucumber','黄瓜','蔬菜',2,'根','冷藏',4,'cucumber'),seedFood('garlic','大蒜','蔬菜',2,'头','冷藏',20,'garlic'),seedFood('seaweed','紫菜','其他',1,'袋','冷藏',60,'pantry'),seedFood('lettuce','生菜','蔬菜',1,'棵','冷藏',4,'lettuce')
         ],activities:[{id:'welcome',title:'新鲜就位，欢迎回家',detail:'已为你准备 12 份演示食材，试着用冰箱里的食材做一顿饭。',time:'演示初始记录',kind:'home'}]},
         {id:'weekend',name:'周末小屋',role:'OWNER',code:'WEEK2026',members:[{id:'self',name:'小易同学',role:'OWNER'}],foods:[],activities:[]}
       ]};
@@ -2738,12 +2582,23 @@
     function validState(s) {
       return s?.version===1 && typeof s.readonly==='boolean' && typeof s.reduceMotion==='boolean' && Array.isArray(s.favorites) && s.favorites.length<=recipes.length && s.favorites.every(x=>recipes.some(r=>r.id===x)) && Array.isArray(s.families) && s.families.length>0 && s.families.length<=12 && new Set(s.families.map(f=>f?.id)).size===s.families.length && s.families.some(f=>f.id===s.activeFamilyId) && s.families.every(f=>typeof f.id==='string' && f.id.length<=80 && typeof f.name==='string' && f.name.trim().length>0 && f.name.length<=30 && ['OWNER','EDITOR','VIEWER'].includes(f.role) && typeof f.code==='string' && /^[A-Z0-9]{8}$/.test(f.code) && Array.isArray(f.members) && f.members.length<=20 && f.members.every(m=>typeof m.id==='string' && typeof m.name==='string' && m.name.length<=30 && ['OWNER','EDITOR','VIEWER'].includes(m.role)) && validFoods(f.foods) && Array.isArray(f.activities) && f.activities.length<=50 && f.activities.every(a=>typeof a.id==='string' && typeof a.title==='string' && a.title.length<=200 && typeof a.detail==='string' && a.detail.length<=500 && typeof a.time==='string' && typeof a.kind==='string' && (!a.before || (validFoods(a.before) && validFoods(a.after) && typeof a.undone==='boolean'))));
     }
+    function upgradeStoredZones(saved) {
+      const families = Array.isArray(saved?.families) ? saved.families : [];
+      for (const household of families) {
+        const activities = Array.isArray(household?.activities) ? household.activities : [];
+        for (const foods of [household?.foods, ...activities.flatMap(entry => [entry?.before, entry?.after])]) {
+          if (!Array.isArray(foods)) continue;
+          for (const food of foods) if (food?.zone === '常温') food.zone = '冷藏';
+        }
+      }
+      return saved;
+    }
     function load() {
-      try { const raw = localStorage.getItem(STORAGE_KEY); diskSnapshot=raw; if (!raw) return initialState(); const parsed=JSON.parse(raw); if(!validState(parsed)) throw Error('invalid local data'); return parsed; }
+      try { const raw = localStorage.getItem(STORAGE_KEY); diskSnapshot=raw; if (!raw) return initialState(); const parsed=upgradeStoredZones(JSON.parse(raw)); if(!validState(parsed)) throw Error('invalid local data'); return parsed; }
       catch(error) { if(error.name==='SecurityError')storageOK=false; loadNotice='浏览器存储不可用或演示数据损坏，已载入初始演示。'; return initialState(); }
     }
     let state = load();
-    const ui = {page:Object.hasOwn(titles,location.hash.slice(1))?location.hash.slice(1):'home',query:'',zone:'all',expiry:'all',category:'all',sort:'expiry',recipeQuery:'',recipeFilter:'all',doors:new Set(),failNext:false,modalType:null,dirty:false,servings:2,recipeId:null};
+    const ui = {page:Object.hasOwn(titles,location.hash.slice(1))?location.hash.slice(1):'home',query:'',zone:'all',expiry:'all',category:'all',sort:'expiry',recipeQuery:'',recipeFilter:'all',doors:new Set(),focus:null,failNext:false,modalType:null,dirty:false,servings:2,recipeId:null};
     const family = () => state.families.find(f=>f.id===state.activeFamilyId);
     const writable = () => !externalChanged && !state.readonly && family().role !== 'VIEWER';
     const manageable = () => !externalChanged && !state.readonly && family().role === 'OWNER';
@@ -2786,27 +2641,52 @@
     const btn = (label,action,cls='',attrs='') => `<button type="button" class="btn ${cls}" data-action="${action}" ${attrs}>${label}</button>`;
     const selectOptions = (items,selected) => items.map(x=>`<option value="${esc(x)}" ${x===selected?'selected':''}>${esc(x)}</option>`).join('');
     const expiryBadge = f => { const d=daysLeft(f);return `<span class="badge ${d<0?'red':d<=3?'amber':'green'}">${d<0?'已过期 '+(-d)+' 天':d===0?'今天到期':d<=3?d+' 天后到期':'新鲜 · '+d+' 天'}</span>`; };
-    const pageHead = (eyebrow,title,subtitle,actions='') => `<header class="page-head"><div><div class="eyebrow">${eyebrow}</div><h1>${title}</h1><p>${subtitle}</p></div><div class="row">${actions}</div></header>`;
+    const pageHead = (title, actions = '') => `<header class="page-head"><h1>${title}</h1>${actions ? `<div class="row">${actions}</div>` : ''}</header>`;
     function render() {
       document.body.classList.toggle('reduce-motion',state.reduceMotion);
       for(const el of document.querySelectorAll('[data-page]')) { if(el.dataset.page===ui.page)el.setAttribute('aria-current','page');else el.removeAttribute('aria-current'); }
       $('#breadcrumb-title').textContent=titles[ui.page];$('#top-family-name').textContent=family().name;$('#nav-food-count').textContent=family().foods.length;$('#notification-dot').hidden=urgentFoods().length+expiredFoods().length===0;
-      $('#main').innerHTML=`${externalChanged?`<div class="notice">${icon('info')}<span>另一标签页已更新演示数据，已暂停本页写入以避免覆盖。</span>${btn('刷新载入','reload-demo','small')}</div>`:!writable()?`<div class="notice">${icon('lock')}<span>当前为只读体验，可以查看全部数据。${state.readonly?'可在演示设置中关闭只读体验。':'此演示家庭的成员身份为只读。'}</span></div>`:''}${!storageOK?`<div class="notice">${icon('info')}浏览器存储不可用，操作在本页仍然有效，刷新后可能丢失。</div>`:''}<div class="screen-fade">${({home:homeView,foods:foodsView,recipes:recipesView,family:familyView,records:recordsView}[ui.page])()}</div><footer class="page-footer"><span>小易冰箱 · 把新鲜，留给每一天。</span><span>FRONTEND DEMO / 数据仅保存在此浏览器</span></footer>`;
+      $('#main').innerHTML=`${externalChanged?`<div class="notice">${icon('info')}<span>另一标签页已更新演示数据，已暂停本页写入以避免覆盖。</span>${btn('刷新载入','reload-demo','small')}</div>`:!writable()?`<div class="notice">${icon('lock')}<span>当前为只读体验，可以查看全部数据。${state.readonly?'可在演示设置中关闭只读体验。':'此演示家庭的成员身份为只读。'}</span></div>`:''}${!storageOK?`<div class="notice">${icon('info')}浏览器存储不可用，操作在本页仍然有效，刷新后可能丢失。</div>`:''}<div class="screen-fade">${({home:homeView,foods:foodsView,recipes:recipesView,family:familyView,records:recordsView}[ui.page])()}</div>`;
       if(ui.page==='foods')renderFoodResults();if(ui.page==='recipes')renderRecipeResults();
     }
     function navigate(page) { if(!Object.hasOwn(titles,page))return;closeModal(true);ui.page=page;history.replaceState(null,'','#'+page);render();window.scrollTo(0,0); }
     function filterFoods(zone='all',expiry='all') { ui.zone=zone;ui.expiry=expiry;ui.query='';ui.category='all';navigate('foods'); }
     function priorityRow(f) { return `<button class="food-preview" data-action="food-detail" data-id="${esc(f.id)}">${foodIcon(f)}<span><span class="preview-name">${esc(f.name)}</span><span class="preview-sub">${esc(f.zone)} · ${f.quantity} ${esc(f.unit)}</span></span>${expiryBadge(f)}</button>`; }
     function kitchenView() {
-      return `<section class="panel" aria-label="可开合的冰箱交互场景"><div class="scene"><div class="kitchen-wall"></div><div class="upper-cabinets"></div><div class="window-light"></div><div class="floor"></div><div class="counter"></div><div class="plant"><i></i><i></i><i></i></div><div class="utensils"></div><div class="fridge-shadow"></div><div class="scene-head"><div><strong>我的冰箱</strong><small>${esc(family().name)} · 日常的保鲜空间</small></div><button class="icon-btn" data-action="reset-scene" aria-label="复位冰箱场景">${icon('rotate')}</button></div><div class="fridge-wrap"><div class="fridge"><div class="interior" aria-hidden="true"><div class="shelf">${foodArt('milk')}${foodArt('egg')}${foodArt('milk')}</div><div class="shelf">${foodArt('tomato')}${foodArt('carrot')}${foodArt('broccoli')}</div><div class="shelf">${foodArt('lettuce')}${foodArt('cucumber')}${foodArt('tofu')}</div></div>${['left','right'].map((d,i)=>`<button class="door ${d} ${ui.doors.has(d)?'open':''}" data-door="${d}" aria-label="${i?'右门':'左门'}" aria-pressed="${ui.doors.has(d)}">${i?'<span class="mini-logo">XIAOYI</span>':'<span class="digital">4°</span>'}</button>`).join('')}${['variable','freezer'].map((d,i)=>`<button class="fridge-drawer ${d} ${ui.doors.has(d)?'open':''}" data-door="${d}" aria-label="${i?'冷冻抽屉':'变温抽屉'}" aria-pressed="${ui.doors.has(d)}"></button>`).join('')}</div></div><div class="scene-caption">点击柜门可开合 · 食材为动画示意</div><div class="scene-corner">A LITTLE FRESHNESS.</div></div><div class="door-controls" aria-label="冰箱开合控制">${[['left','door','左门'],['right','door','右门'],['variable','drawer','变温抽屉'],['freezer','drawer','冷冻抽屉']].map(([key,symbol,label])=>`<button class="door-control" data-door="${key}" aria-pressed="${ui.doors.has(key)}">${icon(symbol)}${label}</button>`).join('')}<button class="door-control" data-action="close-doors">全部关闭</button></div><div class="zone-strip">${zones.map((z,i)=>`<button data-action="zone" data-zone="${z}" aria-label="查看${z}食材"><b>${z} ${['4°C','0°C','−18°C','室温'][i]}</b> · ${family().foods.filter(f=>f.zone===z).length} 份</button>`).join('')}</div></section>`;
+      const overhead = ui.focus === '变温' || ui.focus === '冷冻';
+      return `<section class="panel" aria-label="可开合的冰箱交互场景">
+        <div class="scene" data-focus="${ui.focus ?? 'overview'}">
+          <div class="scene-view"${overhead ? ' inert' : ''}>
+            <div class="floor"></div><div class="counter left"></div><div class="counter right"></div>
+            <div class="fridge-wrap"><div class="fridge">
+              <div class="interior" aria-hidden="true">
+                <div class="shelf">${foodArt('milk')}${foodArt('egg')}${foodArt('milk')}</div>
+                <div class="shelf">${foodArt('tomato')}${foodArt('carrot')}${foodArt('broccoli')}</div>
+                <div class="shelf">${foodArt('lettuce')}${foodArt('cucumber')}${foodArt('tofu')}</div>
+              </div>
+              ${['left','right'].map((door,i) => `<button class="door ${door} ${ui.doors.has(door)?'open':''}" data-door="${door}" aria-label="${i?'右门':'左门'}" aria-pressed="${ui.doors.has(door)}"></button>`).join('')}
+              ${[['variable','变温抽屉'],['freezer','冷冻抽屉']].map(([drawer,label]) => `<button class="fridge-drawer ${drawer} ${ui.doors.has(drawer)?'open':''}" data-door="${drawer}" aria-label="${label}" aria-pressed="${ui.doors.has(drawer)}"></button>`).join('')}
+            </div></div>
+          </div>
+          ${[['变温','variable'],['冷冻','freezer']].map(([zone,key]) => `<div class="drawer-overhead ${key}" aria-hidden="true">${family().foods.filter(food=>food.zone===zone).slice(0,12).map(food=>foodArt(food.kind)).join('')}</div>`).join('')}
+          <button class="icon-btn scene-overview" data-action="reset-scene" aria-label="恢复冰箱概览">${icon('rotate')}</button>
+        </div>
+        <div class="door-controls" aria-label="冰箱开合控制">
+          ${[['left','door','左门'],['right','door','右门'],['variable','drawer','变温抽屉'],['freezer','drawer','冷冻抽屉']].map(([key,symbol,label]) => `<button class="door-control" data-door="${key}" aria-pressed="${ui.doors.has(key)}">${icon(symbol)}${label}</button>`).join('')}
+          <button class="door-control" data-action="close-doors">全部关闭</button>
+        </div>
+        <div class="zone-strip">
+          ${zones.map((zone,index) => `<button data-action="focus-zone" data-zone="${zone}" aria-pressed="${ui.focus===zone}"><b>${zone} ${['4°C','0°C','−18°C'][index]}</b> · ${family().foods.filter(food=>food.zone===zone).length} 份</button>`).join('')}
+        </div>
+      </section>`;
     }
     function homeView() {
       const urgent=urgentFoods(), expired=expiredFoods(), recommended=[...recipes].sort((a,b)=>recipeMatch(b).percent-recipeMatch(a).percent).slice(0,3);
-      const stats=[['list',family().foods.length,'份','在库食材'],['clock',urgent.length,'份','即将到期'],['recipe',recipes.filter(r=>recipeMatch(r).ready).length,'道','食材齐全菜谱'],['fridge',4,'个','储存分区']];
-      return `${pageHead('A FRESH START, EVERY DAY','今天，也好好吃饭。','11 月 10 日，星期二 · 看一眼冰箱，安排一餐刚刚好。',btn(icon('plus')+'新增食材','add-food','primary',disabled()))}<section class="stats" aria-label="食材概览">${stats.map(([symbol,num,unit,label])=>`<div class="stat"><div class="stat-symbol">${icon(symbol)}</div><div><div class="stat-value">${String(num).padStart(2,'0')}<small>${unit}</small></div><div class="stat-label">${label}</div></div></div>`).join('')}</section><div class="home-grid">${kitchenView()}<section class="panel priority"><div class="row between"><h2>今天先用这些</h2><span class="badge amber">${urgent.length} 份临期</span></div><p class="muted">好好利用每一份食材，不辜负新鲜。</p><div class="priority-list">${urgent.length?urgent.slice(0,4).map(priorityRow).join(''):'<div class="empty" style="padding:45px 0"><h3>新鲜，刚刚好</h3><p>暂时没有即将到期的食材。</p></div>'}</div>${expired.length?`<div class="expired-line"><span>${expired.length} 份食材已过期，需要检查</span><button class="text-btn" data-action="expired">去处理 ${icon('arrow')}</button></div>`:''}<button class="text-btn" data-page="foods">查看全部 ${family().foods.length} 份食材 ${icon('arrow')}</button></section></div><section><div class="section-title"><div><h2>今晚，吃点什么？</h2><p>按冰箱里的食材，为你挑选的家常味道。</p></div><button class="text-btn" data-page="recipes">全部菜谱 ${icon('arrow')}</button></div><div class="recipe-grid home-recipes">${recommended.map(recipeCard).join('')}</div></section>`;
+      const stats=[['list',family().foods.length,'份','在库食材'],['clock',urgent.length,'份','即将到期'],['recipe',recipes.filter(r=>recipeMatch(r).ready).length,'道','食材齐全菜谱'],['fridge',zones.length,'个','储存分区']];
+      return `${pageHead('我的冰箱',btn(icon('plus')+'新增食材','add-food','primary',disabled()))}<section class="stats" aria-label="食材概览">${stats.map(([symbol,num,unit,label])=>`<div class="stat"><div class="stat-symbol">${icon(symbol)}</div><div><div class="stat-value">${String(num).padStart(2,'0')}<small>${unit}</small></div><div class="stat-label">${label}</div></div></div>`).join('')}</section><div class="home-grid">${kitchenView()}<section class="panel priority"><div class="row between"><h2>临期食材</h2><span class="badge amber">${urgent.length} 份临期</span></div><div class="priority-list">${urgent.length?urgent.slice(0,4).map(priorityRow).join(''):'<div class="empty" style="padding:45px 0"><p>暂无临期食材</p></div>'}</div>${expired.length?`<div class="expired-line"><span>${expired.length} 份食材已过期，需要检查</span><button class="text-btn" data-action="expired">去处理 ${icon('arrow')}</button></div>`:''}<button class="text-btn" data-page="foods">查看全部 ${family().foods.length} 份食材 ${icon('arrow')}</button></section></div><section><div class="section-title"><div><h2>推荐菜谱</h2></div><button class="text-btn" data-page="recipes">全部菜谱 ${icon('arrow')}</button></div><div class="recipe-grid home-recipes">${recommended.map(recipeCard).join('')}</div></section>`;
     }
     function foodsView() {
-      return `${pageHead('EVERY INGREDIENT HAS ITS PLACE','新鲜食材，一目了然。','把食材收好，把每一天过好。',btn(icon('download')+'导出演示数据','export')+btn(icon('plus')+'新增食材','add-food','primary',disabled()))}<section class="panel"><div class="toolbar"><label class="search">${icon('search')}<input id="food-search" aria-label="搜索食材" placeholder="搜索食材名称…" maxlength="40" value="${esc(ui.query)}"><span style="font-size:10px">/</span></label><select id="expiry-filter" aria-label="到期状态">${[['all','全部到期状态'],['urgent','即将到期（3 天内）'],['expired','已过期'],['fresh','保鲜中（3 天以上）']].map(([key,label])=>`<option value="${key}" ${ui.expiry===key?'selected':''}>${label}</option>`).join('')}</select><select id="category-filter" aria-label="食材分类"><option value="all">全部分类</option>${selectOptions(categories,ui.category)}</select><button class="text-btn" data-action="reset-filters">重置筛选</button></div><div class="list-meta"><div class="tabs" aria-label="分区筛选">${['all',...zones].map(z=>`<button data-filter-zone="${z}" aria-pressed="${ui.zone===z}">${z==='all'?'全部':z}<small>${z==='all'?family().foods.length:family().foods.filter(f=>f.zone===z).length}</small></button>`).join('')}</div></div><div class="list-meta" style="padding-top:0"><span id="result-count" aria-live="polite"></span><div class="row"><label for="food-sort">排序</label><select id="food-sort" style="width:135px;border:0;background:transparent;color:#7d898e;font-size:11px;min-height:32px"><option value="expiry" ${ui.sort==='expiry'?'selected':''}>到期时间从近到远</option><option value="name" ${ui.sort==='name'?'selected':''}>名称顺序</option><option value="quantity" ${ui.sort==='quantity'?'selected':''}>数量从多到少</option></select></div></div><div id="food-results"></div></section>${expiredFoods().length?`<div class="row between wrap" style="margin-top:17px"><span class="muted" style="font-size:11px">过期食材不会参与菜谱匹配与做饭扣减。</span>${btn(icon('trash')+'清理 '+expiredFoods().length+' 份过期食材','clear-expired','danger small',disabled())}</div>`:''}`;
+      return `${pageHead('食材清单',btn(icon('download')+'导出演示数据','export')+btn(icon('plus')+'新增食材','add-food','primary',disabled()))}<section class="panel"><div class="toolbar"><label class="search">${icon('search')}<input id="food-search" aria-label="搜索食材" placeholder="搜索食材名称…" maxlength="40" value="${esc(ui.query)}"><span style="font-size:10px">/</span></label><select id="expiry-filter" aria-label="到期状态">${[['all','全部到期状态'],['urgent','即将到期（3 天内）'],['expired','已过期'],['fresh','保鲜中（3 天以上）']].map(([key,label])=>`<option value="${key}" ${ui.expiry===key?'selected':''}>${label}</option>`).join('')}</select><select id="category-filter" aria-label="食材分类"><option value="all">全部分类</option>${selectOptions(categories,ui.category)}</select><button class="text-btn" data-action="reset-filters">重置筛选</button></div><div class="list-meta"><div class="tabs" aria-label="分区筛选">${['all',...zones].map(z=>`<button data-filter-zone="${z}" aria-pressed="${ui.zone===z}">${z==='all'?'全部':z}<small>${z==='all'?family().foods.length:family().foods.filter(f=>f.zone===z).length}</small></button>`).join('')}</div></div><div class="list-meta" style="padding-top:0"><span id="result-count" aria-live="polite"></span><div class="row"><label for="food-sort">排序</label><select id="food-sort" style="width:135px;border:0;background:transparent;color:#7d898e;font-size:11px;min-height:32px"><option value="expiry" ${ui.sort==='expiry'?'selected':''}>到期时间从近到远</option><option value="name" ${ui.sort==='name'?'selected':''}>名称顺序</option><option value="quantity" ${ui.sort==='quantity'?'selected':''}>数量从多到少</option></select></div></div><div id="food-results"></div></section>${expiredFoods().length?`<div class="row between wrap" style="margin-top:17px"><span class="muted" style="font-size:11px">过期食材不会参与菜谱匹配与做饭扣减。</span>${btn(icon('trash')+'清理 '+expiredFoods().length+' 份过期食材','clear-expired','danger small',disabled())}</div>`:''}`;
     }
     function renderFoodResults() {
       const results=family().foods.filter(f=>(!ui.query||f.name.toLowerCase().includes(ui.query.toLowerCase())) && (ui.zone==='all'||f.zone===ui.zone) && (ui.category==='all'||f.category===ui.category) && (ui.expiry==='all'||ui.expiry==='urgent'&&daysLeft(f)>=0&&daysLeft(f)<=3||ui.expiry==='expired'&&daysLeft(f)<0||ui.expiry==='fresh'&&daysLeft(f)>3)).sort((a,b)=>ui.sort==='name'?a.name.localeCompare(b.name,'zh-CN'):ui.sort==='quantity'?b.quantity-a.quantity:daysLeft(a)-daysLeft(b)||a.name.localeCompare(b.name,'zh-CN'));
@@ -2830,7 +2710,7 @@
       return `<article class="panel recipe-card"><button class="recipe-photo" data-action="recipe-detail" data-id="${r.id}" aria-label="查看${r.name}菜谱"><img src="${photos[r.id]||''}" alt="${r.name}成品" loading="lazy"></button><button class="favorite" data-action="favorite" data-id="${r.id}" aria-label="${fav?'取消收藏':'收藏'}${r.name}" aria-pressed="${fav}">${icon('heart')}</button><div class="recipe-info"><h3>${r.name}</h3><div class="row"><span class="badge ${match.ready?'green':'amber'}">${match.ready?'食材齐全':'食材匹配 '+match.percent+'%'}</span><span class="recipe-meta">${icon('clock')}${r.minutes} 分钟 <span style="padding:0 2px">·</span> ${r.tag}</span></div></div></article>`;
     }
     function recipesView() {
-      return `${pageHead('A LITTLE INSPIRATION FOR DINNER','一餐一饭，都有灵感。','让冰箱里现有的食材，变成餐桌上的小确幸。')}<div class="recipe-toolbar"><div class="tabs" aria-label="菜谱筛选">${[['all','全部菜谱'],['ready','食材齐全'],['favorite','我的收藏']].map(([v,l])=>`<button data-recipe-filter="${v}" aria-pressed="${ui.recipeFilter===v}">${l}</button>`).join('')}</div><label class="search">${icon('search')}<input id="recipe-search" aria-label="搜索菜谱" maxlength="40" value="${esc(ui.recipeQuery)}" placeholder="搜索菜名或所需食材…"></label></div><div id="recipe-results" aria-live="polite"></div>`;
+      return `${pageHead('今日菜谱')}<div class="recipe-toolbar"><div class="tabs" aria-label="菜谱筛选">${[['all','全部菜谱'],['ready','食材齐全'],['favorite','我的收藏']].map(([v,l])=>`<button data-recipe-filter="${v}" aria-pressed="${ui.recipeFilter===v}">${l}</button>`).join('')}</div><label class="search">${icon('search')}<input id="recipe-search" aria-label="搜索菜谱" maxlength="40" value="${esc(ui.recipeQuery)}" placeholder="搜索菜名或所需食材…"></label></div><div id="recipe-results" aria-live="polite"></div>`;
     }
     function renderRecipeResults() {
       const results=recipes.filter(r=>(!ui.recipeQuery || (r.name+r.ingredients.map(i=>i[0]).join('')).includes(ui.recipeQuery))&&(ui.recipeFilter==='all'||ui.recipeFilter==='ready'&&recipeMatch(r).ready||ui.recipeFilter==='favorite'&&state.favorites.includes(r.id)));
@@ -2838,13 +2718,13 @@
     }
     function familyView() {
       const f=family();
-      return `${pageHead('HOME IS WHERE WE SHARE','一起，把日子过新鲜。','在不同家庭之间切换，食材和操作记录各自保存。',btn(icon('plus')+'创建家庭','create-family','primary'))}<section class="panel family-overview"><div class="family-heading"><div class="family-icon">${icon('home')}</div><div><h2>${esc(f.name)}</h2><p>${f.members.length} 位演示成员 · ${f.foods.length} 份食材 · ${f.role==='OWNER'?'家庭主人':f.role==='EDITOR'?'可编辑成员':'只读成员'}</p></div></div>${btn(icon('people')+'邀请成员','invite','',manageable()?'':'disabled')}</section><div class="section-title"><div><h2>我的家庭</h2><p>每个家庭都有自己的小小厨房。</p></div><button class="text-btn" data-action="join-family">用邀请码加入 ${icon('arrow')}</button></div><div class="family-grid">${familyCards()}</div><div class="section-title"><div><h2>家庭成员</h2><p>这是本地协作演示，成员操作不会发送任何消息。</p></div>${btn(icon('plus')+'添加演示成员','add-member','small',manageable()?'':'disabled')}</div><section class="panel members">${f.members.map(m=>`<div class="member-row"><span class="avatar" style="background:${m.role==='OWNER'?'#e8ede4':'#edf0ef'}">${esc(m.name.slice(0,1))}</span><div><strong>${esc(m.name)}${m.id==='self'?' <span class="muted">（你）</span>':''}</strong><small>${m.role==='OWNER'?'管理家庭、成员与食材':m.role==='EDITOR'?'管理食材、一起下厨':'查看食材与菜谱'}</small></div><div class="member-actions">${m.role==='OWNER'?'<span class="badge green">家庭主人</span>':`<select data-member-role="${esc(m.id)}" aria-label="${esc(m.name)}的角色" ${manageable()?'':'disabled'}>${[['EDITOR','可编辑成员'],['VIEWER','只读成员']].map(([v,l])=>`<option value="${v}" ${m.role===v?'selected':''}>${l}</option>`).join('')}</select><button class="icon-btn" data-action="remove-member" data-id="${esc(m.id)}" aria-label="移除${esc(m.name)}" ${manageable()?'':'disabled'}>${icon('close')}</button>`}</div></div>`).join('')}</section>`;
+      return `${pageHead('我的家庭',btn(icon('plus')+'创建家庭','create-family','primary'))}<section class="panel family-overview"><div class="family-heading"><div class="family-icon">${icon('home')}</div><div><h2>${esc(f.name)}</h2><p>${f.members.length} 位演示成员 · ${f.foods.length} 份食材 · ${f.role==='OWNER'?'家庭主人':f.role==='EDITOR'?'可编辑成员':'只读成员'}</p></div></div>${btn(icon('people')+'邀请成员','invite','',manageable()?'':'disabled')}</section><div class="section-title"><div><h2>我的家庭</h2><p>每个家庭都有自己的小小厨房。</p></div><button class="text-btn" data-action="join-family">用邀请码加入 ${icon('arrow')}</button></div><div class="family-grid">${familyCards()}</div><div class="section-title"><div><h2>家庭成员</h2><p>这是本地协作演示，成员操作不会发送任何消息。</p></div>${btn(icon('plus')+'添加演示成员','add-member','small',manageable()?'':'disabled')}</div><section class="panel members">${f.members.map(m=>`<div class="member-row"><span class="avatar" style="background:${m.role==='OWNER'?'#e8ede4':'#edf0ef'}">${esc(m.name.slice(0,1))}</span><div><strong>${esc(m.name)}${m.id==='self'?' <span class="muted">（你）</span>':''}</strong><small>${m.role==='OWNER'?'管理家庭、成员与食材':m.role==='EDITOR'?'管理食材、一起下厨':'查看食材与菜谱'}</small></div><div class="member-actions">${m.role==='OWNER'?'<span class="badge green">家庭主人</span>':`<select data-member-role="${esc(m.id)}" aria-label="${esc(m.name)}的角色" ${manageable()?'':'disabled'}>${[['EDITOR','可编辑成员'],['VIEWER','只读成员']].map(([v,l])=>`<option value="${v}" ${m.role===v?'selected':''}>${l}</option>`).join('')}</select><button class="icon-btn" data-action="remove-member" data-id="${esc(m.id)}" aria-label="移除${esc(m.name)}" ${manageable()?'':'disabled'}>${icon('close')}</button>`}</div></div>`).join('')}</section>`;
     }
     function familyCards() { return state.families.map(f=>`<button class="house-card" data-action="choose-family" data-id="${esc(f.id)}" aria-pressed="${f.id===state.activeFamilyId}"><div><strong>${esc(f.name)}</strong><p>${f.members.length} 位成员 · ${f.foods.length} 份食材${f.role==='VIEWER'?' · 只读':''}</p></div>${icon(f.id===state.activeFamilyId?'check':'arrow')}</button>`).join(''); }
     function canRevert(op) { return op.before && JSON.stringify(family().foods)===JSON.stringify(op.undone?op.before:op.after); }
     function recordsView() {
       const activities=family().activities;
-      return `${pageHead('THE LITTLE THINGS, REMEMBERED','每一份新鲜，都有迹可循。','从入库到上桌，记录这个家庭的食材日常。',btn(icon('download')+'导出记录','export'))}<section class="panel timeline">${activities.length?activities.map(op=>`<article class="timeline-item"><div class="timeline-symbol">${icon(op.kind)}</div><div class="timeline-text"><h3>${esc(op.title)} ${op.undone?'<span class="badge">已撤销</span>':''}</h3><p>${esc(op.detail)}</p><div class="timeline-time">${esc(op.time)}</div></div>${op.before?btn(icon('rotate')+(op.undone?'恢复操作':'撤销操作'),'revert','small',`data-id="${esc(op.id)}" ${writable()&&canRevert(op)?'':'disabled title="后续库存已变化，不能覆盖当前数据"'}`):''}</article>`).join(''):`<div class="empty">${icon('clock')}<h3>日常，从这一刻开始</h3><p>新增食材或完成做饭，这里就会留下记录。</p>${btn('去看看冰箱','go-home')}</div>`}</section><p class="form-hint">仅在当前库存与操作快照一致时允许撤销或恢复，避免覆盖后续修改。演示最多保存最近 50 条记录。</p>`;
+      return `${pageHead('操作记录',btn(icon('download')+'导出记录','export'))}<section class="panel timeline">${activities.length?activities.map(op=>`<article class="timeline-item"><div class="timeline-symbol">${icon(op.kind)}</div><div class="timeline-text"><h3>${esc(op.title)} ${op.undone?'<span class="badge">已撤销</span>':''}</h3><p>${esc(op.detail)}</p><div class="timeline-time">${esc(op.time)}</div></div>${op.before?btn(icon('rotate')+(op.undone?'恢复操作':'撤销操作'),'revert','small',`data-id="${esc(op.id)}" ${writable()&&canRevert(op)?'':'disabled title="后续库存已变化，不能覆盖当前数据"'}`):''}</article>`).join(''):`<div class="empty">${icon('clock')}<h3>日常，从这一刻开始</h3><p>新增食材或完成做饭，这里就会留下记录。</p>${btn('去看看冰箱','go-home')}</div>`}</section><p class="form-hint">仅在当前库存与操作快照一致时允许撤销或恢复，避免覆盖后续修改。演示最多保存最近 50 条记录。</p>`;
     }
     // 08 / Dialogs and forms. Guard drafts, retain inputs on failure, re-check writes.
     function dialogHead(title,subtitle='') {return `<div class="dialog-head"><div><h2 id="modal-title">${title}</h2>${subtitle?`<p>${subtitle}</p>`:''}</div><button type="button" class="icon-btn" data-action="close-modal" aria-label="关闭弹窗">${icon('close')}</button></div>`;}
@@ -2910,7 +2790,7 @@
     function discard(foodId) {const food=family().foods.find(f=>f.id===foodId);if(!food||!writable())return;ask('确认丢弃'+food.name+'？',`将从当前家庭移除 ${food.quantity} ${food.unit} ${food.name}，可在记录中撤销。`,()=>commit('丢弃了'+food.name,`${food.quantity} ${food.unit} · ${food.zone}`,'trash',f=>{f.foods=f.foods.filter(x=>x.id!==foodId);}), '确认丢弃',true);}
     function clearExpired() {const foods=expiredFoods();if(!foods.length||!writable())return;ask('清理这 '+foods.length+' 份过期食材？',foods.map(f=>f.name+' '+f.quantity+f.unit).join('、')+'。今天到期的食材会保留，可在记录中撤销本次清理。',()=>commit('清理了 '+foods.length+' 份过期食材',foods.map(f=>f.name).join('、'),'trash',f=>{f.foods=f.foods.filter(x=>daysLeft(x)>=0);}), '确认清理',true);}
     function revert(opId) {if(!ensureCurrent())return;const op=family().activities.find(x=>x.id===opId);if(!op||!writable())return;if(!canRevert(op)){toast('后续库存已变化，不能覆盖当前数据',true);return;}if(ui.failNext){ui.failNext=false;toast('模拟保存失败，库存未变化，请重试',true);return;}family().foods=clone(op.undone?op.after:op.before);op.undone=!op.undone;saved(op.undone?'已撤销：'+op.title:'已恢复：'+op.title);}
-    function switchFamily(familyId) {if(!ensureCurrent()||!state.families.some(f=>f.id===familyId))return;closeModal(true);state.activeFamilyId=familyId;ui.query='';ui.zone='all';ui.expiry='all';ui.category='all';ui.doors.clear();ui.recipeFilter='all';saved('已切换到'+family().name);}
+    function switchFamily(familyId) {if(!ensureCurrent()||!state.families.some(f=>f.id===familyId))return;closeModal(true);state.activeFamilyId=familyId;ui.query='';ui.zone='all';ui.expiry='all';ui.category='all';ui.focus=null;ui.doors.clear();ui.recipeFilter='all';saved('已切换到'+family().name);}
     function createFamily(form) {
       if(!ensureCurrent())return;
       const name=String(new FormData(form).get('name')).trim();if(!name){formError('请输入家庭名称。');return;}if(state.families.length>=12){formError('演示最多创建 12 个家庭。');return;}
@@ -2933,12 +2813,55 @@
       const snapshot={type:'xiaoyi-frontend-demo',date:DEMO_DATE,family:clone(family()),note:'本地前端演示数据，不含真实账号或接口数据。'};
       const url=URL.createObjectURL(new Blob([JSON.stringify(snapshot,null,2)],{type:'application/json;charset=utf-8'})),a=document.createElement('a');a.href=url;a.download='小易冰箱-演示数据.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);toast('演示数据已导出为 JSON 文件');
     }
-    function toggleDoor(part) {if(!['left','right','variable','freezer'].includes(part))return;ui.doors.has(part)?ui.doors.delete(part):ui.doors.add(part);syncDoors();}
-    function syncDoors() {for(const el of document.querySelectorAll('[data-door]')){const open=ui.doors.has(el.dataset.door);el.setAttribute('aria-pressed',String(open));if(el.classList.contains('door')||el.classList.contains('fridge-drawer'))el.classList.toggle('open',open);}}
+    function toggleDoor(part) {
+      const zone = zones.find(candidate => zoneDoors[candidate].includes(part));
+      if (!zone) return;
+      if (zone !== '冷藏') {
+        if (ui.focus === zone && ui.doors.has(part)) closeKitchen();
+        else focusKitchen(zone);
+        return;
+      }
+      if (ui.doors.has(part)) ui.doors.delete(part);
+      else ui.doors.add(part);
+      const isOpen = zoneDoors[zone].some(door => ui.doors.has(door));
+      ui.focus = isOpen ? zone : null;
+      syncDoors();
+    }
+    function focusKitchen(zone) {
+      if (!zones.includes(zone)) return;
+      if (zone !== '冷藏') ui.doors.clear();
+      ui.focus = zone;
+      for (const door of zoneDoors[zone]) ui.doors.add(door);
+      syncDoors();
+    }
+    function closeKitchen() {
+      ui.doors.clear();
+      ui.focus = null;
+      syncDoors();
+    }
+    function syncDoors() {
+      for (const el of document.querySelectorAll('[data-door]')) {
+        const open = ui.doors.has(el.dataset.door);
+        el.setAttribute('aria-pressed', String(open));
+        if (el.matches('.door,.fridge-drawer')) el.classList.toggle('open', open);
+      }
+      const scene = $('.scene');
+      if (!scene) return;
+      const view = scene.querySelector('.scene-view');
+      const overhead = ui.focus === '变温' || ui.focus === '冷冻';
+      if (overhead && view.contains(document.activeElement)) {
+        $(`.door-control[data-door="${zoneDoors[ui.focus][0]}"]`).focus({preventScroll:true});
+      }
+      view.inert = overhead;
+      scene.dataset.focus = ui.focus ?? 'overview';
+      for (const el of document.querySelectorAll('[data-action="focus-zone"]')) {
+        el.setAttribute('aria-pressed', String(ui.focus === el.dataset.zone));
+      }
+    }
     const actions = {
       'add-food':()=>openFoodForm(),'food-detail':el=>showFood(el.dataset.id),'edit-food':el=>{const f=family().foods.find(x=>x.id===el.dataset.id);if(f)openFoodForm(f);},'move-food':el=>showMove(el.dataset.id),'discard-food':el=>discard(el.dataset.id),
-      'close-modal':()=>closeModal(),'help':help,'settings':settings,'switch-family':showFamilySwitch,'notifications':notifications,'close-doors':()=>{ui.doors.clear();syncDoors();},'reset-scene':()=>{ui.doors.clear();syncDoors();toast('已复位，所有柜门与抽屉关闭');},
-      'zone':el=>filterFoods(el.dataset.zone),'expired':()=>filterFoods('all','expired'),'all-foods':()=>navigate('foods'),'go-home':()=>navigate('home'),'clear-expired':clearExpired,
+      'close-modal':()=>closeModal(),'help':help,'settings':settings,'switch-family':showFamilySwitch,'notifications':notifications,'close-doors':closeKitchen,'reset-scene':closeKitchen,
+      'focus-zone':el=>focusKitchen(el.dataset.zone),'expired':()=>filterFoods('all','expired'),'all-foods':()=>navigate('foods'),'go-home':()=>navigate('home'),'clear-expired':clearExpired,
       'reset-filters':()=>{ui.query='';ui.zone='all';ui.expiry='all';ui.category='all';ui.sort='expiry';render();},
       'recipe-detail':el=>showRecipe(el.dataset.id),'favorite':el=>{if(!ensureCurrent())return;const recipeId=el.dataset.id;if(!recipes.some(r=>r.id===recipeId))return;const found=state.favorites.includes(recipeId);state.favorites=found?state.favorites.filter(x=>x!==recipeId):[...state.favorites,recipeId];saved(found?'已取消收藏':'已收藏，去“我的收藏”里看看');},
       'all-recipes':()=>{ui.recipeQuery='';ui.recipeFilter='all';render();},'servings-up':()=>{ui.servings=Math.min(6,ui.servings+1);showRecipe(ui.recipeId,true);},'servings-down':()=>{ui.servings=Math.max(1,ui.servings-1);showRecipe(ui.recipeId,true);},'cook':el=>cook(el.dataset.id),
@@ -2947,7 +2870,7 @@
       'remove-member':el=>{if(!manageable())return;const m=family().members.find(x=>x.id===el.dataset.id);if(!m||m.role==='OWNER')return;ask('移除演示成员'+m.name+'？','该操作仅影响本地成员列表，不会发送通知。',()=>commit('移除了演示成员',m.name,'people',f=>{f.members=f.members.filter(x=>x.id!==m.id);},{manage:true,inventory:false}),'确认移除',true);},
       'revert':el=>revert(el.dataset.id),'export':exportData,
       'reload-demo':()=>{if(ui.dirty)ask('刷新并载入最新演示？','当前未保存的表单草稿将被丢弃。',()=>{ui.dirty=false;location.reload();},'刷新载入');else location.reload();},
-      'reset':()=>ask('重新开始这段新鲜日常？','将重置本演示的食材、家庭、收藏和记录，恢复初始数据。此操作无法撤销。',()=>{if(!ensureCurrent())return;state=initialState();ui.failNext=false;ui.doors.clear();ui.query='';ui.zone='all';ui.expiry='all';ui.category='all';ui.recipeFilter='all';ui.recipeQuery='';ui.sort='expiry';closeModal(true);navigate('home');saved('演示数据已重置，欢迎重新开始');},'确认重置',true)
+      'reset':()=>ask('重新开始这段新鲜日常？','将重置本演示的食材、家庭、收藏和记录，恢复初始数据。此操作无法撤销。',()=>{if(!ensureCurrent())return;state=initialState();ui.failNext=false;closeKitchen();ui.query='';ui.zone='all';ui.expiry='all';ui.category='all';ui.recipeFilter='all';ui.recipeQuery='';ui.sort='expiry';closeModal(true);navigate('home');saved('演示数据已重置，欢迎重新开始');},'确认重置',true)
     };
     document.addEventListener('click',event=>{
       const button=event.target.closest('button');if(!button||button.disabled)return;
