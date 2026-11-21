@@ -1,3 +1,7 @@
+/*
+ * 这个文件：创建家庭的请求体：只需要一个家庭名称。
+ */
+
 package com.smartfridge.auth.family;
 
 import jakarta.validation.constraints.NotBlank;

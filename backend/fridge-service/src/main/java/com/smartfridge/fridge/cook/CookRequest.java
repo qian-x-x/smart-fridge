@@ -1,3 +1,7 @@
+/*
+ * 这个文件：做饭请求体：菜谱 id/名称、份数、requestId（防重复提交）、要扣减的食材清单、备注。
+ */
+
 package com.smartfridge.fridge.cook;
 
 import jakarta.validation.Valid;

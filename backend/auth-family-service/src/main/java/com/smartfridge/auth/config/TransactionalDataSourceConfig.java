@@ -1,3 +1,8 @@
+/*
+ * 这个文件：数据库初始化配置。先用原始连接跑 Flyway 建表，再把数据源包一层 Seata 代理，
+ * 这样空数据库第一次启动时也能正常建表，同时后续写操作能参与分布式事务。
+ */
+
 package com.smartfridge.auth.config;
 
 import com.zaxxer.hikari.HikariDataSource;

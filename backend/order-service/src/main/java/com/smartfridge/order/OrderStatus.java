@@ -1,3 +1,7 @@
+/*
+ * 这个文件：订单状态枚举（待处理、已创建等）。
+ */
+
 package com.smartfridge.order;
 
 public enum OrderStatus {

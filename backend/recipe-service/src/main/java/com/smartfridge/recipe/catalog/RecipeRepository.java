@@ -1,3 +1,7 @@
+/*
+ * 这个文件：菜谱表和原料表的 SQL 查询。
+ */
+
 package com.smartfridge.recipe.catalog;
 
 import org.springframework.jdbc.core.JdbcTemplate;

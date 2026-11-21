@@ -1,3 +1,8 @@
+/*
+ * 这个文件：拦截需要登录的请求：从 Authorization 头取出 Bearer token，解析、查黑名单，
+ * 通过后把当前用户放进请求上下文；不通过直接返回 401。
+ */
+
 package com.smartfridge.auth.security;
 
 import com.smartfridge.common.api.ErrorCode;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：扣减库存的请求体。
+ */
+
 package com.smartfridge.stock;
 
 import jakarta.validation.constraints.Min;

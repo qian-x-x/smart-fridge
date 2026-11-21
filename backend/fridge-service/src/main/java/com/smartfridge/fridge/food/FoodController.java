@@ -1,3 +1,7 @@
+/*
+ * 这个文件：食材的主要接口：新增、搜索、批量导入、详情、移动、使用、编辑、丢弃。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.smartfridge.common.api.ApiResponse;

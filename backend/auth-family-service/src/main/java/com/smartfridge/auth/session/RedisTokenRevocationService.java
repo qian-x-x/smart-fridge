@@ -1,3 +1,8 @@
+/*
+ * 这个文件：把已登出的 accessToken 记进 Redis 黑名单。
+ * 记录只保留到该 token 本来会过期的时间，所以黑名单不会越攒越多。
+ */
+
 package com.smartfridge.auth.session;
 
 import org.springframework.data.redis.core.StringRedisTemplate;

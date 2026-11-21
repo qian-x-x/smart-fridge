@@ -1,3 +1,8 @@
+/*
+ * 这个文件：库存调用的唯一出口，也是熔断的落点。
+ * 库存不足是业务结果，正常往上抛；熔断打开就不再发真实请求；超时等技术故障则降级成可读提示。
+ */
+
 package com.smartfridge.order;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;

@@ -1,3 +1,8 @@
+/*
+ * 这个文件：业务异常。和系统崩溃不同，它代表「用户操作不合法」这类可预期的错误，
+ * 自带错误码和 HTTP 状态码。conflict()、forbidden()、notFound() 这些静态方法是为了少写样板代码。
+ */
+
 package com.smartfridge.common.error;
 
 import com.smartfridge.common.api.ErrorCode;

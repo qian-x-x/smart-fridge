@@ -1,3 +1,7 @@
+/*
+ * 这个文件：演示下单的请求体：商品编号、数量，以及用于演示超时/失败的参数。
+ */
+
 package com.smartfridge.order;
 
 import jakarta.validation.constraints.Min;

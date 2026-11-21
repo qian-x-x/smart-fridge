@@ -1,3 +1,7 @@
+/*
+ * 这个文件：Feign 接口声明：向认证服务查询「这个用户在这个家庭里是什么角色」。
+ */
+
 package com.smartfridge.fridge.family;
 
 import org.springframework.cloud.openfeign.FeignClient;

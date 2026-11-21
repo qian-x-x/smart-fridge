@@ -1,3 +1,7 @@
+/*
+ * 这个文件：「使用掉一部分食材」的请求体：用多少、基于哪个版本号。
+ */
+
 package com.smartfridge.fridge.food;
 
 import jakarta.validation.constraints.DecimalMin;

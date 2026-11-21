@@ -1,3 +1,7 @@
+/*
+ * 这个文件：订单表的 SQL 操作。
+ */
+
 package com.smartfridge.order;
 
 import org.springframework.jdbc.core.JdbcTemplate;

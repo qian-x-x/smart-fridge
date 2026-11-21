@@ -1,3 +1,7 @@
+/*
+ * 这个文件：Feign 接口声明：调用库存服务扣减。
+ */
+
 package com.smartfridge.order;
 
 import com.smartfridge.common.api.ApiResponse;

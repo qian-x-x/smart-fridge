@@ -1,3 +1,7 @@
+/*
+ * 这个文件：声明调用认证服务的 Feign 客户端（带负载均衡）。
+ */
+
 package com.smartfridge.gateway.security;
 
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;

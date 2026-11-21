@@ -1,3 +1,7 @@
+/*
+ * 这个文件：Feign 接口声明：调用冰箱服务创建一个默认冰箱。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.common.api.ApiResponse;

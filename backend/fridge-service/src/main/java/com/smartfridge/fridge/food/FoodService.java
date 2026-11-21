@@ -1,3 +1,8 @@
+/*
+ * 这个文件：食材业务的总入口：建食材前校验位置属于这个冰箱、日期合理、数量为正、标签合规；
+ * 批量导入做幂等；搜索、移动、使用、丢弃都先过权限闸门再动数据。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -50,6 +55,10 @@ public class FoodService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * 新增食材。顺序很重要：先确认当前用户有编辑权限，再校验存放位置/日期/标签，
+     * 最后才写库。贴纸类食材还要额外检查必须是「整份」（不能出现 1.5 份）。
+     */
     @Transactional
     public FoodView create(CurrentUser user, String authorization, CreateFoodRequest request) {
         FridgeView fridge = accessGuard.requireEditor(request.fridgeId(), authorization);
@@ -62,6 +71,11 @@ public class FoodService {
         return foodViewMapper.withExpiry(foodRepository.create(request, user.id()), fridge);
     }
 
+    /**
+     * 批量导入食材（勾选贴纸一次加多个）。
+     * 防重复提交的套路：用 requestId + 本批内容的哈希做幂等键——
+     * 同一个 requestId 再来一次，内容一样就直接返回上次结果；内容不一样则报冲突。
+     */
     public CatalogBatchResult createCatalogBatch(CurrentUser user, String authorization, CatalogFoodBatchRequest request) {
         FridgeView fridge = accessGuard.requireEditor(request.fridgeId(), authorization);
         String hash = catalogPayloadHash(request.items());
@@ -127,6 +141,7 @@ public class FoodService {
         return foodViewMapper.withExpiry(food, fridge);
     }
 
+    /** 搜索食材：用冰箱所在时区的「今天」来判断过期/临期，避免服务器时区和用户对不上。 */
     public List<FoodView> search(long fridgeId, FoodSearchFilter filter, String authorization) {
         FridgeView fridge = accessGuard.requireMember(fridgeId, authorization);
         LocalDate today = LocalDate.now(clock.withZone(ZoneId.of(fridge.timezone())));
@@ -135,6 +150,10 @@ public class FoodService {
             .toList();
     }
 
+    /**
+     * 移动食材到别的分区/容器。
+     * 目标分区必须属于这个冰箱、容器必须属于目标分区；版本号对不上说明别人先改了，提示刷新。
+     */
     @Transactional
     public FoodView move(
         long foodId,
@@ -157,6 +176,7 @@ public class FoodService {
         return foodViewMapper.withExpiry(foodRepository.requireById(foodId), fridge);
     }
 
+    /** 使用掉一部分食材：数量不能超过剩余量；真正的并发保护在数据库的版本号条件更新里。 */
     @Transactional
     public FoodView consume(
         long foodId,
@@ -179,6 +199,10 @@ public class FoodService {
         return foodViewMapper.withExpiry(foodRepository.requireById(foodId), fridge);
     }
 
+    /**
+     * 编辑食材。贴纸食材（来自菜谱勾选）只允许改数量，名称和分类锁死，
+     * 否则会和冰箱上的贴纸对不上。
+     */
     @Transactional
     public FoodView update(
         long foodId,
@@ -212,6 +236,7 @@ public class FoodService {
         return foodViewMapper.withExpiry(foodRepository.requireById(foodId), fridge);
     }
 
+    /** 主动丢弃食材：走软删除，操作流水里会留下一条 DISCARD，之后仍可撤销。 */
     @Transactional
     public void discard(
         long foodId,

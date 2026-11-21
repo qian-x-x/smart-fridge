@@ -1,3 +1,8 @@
+/*
+ * 这个文件：全局异常兜底。不管哪个接口抛了什么异常，都在这里被翻译成统一的 JSON 返回，
+ * 避免把 Java 堆栈直接甩给前端。
+ */
+
 package com.smartfridge.common.error;
 
 import com.smartfridge.common.api.ApiResponse;

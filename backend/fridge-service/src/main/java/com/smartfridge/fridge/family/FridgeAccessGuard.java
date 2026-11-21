@@ -1,3 +1,10 @@
+/*
+ * 这个文件：所有食材、流水、做饭接口的统一权限闸门。
+ * requireMember：必须是这个家庭的成员（OWNER/EDITOR/VIEWER 都行）；
+ * requireEditor：在成员的基础上，VIEWER（只读）会被拒绝修改。
+ * 统一走这里，保证每个功能的权限提示都一致。
+ */
+
 package com.smartfridge.fridge.family;
 
 import com.smartfridge.common.error.BusinessException;

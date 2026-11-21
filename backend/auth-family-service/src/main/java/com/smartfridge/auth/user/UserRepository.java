@@ -1,3 +1,7 @@
+/*
+ * 这个文件：用户表的 SQL：判断用户名/手机号是否已存在、新增、按账号或 id 查询。
+ */
+
 package com.smartfridge.auth.user;
 
 import org.springframework.jdbc.core.JdbcTemplate;

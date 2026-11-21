@@ -1,3 +1,7 @@
+/*
+ * 这个文件：操作流水相关接口：查看流水、撤销某次操作、恢复已撤销的操作。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.smartfridge.common.api.ApiResponse;

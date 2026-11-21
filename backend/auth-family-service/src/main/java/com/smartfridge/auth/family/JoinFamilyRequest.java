@@ -1,3 +1,7 @@
+/*
+ * 这个文件：用邀请码加入家庭的请求体。
+ */
+
 package com.smartfridge.auth.family;
 
 import jakarta.validation.constraints.NotBlank;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：数据库初始化：先 Flyway 建表，再包一层 Seata 数据源代理（和认证服务同一套路）。
+ */
+
 package com.smartfridge.fridge.config;
 
 import com.zaxxer.hikari.HikariDataSource;

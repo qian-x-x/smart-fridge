@@ -1,3 +1,7 @@
+/*
+ * 这个文件：所有接口统一的返回格式：{code, message, data, traceId}。前端只需要认这一种结构，成功失败都长得一样。
+ */
+
 package com.smartfridge.common.api;
 
 import org.slf4j.MDC;

@@ -1,3 +1,8 @@
+/*
+ * 这个文件：refreshToken 的会话表：保存、判断是否有效、撤销、消费。
+ * 「消费」保证同一个 refreshToken 只能换一次新令牌，防止被盗后反复使用。
+ */
+
 package com.smartfridge.auth.session;
 
 import org.springframework.jdbc.core.JdbcTemplate;

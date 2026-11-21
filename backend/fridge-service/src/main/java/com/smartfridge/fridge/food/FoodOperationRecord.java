@@ -1,3 +1,7 @@
+/*
+ * 这个文件：流水表的一行：谁在什么时候对哪个食材做了什么，前后状态各是什么。
+ */
+
 package com.smartfridge.fridge.food;
 
 import java.math.BigDecimal;

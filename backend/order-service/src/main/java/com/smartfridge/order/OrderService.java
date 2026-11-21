@@ -1,3 +1,10 @@
+/*
+ * 这个文件：演示用的下单流程，专门用来验证两件事：
+ * 1) Sentinel 限流真的能挡住超额请求；
+ * 2) Seata 全局事务能让「订单落库」和「扣库存」要么一起成功、要么一起回滚。
+ * 库存不足时故意抛异常而不是返回失败对象，因为全局事务只对异常回滚。
+ */
+
 package com.smartfridge.order;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;

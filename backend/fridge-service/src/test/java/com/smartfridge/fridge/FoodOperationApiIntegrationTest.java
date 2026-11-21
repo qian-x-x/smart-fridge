@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试操作流水：撤销、恢复以及两人同时操作时的并发冲突处理。
+ */
+
 package com.smartfridge.fridge;
 
 import com.jayway.jsonpath.JsonPath;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：过期清理的结果：这次清掉了几条食材。
+ */
+
 package com.smartfridge.fridge.food;
 
 import java.util.List;

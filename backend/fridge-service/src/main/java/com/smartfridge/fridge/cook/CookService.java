@@ -1,3 +1,9 @@
+/*
+ * 这个文件：做饭的核心逻辑。做之前先检查：食材属于这个冰箱、没过期、数量够、版本没被别人改过；
+ * 检查通过后，扣库存和写记录在同一个事务里完成；
+ * 同一个 requestId 重复提交不会扣两次，直接返回第一次的结果。
+ */
+
 package com.smartfridge.fridge.cook;
 
 import com.smartfridge.common.api.ErrorCode;
@@ -46,8 +52,9 @@ public class CookService {
     }
 
     /**
-     * Confirms a cooking session. The client generated request id makes the call
-     * idempotent: a replay returns the stored record instead of deducting twice.
+     * 确认一次做饭。
+     * 入口先查这个 requestId 是不是已经做过（客户端网络重试会重复发）：
+     * 做过就直接返回旧记录，不再扣第二次库存。
      */
     public CookResult cook(
         long fridgeId,
@@ -81,6 +88,12 @@ public class CookService {
         return cookRepository.list(fridgeId, bounded);
     }
 
+    /**
+     * 真正落库的一步，整体在一个事务里：
+     * 1) 先占住 requestId（唯一索引保证并发下只有一个人能占成功）；
+     * 2) 逐条检查食材：属于本冰箱、没过期、数量够、版本没被别人改；
+     * 3) 全部检查通过后才逐个扣减，并记录每条食材扣了多少。
+     */
     private CookRecordView write(FridgeView fridge, CurrentUser user, CookRequest request) {
         // Reserve the request before checking versions. A concurrent replay may
         // see stock already deducted, but still gets the original record.
@@ -143,6 +156,10 @@ public class CookService {
             .orElseThrow(() -> new IllegalStateException("Cook record was not persisted"));
     }
 
+    /**
+     * 重放校验：同一个 requestId 再次请求时，内容必须和第一次完全一致才返回旧结果，
+     * 否则说明这个编号被拿去下了一单不同的菜，直接报冲突。
+     */
     private CookResult replay(CookRecordView record, CurrentUser user, CookRequest request) {
         if (record.actorUserId() != user.id() ||
             record.recipeId() != request.recipeId() ||

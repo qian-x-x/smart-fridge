@@ -1,3 +1,7 @@
+/*
+ * 这个文件：注册网关用户拦截器，让接口能拿到当前用户身份。
+ */
+
 package com.smartfridge.fridge.config;
 
 import com.smartfridge.fridge.security.GatewayUserInterceptor;

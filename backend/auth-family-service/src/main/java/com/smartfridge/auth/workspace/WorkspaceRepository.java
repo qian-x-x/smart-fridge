@@ -1,3 +1,7 @@
+/*
+ * 这个文件：工作区登记表的 SQL：先占位、绑定家庭、标记完成、查询、事务围栏。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import java.util.Optional;

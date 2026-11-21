@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试菜谱数据的数据库迁移兼容性：升级后旧数据还能正常读取。
+ */
+
 package com.smartfridge.recipe;
 
 import org.flywaydb.core.Flyway;

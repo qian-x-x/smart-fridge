@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试网关鉴权过滤器：没带令牌、令牌无效、令牌类型不对、身份头伪造等场景是否都被正确处理。
+ */
+
 package com.smartfridge.gateway;
 
 import com.smartfridge.gateway.filter.JwtGatewayFilter;

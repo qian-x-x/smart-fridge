@@ -1,3 +1,7 @@
+/*
+ * 这个文件：批量导入食材的请求体（一次提交多条）。
+ */
+
 package com.smartfridge.fridge.food;
 
 import jakarta.validation.Valid;

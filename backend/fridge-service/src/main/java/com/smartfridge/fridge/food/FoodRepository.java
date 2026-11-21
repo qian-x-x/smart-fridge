@@ -1,3 +1,8 @@
+/*
+ * 这个文件：食材表的 SQL 大本营：新增、搜索、移动、使用、做饭扣减、查过期、丢弃、乐观锁更新，
+ * 以及每次改动顺手写一条流水。业务规则不在这里，这里只负责把数据可靠地存进去。
+ */
+
 package com.smartfridge.fridge.food;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -68,6 +73,7 @@ public class FoodRepository {
 
     record CatalogBatch(String payloadHash, int itemCount) {}
 
+    /** 新增一条食材；插入成功后立刻补一条 ADD 流水，方便事后撤销或追溯。 */
     public FoodView create(CreateFoodRequest request, long userId) {
         KeyHolder keys = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
@@ -234,6 +240,11 @@ public class FoodRepository {
         ) == 1;
     }
 
+    /**
+     * 把食材挪到别的分区/容器。
+     * WHERE 里带 version = ? 是乐观锁：只有版本号还是调用者读到的那一版才更新，
+     * 否则说明别人先改了，返回 false，由上层提示用户刷新重试。
+     */
     public boolean move(
         FoodRecord food,
         long zoneId,
@@ -278,6 +289,7 @@ public class FoodRepository {
         return true;
     }
 
+    /** 使用掉一部分食材：扣减数量，同样用版本号乐观锁，成功后写一条 CONSUME 流水。 */
     public boolean consume(
         FoodRecord food,
         java.math.BigDecimal quantity,
@@ -453,6 +465,10 @@ public class FoodRepository {
         );
     }
 
+    /**
+     * 丢弃食材。注意是「软删除」：数据行还在，只是 status 改成 DISCARDED、数量清零，
+     * 所以操作流水仍然能引用它，撤销时也能把它恢复回来。
+     */
     public boolean discard(FoodRecord food, int expectedVersion, long userId, String note) {
         int updated = jdbcTemplate.update(
             """
@@ -489,6 +505,10 @@ public class FoodRepository {
         return true;
     }
 
+    /**
+     * 按条件搜索食材：SQL 是一段段拼出来的，只有传了对应条件才加对应 AND。
+     * 关键字和标签都做了 LIKE 转义，防止用户输入的 % 或 _ 被当成通配符。
+     */
     public List<FoodView> search(long fridgeId, FoodSearchFilter filter, LocalDate today) {
         StringBuilder sql = new StringBuilder("""
                 SELECT id, fridge_id, zone_id, container_id, name, category,
@@ -553,6 +573,10 @@ public class FoodRepository {
         return value.replace("!", "!!").replace("%", "!%").replace("_", "!_");
     }
 
+    /**
+     * 写一条操作流水。所有会改变食材的操作（新增/移动/使用/做饭/编辑/丢弃）都在同一个事务里
+     * 调用它，记下「改之前是什么样、改之后是什么样」，撤销与恢复就是靠这张表算回去的。
+     */
     private void recordOperation(
         long fridgeId,
         long foodId,

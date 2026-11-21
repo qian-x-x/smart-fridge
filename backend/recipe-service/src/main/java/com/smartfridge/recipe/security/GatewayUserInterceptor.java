@@ -1,3 +1,7 @@
+/*
+ * 这个文件：从网关注入的头里取用户身份，保证接口只能被已登录用户访问。
+ */
+
 package com.smartfridge.recipe.security;
 
 import com.smartfridge.common.api.ErrorCode;

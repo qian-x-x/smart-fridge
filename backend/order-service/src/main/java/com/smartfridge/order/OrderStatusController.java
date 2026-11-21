@@ -1,3 +1,7 @@
+/*
+ * 这个文件：健康检查接口。
+ */
+
 package com.smartfridge.order;
 
 import com.smartfridge.common.api.ApiResponse;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：返回给前端的流水条目：动作、操作人、时间、数量变化、能否撤销。
+ */
+
 package com.smartfridge.fridge.food;
 
 import java.math.BigDecimal;

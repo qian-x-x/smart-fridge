@@ -1,3 +1,7 @@
+/*
+ * 这个文件：把当前 Seata 事务号塞进发给其他服务的请求头里，保证跨服务调用还在同一个事务中。
+ */
+
 package com.smartfridge.fridge.config;
 
 import feign.RequestInterceptor;

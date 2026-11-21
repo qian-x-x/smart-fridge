@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试过期食材清理：只清真正过期的，且清理后可以逐条撤销。
+ */
+
 package com.smartfridge.fridge;
 
 import com.jayway.jsonpath.JsonPath;

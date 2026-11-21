@@ -1,3 +1,7 @@
+/*
+ * 这个文件：家庭相关接口：创建、我的家庭列表、详情、用邀请码加入、成员列表、改角色、移除成员、转交所有权。
+ */
+
 package com.smartfridge.auth.family;
 
 import com.smartfridge.auth.security.CurrentUser;

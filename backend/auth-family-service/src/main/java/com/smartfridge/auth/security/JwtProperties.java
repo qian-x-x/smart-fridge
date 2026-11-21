@@ -1,3 +1,7 @@
+/*
+ * 这个文件：JWT 的配置项：签名密钥、access 和 refresh 各自的有效期。
+ */
+
 package com.smartfridge.auth.security;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试账号流程：注册、登录、刷新令牌、退出后令牌立即失效。
+ */
+
 package com.smartfridge.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;

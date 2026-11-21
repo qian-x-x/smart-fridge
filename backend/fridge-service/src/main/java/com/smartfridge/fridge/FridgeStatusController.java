@@ -1,3 +1,7 @@
+/*
+ * 这个文件：健康检查接口，运维用来确认服务活着。
+ */
+
 package com.smartfridge.fridge;
 
 import com.smartfridge.common.api.ApiResponse;

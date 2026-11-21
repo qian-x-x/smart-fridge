@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试「令牌是否已被吊销」的远程查询客户端及它的异常处理。
+ */
+
 package com.smartfridge.gateway;
 
 import com.smartfridge.gateway.security.TokenIntrospectionClient;

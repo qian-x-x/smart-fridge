@@ -1,3 +1,7 @@
+/*
+ * 这个文件：库存服务（演示模块）的启动类，默认不随主流程启动。
+ */
+
 package com.smartfridge.stock;
 
 import org.springframework.boot.SpringApplication;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：创建家庭工作区的 HTTP 入口。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.auth.security.CurrentUser;

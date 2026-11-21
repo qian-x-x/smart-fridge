@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试调用权限服务的封装层：各种下游错误是否正确翻译成对应的业务错误。
+ */
+
 package com.smartfridge.fridge;
 
 import com.smartfridge.fridge.family.*;

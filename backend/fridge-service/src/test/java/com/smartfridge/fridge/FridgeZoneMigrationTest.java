@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试数据库迁移：老数据升级后冰箱分区结构是否符合新版本要求。
+ */
+
 package com.smartfridge.fridge;
 
 import org.flywaydb.core.Flyway;

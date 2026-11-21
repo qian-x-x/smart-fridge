@@ -1,3 +1,7 @@
+/*
+ * 这个文件：登录请求体：账号（用户名或手机号）加密码。
+ */
+
 package com.smartfridge.auth.api;
 
 import jakarta.validation.constraints.NotBlank;

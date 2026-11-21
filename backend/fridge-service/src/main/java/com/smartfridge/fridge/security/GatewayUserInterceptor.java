@@ -1,3 +1,8 @@
+/*
+ * 这个文件：从网关注入的 X-User-Id / X-User-Name 头取用户身份，放进请求上下文。
+ * 拿不到就返回 401，说明请求没经过网关或者网关没放行。
+ */
+
 package com.smartfridge.fridge.security;
 
 import com.smartfridge.common.api.ErrorCode;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：订单表的一行。
+ */
+
 package com.smartfridge.order;
 
 import java.time.Instant;

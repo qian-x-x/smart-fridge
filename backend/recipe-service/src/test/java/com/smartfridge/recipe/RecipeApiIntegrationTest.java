@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试菜谱接口：列表和详情返回的数据结构是否正确。
+ */
+
 package com.smartfridge.recipe;
 
 import org.junit.jupiter.api.Test;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：库存查询的返回数据。
+ */
+
 package com.smartfridge.stock;
 
 /**

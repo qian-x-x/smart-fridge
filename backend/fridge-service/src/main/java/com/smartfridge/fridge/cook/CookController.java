@@ -1,3 +1,7 @@
+/*
+ * 这个文件：做饭相关接口：确认一次做饭（扣库存）、查看做饭历史。
+ */
+
 package com.smartfridge.fridge.cook;
 
 import com.smartfridge.common.api.ApiResponse;

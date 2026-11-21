@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试网关的跨域配置：前端从浏览器调接口时不会被 CORS 挡掉。
+ */
+
 package com.smartfridge.gateway;
 
 import org.junit.jupiter.api.Test;

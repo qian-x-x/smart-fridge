@@ -1,3 +1,7 @@
+/*
+ * 这个文件：菜谱接口：列出全部菜谱、查看单个菜谱详情。
+ */
+
 package com.smartfridge.recipe.catalog;
 
 import com.smartfridge.common.api.ApiResponse;

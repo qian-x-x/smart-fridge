@@ -1,3 +1,8 @@
+/*
+ * 这个文件：给每个进入的请求生成（或沿用上游传来的）traceId，写进日志上下文。
+ * 这样一次请求经过多个微服务，日志里能用同一个编号串起来排查。
+ */
+
 package com.smartfridge.common.web;
 
 import jakarta.servlet.FilterChain;

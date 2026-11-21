@@ -1,3 +1,8 @@
+/*
+ * 这个文件：JWT 的签发和解析都在这。token 里带 type 字段区分 access / refresh，
+ * 防止有人拿 refreshToken 冒充 accessToken 调业务接口。
+ */
+
 package com.smartfridge.auth.security;
 
 import com.smartfridge.auth.user.UserAccount;

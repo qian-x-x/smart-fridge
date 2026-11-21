@@ -1,3 +1,7 @@
+/*
+ * 这个文件：工作区分两步落库：先登记请求并创建家庭，等冰箱建好后再回填冰箱 id。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.auth.family.FamilyService;

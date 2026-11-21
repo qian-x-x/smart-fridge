@@ -1,3 +1,7 @@
+/*
+ * 这个文件：在网关层给请求打上 traceId，后面的服务沿用同一个编号。
+ */
+
 package com.smartfridge.gateway.filter;
 
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;

@@ -1,3 +1,8 @@
+/*
+ * 这个文件：家庭可见性控制。分布式事务还没最终提交时，先把家庭藏起来，
+ * 避免用户看到「建了一半」或者「其实已回滚」的家庭。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.common.error.BusinessException;

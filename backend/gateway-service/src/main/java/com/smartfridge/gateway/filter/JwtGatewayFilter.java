@@ -1,3 +1,11 @@
+/*
+ * 这个文件：网关的统一鉴权闸门。
+ * 登录、注册这类公开接口直接放行；其余 /api/ 请求必须带 Bearer token。
+ * 校验内容：签名是否有效、是不是 access 类型、有没有被用户登出拉黑。
+ * 校验通过后，删掉客户端自己伪造的身份头，由网关注入真实的 X-User-Id / X-User-Name / X-User-Role，
+ * 后面的服务只信任这三个头，不再自己解析 token。
+ */
+
 package com.smartfridge.gateway.filter;
 
 import io.jsonwebtoken.Claims;
@@ -62,6 +70,8 @@ public class JwtGatewayFilter implements GlobalFilter, Ordered {
                 return reject(exchange, "令牌类型无效");
             }
 
+            // 先删掉客户端可能自己伪造的身份头，再由网关注入真实身份：
+            // 后面的业务服务只认这三个头，所以这一步决定了「你是谁」。
             ServerHttpRequest request = exchange.getRequest().mutate()
                 .headers(headers -> {
                     headers.remove("X-User-Id");

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：启动时加载 Sentinel 的限流和熔断规则（演示用）。
+ */
+
 package com.smartfridge.order;
 
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;

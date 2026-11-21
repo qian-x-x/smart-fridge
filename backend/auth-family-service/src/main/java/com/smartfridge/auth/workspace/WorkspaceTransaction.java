@@ -1,3 +1,7 @@
+/*
+ * 这个文件：Seata 全局事务的范围：建家庭 → 建冰箱 → 收尾，任何一步失败，整体回滚。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import io.seata.spring.annotation.GlobalTransactional;

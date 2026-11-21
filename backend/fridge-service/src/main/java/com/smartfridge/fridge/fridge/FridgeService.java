@@ -1,3 +1,7 @@
+/*
+ * 这个文件：冰箱业务：创建和查询，创建前会确认用户属于这个家庭。
+ */
+
 package com.smartfridge.fridge.fridge;
 
 import com.smartfridge.common.error.BusinessException;

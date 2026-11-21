@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试冰箱接口：创建冰箱时默认分区/容器是否齐全、按家庭查询是否正常。
+ */
+
 package com.smartfridge.fridge;
 
 import com.sun.net.httpserver.HttpServer;

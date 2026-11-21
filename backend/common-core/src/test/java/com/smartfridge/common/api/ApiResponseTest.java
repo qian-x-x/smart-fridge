@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试统一返回格式：成功和失败时 code / message / data / traceId 是否按约定输出。
+ */
+
 package com.smartfridge.common.api;
 
 import org.junit.jupiter.api.AfterEach;

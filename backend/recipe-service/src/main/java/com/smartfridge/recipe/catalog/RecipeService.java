@@ -1,3 +1,7 @@
+/*
+ * 这个文件：菜谱查询业务：列表和详情，查不到给「菜谱不存在」。
+ */
+
 package com.smartfridge.recipe.catalog;
 
 import com.smartfridge.common.error.BusinessException;

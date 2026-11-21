@@ -1,3 +1,7 @@
+/*
+ * 这个文件：冰箱相关配置，目前是「还有几天算临期」这个阈值，从配置文件读取。
+ */
+
 package com.smartfridge.fridge.config;
 
 import org.springframework.beans.factory.annotation.Value;

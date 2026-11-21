@@ -1,3 +1,8 @@
+/*
+ * 这个文件：真正发起权限查询的地方：调用认证服务，把 404/401/其他故障各自翻译成
+ * 对应的业务错误，不让底层的 Feign 细节泄漏到业务代码。
+ */
+
 package com.smartfridge.fridge.family;
 
 import com.smartfridge.common.api.ErrorCode;

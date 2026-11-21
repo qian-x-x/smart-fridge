@@ -1,3 +1,7 @@
+/*
+ * 这个文件：库存读写的 SQL 逻辑：查库存、扣库存（带库存不足检查）。
+ */
+
 package com.smartfridge.stock;
 
 import com.smartfridge.common.api.ErrorCode;

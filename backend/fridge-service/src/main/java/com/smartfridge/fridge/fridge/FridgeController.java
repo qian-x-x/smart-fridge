@@ -1,3 +1,7 @@
+/*
+ * 这个文件：冰箱接口：创建冰箱、按家庭查冰箱、按 id 查冰箱。
+ */
+
 package com.smartfridge.fridge.fridge;
 
 import com.smartfridge.common.api.ApiResponse;

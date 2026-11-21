@@ -1,3 +1,7 @@
+/*
+ * 这个文件：新增食材的请求体：名称、分类、数量、单位、存放位置、生产/过期日期等。
+ */
+
 package com.smartfridge.fridge.food;
 
 import jakarta.validation.constraints.DecimalMin;

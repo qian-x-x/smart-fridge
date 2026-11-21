@@ -1,3 +1,7 @@
+/*
+ * 这个文件：返回给前端的食材信息，比数据库多了「还剩几天过期」和「是否临期」。
+ */
+
 package com.smartfridge.fridge.food;
 
 import java.math.BigDecimal;

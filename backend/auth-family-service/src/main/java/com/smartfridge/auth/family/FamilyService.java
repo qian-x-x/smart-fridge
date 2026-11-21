@@ -1,3 +1,10 @@
+/*
+ * 这个文件：家庭的业务规则集中在这里。
+ * 创建家庭时随机生成 8 位邀请码，创建者自动成为 OWNER；
+ * 别人用邀请码加入默认是 VIEWER；只有 OWNER 能改角色、移除成员、转交所有权；
+ * 所有权只能转给 EDITOR；正在初始化中的家庭对外不可见。
+ */
+
 package com.smartfridge.auth.family;
 
 import com.smartfridge.common.error.BusinessException;

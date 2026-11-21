@@ -1,3 +1,7 @@
+/*
+ * 这个文件：去认证服务查「这个 token 还有效吗」，用来发现用户登出后作废的令牌。
+ */
+
 package com.smartfridge.gateway.security;
 
 import org.springframework.beans.factory.annotation.Qualifier;

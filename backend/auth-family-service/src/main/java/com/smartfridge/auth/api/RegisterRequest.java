@@ -1,3 +1,8 @@
+/*
+ * 这个文件：注册请求体：用户名、手机号、显示名称、密码。
+ * 除了长度和格式校验，还额外检查密码编码后不超过 72 字节（BCrypt 的硬性上限）。
+ */
+
 package com.smartfridge.auth.api;
 
 import jakarta.validation.constraints.NotBlank;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：移动食材的请求体：从哪个分区挪到哪个分区/容器。
+ */
+
 package com.smartfridge.fridge.food;
 
 import jakarta.validation.constraints.Min;

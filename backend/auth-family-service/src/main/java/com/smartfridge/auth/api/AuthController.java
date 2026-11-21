@@ -1,3 +1,7 @@
+/*
+ * 这个文件：认证相关的 HTTP 接口：注册、登录、刷新令牌、退出、令牌有效性查询。
+ */
+
 package com.smartfridge.auth.api;
 
 import com.smartfridge.auth.application.AuthService;

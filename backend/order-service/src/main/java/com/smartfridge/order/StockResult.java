@@ -1,3 +1,7 @@
+/*
+ * 这个文件：库存调用结果：成功带着剩余库存，失败带着原因。
+ */
+
 package com.smartfridge.order;
 
 /**

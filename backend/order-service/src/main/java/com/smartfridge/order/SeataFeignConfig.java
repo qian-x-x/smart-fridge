@@ -1,3 +1,7 @@
+/*
+ * 这个文件：给 Feign 请求加上 Seata 事务号，让库存服务加入同一个全局事务。
+ */
+
 package com.smartfridge.order;
 
 import feign.RequestInterceptor;

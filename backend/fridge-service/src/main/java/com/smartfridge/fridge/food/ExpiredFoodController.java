@@ -1,3 +1,7 @@
+/*
+ * 这个文件：一键清理过期食材的接口。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.smartfridge.common.api.ApiResponse;

@@ -1,3 +1,10 @@
+/*
+ * 这个文件：撤销和恢复的业务计算。
+ * 撤销：把数量、位置、状态全部算回操作之前的样子，同时写一条 UNDO 流水；
+ * 恢复：再反向算回去，写一条 RESTORE 流水。
+ * 每一步都用版本号 + 数据库锁防止并发冲突。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.smartfridge.common.error.BusinessException;
@@ -41,6 +48,12 @@ public class FoodOperationService {
         return operationRepository.timeline(fridgeId, foodId, bounded);
     }
 
+    /**
+     * 撤销一次历史操作。
+     * 做法：先锁住这条食材行，再根据原操作的类型算出「撤销后应该是什么状态」，
+     * 然后写一条 UNDO 流水，最后把原流水标记成「已被这条 UNDO 撤销」。
+     * 标记这一步是条件更新，两个成员同时点撤销时只有一个能成功。
+     */
     @Transactional
     public FoodView undo(
         long foodId,
@@ -60,6 +73,8 @@ public class FoodOperationService {
         }
         requireVersion(food, expectedVersion);
 
+        // 按原操作类型反推目标状态：
+        // MOVE 挪回原位置；CONSUME/COOK 把吃掉的加回去；DISCARD 重新置为启用并恢复数量。
         Target target = switch (operation.action()) {
             case "MOVE" -> new Target(
                 food.status(),
@@ -103,6 +118,10 @@ public class FoodOperationService {
         return currentView(foodId, fridge);
     }
 
+    /**
+     * 恢复一次「已撤销」的操作，相当于把撤销再撤销。
+     * 前提是这条记录确实被撤销过，而且食材还处在启用状态。
+     */
     @Transactional
     public FoodView restore(
         long foodId,

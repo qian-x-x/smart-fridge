@@ -1,3 +1,7 @@
+/*
+ * 这个文件：把 JWT 拦截器挂到 Spring MVC 上，让受保护的接口先验 token。
+ */
+
 package com.smartfridge.auth.config;
 
 import com.smartfridge.auth.security.JwtAuthInterceptor;

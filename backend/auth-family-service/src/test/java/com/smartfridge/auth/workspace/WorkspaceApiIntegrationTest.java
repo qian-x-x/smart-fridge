@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试「一次创建家庭 + 默认冰箱」这个接口：成功、重复请求（幂等）、以及失败时会不会留下半成品数据。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.fasterxml.jackson.databind.JsonNode;

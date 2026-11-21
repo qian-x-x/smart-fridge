@@ -1,3 +1,7 @@
+/*
+ * 这个文件：修改家庭成员角色的请求体（只能改成 EDITOR 或 VIEWER）。
+ */
+
 package com.smartfridge.auth.family;
 
 import jakarta.validation.constraints.NotBlank;

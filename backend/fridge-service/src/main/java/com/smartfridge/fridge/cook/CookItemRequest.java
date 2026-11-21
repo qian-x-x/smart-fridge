@@ -1,3 +1,7 @@
+/*
+ * 这个文件：做饭请求里的一项：哪种食材、扣多少、基于哪个版本号。
+ */
+
 package com.smartfridge.fridge.cook;
 
 import jakarta.validation.constraints.DecimalMin;

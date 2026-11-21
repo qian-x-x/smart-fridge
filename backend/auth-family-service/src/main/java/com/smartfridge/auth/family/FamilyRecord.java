@@ -1,3 +1,7 @@
+/*
+ * 这个文件：数据库里一行家庭记录：家庭名、邀请码、拥有者、创建时间。
+ */
+
 package com.smartfridge.auth.family;
 
 import java.time.Instant;

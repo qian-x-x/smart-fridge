@@ -1,3 +1,9 @@
+/*
+ * 这个文件：注册、登录、刷新、退出这四个流程的业务逻辑。
+ * 要点：刷新时旧的 refreshToken 立刻作废，一个只能用一次；
+ * 退出时把 accessToken 的编号记进 Redis 黑名单，refreshToken 也从会话表撤销。
+ */
+
 package com.smartfridge.auth.application;
 
 import com.smartfridge.auth.api.AuthTokenResponse;
@@ -46,6 +52,10 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * 注册新用户：用户名和手机号至少填一个，重复的直接拒绝，
+     * 密码只存 BCrypt 哈希；注册成功立刻签发一对令牌，用户不用再登录一次。
+     */
     @Transactional
     public AuthTokenResponse register(RegisterRequest request) {
         String username = normalize(request.username());
@@ -77,6 +87,10 @@ public class AuthService {
         }
     }
 
+    /**
+     * 登录：用户名或手机号都能当账号用。
+     * 用户不存在和密码错误返回同一句提示，避免被别人试探出「这个账号存不存在」。
+     */
     @Transactional
     public AuthTokenResponse login(LoginRequest request) {
         UserAccount user = userRepository.findByIdentifier(request.identifier().trim())
@@ -87,6 +101,11 @@ public class AuthService {
         return issueTokens(user);
     }
 
+    /**
+     * 用 refreshToken 换一对新令牌。
+     * consumeActive 会把旧 refreshToken 标记为已用：同一个只能用一次，
+     * 这样即使它被偷走，攻击者最多也只能用一次，而正常用户下次刷新会失败并要求重新登录。
+     */
     @Transactional
     public AuthTokenResponse refresh(String refreshToken) {
         TokenClaims claims = tokenService.parseRefreshToken(refreshToken);
@@ -99,6 +118,10 @@ public class AuthService {
         return issueTokens(user);
     }
 
+    /**
+     * 退出登录：把 accessToken 的编号写进 Redis 黑名单（有效到它本来过期那一刻），
+     * 同时撤销 refreshToken，防止退出后还能用刷新接口续命。
+     */
     @Transactional
     public void logout(String accessToken, String refreshToken) {
         TokenClaims accessClaims = tokenService.parseAccessToken(accessToken);

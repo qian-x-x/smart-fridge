@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试「全局事务到底算不算已提交」的判断逻辑（Seata 的几种中间状态）。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.common.error.BusinessException;

@@ -1,3 +1,7 @@
+/*
+ * 这个文件：食材搜索条件：关键字、分区、状态、日期范围等。
+ */
+
 package com.smartfridge.fridge.food;
 
 import jakarta.validation.constraints.AssertTrue;

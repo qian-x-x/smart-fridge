@@ -1,3 +1,7 @@
+/*
+ * 这个文件：创建冰箱的请求体：属于哪个家庭、叫什么名字。
+ */
+
 package com.smartfridge.fridge.fridge;
 
 import jakarta.validation.constraints.NotBlank;

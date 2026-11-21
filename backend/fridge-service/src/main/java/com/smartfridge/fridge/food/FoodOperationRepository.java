@@ -1,3 +1,8 @@
+/*
+ * 这个文件：流水表的 SQL。撤销/恢复用「条件更新」实现，
+ * 两个成员同时点撤销时只有一个能成功，另一个会收到冲突提示。
+ */
+
 package com.smartfridge.fridge.food;
 
 import org.springframework.jdbc.core.JdbcTemplate;

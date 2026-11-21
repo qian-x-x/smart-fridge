@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试网关路由：按路径能不能正确转发到对应服务。
+ */
+
 package com.smartfridge.gateway;
 
 import org.junit.jupiter.api.Test;

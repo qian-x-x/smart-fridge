@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试做饭接口：正常扣减、库存不足、重复 requestId 不会扣两次。
+ */
+
 package com.smartfridge.fridge;
 
 import com.jayway.jsonpath.JsonPath;

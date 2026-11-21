@@ -1,3 +1,8 @@
+/*
+ * 这个文件：冰箱、分区、容器三张表的 SQL。新建冰箱时会自动写入默认的三个温区
+ * （冷藏、变温、冷冻）和五个容器，用户不需要手动配置。
+ */
+
 package com.smartfridge.fridge.fridge;
 
 import org.springframework.jdbc.core.JdbcTemplate;

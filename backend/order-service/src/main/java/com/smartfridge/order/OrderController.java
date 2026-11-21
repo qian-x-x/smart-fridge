@@ -1,3 +1,7 @@
+/*
+ * 这个文件：演示接口：下单、按 id 查订单、查最近订单。
+ */
+
 package com.smartfridge.order;
 
 import com.smartfridge.common.api.ApiResponse;

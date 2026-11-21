@@ -1,3 +1,8 @@
+/*
+ * 这个文件：按冰箱所在时区计算「还有几天到期、算不算临期」，统一给食材列表和流水用，
+ * 保证两个地方显示的结论一致。
+ */
+
 package com.smartfridge.fridge.food;
 
 import com.smartfridge.fridge.config.FridgeSettings;

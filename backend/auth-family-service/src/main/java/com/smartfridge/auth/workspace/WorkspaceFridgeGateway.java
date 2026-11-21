@@ -1,3 +1,8 @@
+/*
+ * 这个文件：调用冰箱服务的封装层：校验返回是否合理，把 401/403/409 翻译成用户看得懂的中文，
+ * 并用 Sentinel 做限流和熔断兜底。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;

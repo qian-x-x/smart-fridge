@@ -1,3 +1,7 @@
+/*
+ * 这个文件：家庭表和成员表的 SQL 操作。只负责和数据库打交道，不含业务判断。
+ */
+
 package com.smartfridge.auth.family;
 
 import java.sql.Timestamp;

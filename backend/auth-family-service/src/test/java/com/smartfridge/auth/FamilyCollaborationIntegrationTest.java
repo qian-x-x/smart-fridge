@@ -1,3 +1,7 @@
+/*
+ * 这个文件：测试家庭协作：创建家庭、邀请加入、改角色、移除成员、转交所有权这些规则是否按预期工作。
+ */
+
 package com.smartfridge.auth;
 
 import com.fasterxml.jackson.databind.JsonNode;

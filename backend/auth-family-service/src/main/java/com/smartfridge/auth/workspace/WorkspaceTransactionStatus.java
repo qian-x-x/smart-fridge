@@ -1,3 +1,7 @@
+/*
+ * 这个文件：查询 Seata 全局事务的最终状态，用来判断家庭到底「已提交」「还在跑」还是「已回滚」。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.smartfridge.common.api.ErrorCode;

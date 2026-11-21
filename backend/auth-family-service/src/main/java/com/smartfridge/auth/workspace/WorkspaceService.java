@@ -1,3 +1,8 @@
+/*
+ * 这个文件：创建家庭的总调度：先查这个 requestId 是不是已经处理过（幂等重放），
+ * 没处理过就开全局事务去建；失败或并发重复时再根据状态决定是重试、等待还是报错。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;

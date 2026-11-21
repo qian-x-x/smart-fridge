@@ -1,3 +1,7 @@
+/*
+ * 这个文件：做饭记录表和明细表的 SQL 操作。
+ */
+
 package com.smartfridge.fridge.cook;
 
 import org.springframework.jdbc.core.JdbcTemplate;

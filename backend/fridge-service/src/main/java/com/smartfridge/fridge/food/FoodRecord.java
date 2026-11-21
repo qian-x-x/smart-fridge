@@ -1,3 +1,7 @@
+/*
+ * 这个文件：食材表的一行原始记录（数据库长什么样就长什么样）。
+ */
+
 package com.smartfridge.fridge.food;
 
 import java.math.BigDecimal;

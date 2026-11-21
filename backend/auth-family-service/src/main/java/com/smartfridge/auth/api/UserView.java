@@ -1,3 +1,7 @@
+/*
+ * 这个文件：返回给前端的用户资料。注意：故意不包含密码哈希。
+ */
+
 package com.smartfridge.auth.api;
 
 import com.smartfridge.auth.user.UserAccount;

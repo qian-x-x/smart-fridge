@@ -1,3 +1,7 @@
+/*
+ * 这个文件：菜谱服务的启动类。它只读不写，提供菜谱目录给前端。
+ */
+
 package com.smartfridge.recipe;
 
 import org.springframework.boot.SpringApplication;

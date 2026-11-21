@@ -1,3 +1,7 @@
+/*
+ * 这个文件：创建工作区时的两道保护：QPS 限流 + 慢调用熔断；同时把 Seata 事务号透传给下游服务。
+ */
+
 package com.smartfridge.auth.workspace;
 
 import com.alibaba.csp.sentinel.slots.block.RuleConstant;

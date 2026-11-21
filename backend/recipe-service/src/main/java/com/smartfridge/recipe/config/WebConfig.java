@@ -1,3 +1,7 @@
+/*
+ * 这个文件：注册网关用户拦截器。
+ */
+
 package com.smartfridge.recipe.config;
 
 import com.smartfridge.recipe.security.GatewayUserInterceptor;

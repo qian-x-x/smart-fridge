@@ -1,3 +1,7 @@
+/*
+ * 这个文件：下单结果：成功 / 被限流 / 库存不可用，三种情况用不同构造方法生成。
+ */
+
 package com.smartfridge.order;
 
 public record OrderResult(OrderStatus status, OrderView order, String message) {

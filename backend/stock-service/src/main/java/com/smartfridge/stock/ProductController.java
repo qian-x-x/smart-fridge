@@ -1,3 +1,7 @@
+/*
+ * 这个文件：库存接口：查库存、扣库存、以及一个模拟慢响应的接口（给熔断演示用）。
+ */
+
 package com.smartfridge.stock;
 
 import com.smartfridge.common.api.ApiResponse;
